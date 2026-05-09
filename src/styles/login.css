@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* СИНИЙ ФОН (как ты хотел, но красивый) */
+.login-screen {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(160deg, #0a2a8a, #031a5c 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* затемнение + глубина */
+.login-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+  pointer-events: none;
+}
+
+/* LOCK SCREEN */
+.lock-screen {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  cursor: pointer;
+  animation: fadeIn 0.8s ease;
+}
+
+.time {
+  font-size: 72px;
+  font-weight: 200;
+  color: white;
+}
+
+.date {
+  font-size: 18px;
+  opacity: 0.8;
+  color: white;
+}
+
+/* LOGIN */
+.login-box {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: fadeIn 0.6s ease;
+}
+
+/* ЛОГО */
+.logo {
+  width: 90px;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.6));
+}
+
+/* ТЕКСТ */
+.title {
+  font-size: 20px;
+  margin-bottom: 25px;
+  color: white;
+}
+
+/* ПОЛЕ */
+.login-box input {
+  width: 280px;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(0, 0, 40, 0.5);
+  color: white;
+  text-align: center;
+  font-size: 14px;
+  backdrop-filter: blur(6px);
+}
+
+/* ФОКУС */
+.login-box input:focus {
+  border-color: #ffffff;
+  box-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+/* ОШИБКА */
+.login-box input.error {
+  border-color: red;
+}
+
+/* АНИМАЦИЯ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

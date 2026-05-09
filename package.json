@@ -1,0 +1,23 @@
+{
+  "name": "detective-os",
+  "version": "1.0.0",
+  "description": "Detective Game - Desktop Simulator",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "build": "vite build",
+    "electron": "electron .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "concurrently": "^8.2.0",
+    "electron": "^25.0.0",
+    "vite": "^4.4.0",
+    "wait-on": "^7.0.1"
+  }
+}

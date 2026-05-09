@@ -1,0 +1,601 @@
+/* ===== DESKTOP ===== */
+.desktop {
+  width: 100vw;
+  height: 100vh;
+  background: url('/assets/images/desktop.jpg') center / cover no-repeat;
+  position: relative;
+}
+
+/* ===== ИКОНКИ ===== */
+.desktop-icons {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-icon {
+  width: 80px;
+  margin-bottom: 18px;
+  text-align: center;
+  color: white;
+  padding: 6px;
+}
+
+.desktop-icon .icon {
+  font-size: 32px;
+}
+
+.desktop-icon .label {
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* ===== BHROME ===== */
+.bhrome {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  background: #0c0d11;
+  color: #e6e6e6;
+
+  position: relative;
+  z-index: 1; /* 👈 чтобы не перекрывал уведомление */
+}
+
+/* ===== BAR ===== */
+.bhrome-bar {
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0 10px;
+
+  background: #14161b;
+}
+
+/* адрес */
+.bhrome-address {
+  flex: 1;
+
+  background: #0b0c10;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  color: white;
+  font-size: 13px;
+
+  outline: none;
+}
+
+/* фокус как в браузере */
+.bhrome-address:focus {
+  border-color: #4cafef;
+}
+
+/* ===== PAGE ===== */
+.bhrome-page {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* ← ВАЖНО */
+}
+
+/* ============================= */
+/* GMAIL (ТВОЙ ДИЗАЙН БЕЗ ДУБЛЕЙ) */
+/* ============================= */
+
+.gmail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* TOP */
+.gmail-top {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  background: #1a1d23;
+}
+
+.gmail-search {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 24px;
+  border: none;
+  background: #2a2d34;
+  color: white;
+}
+
+/* BODY */
+.gmail-body {
+  display: flex;
+  flex: 1;
+
+  height: 0;        /* ← КЛЮЧ */
+  overflow: hidden; /* ← КЛЮЧ */
+}
+
+/* SIDEBAR */
+.gmail-sidebar {
+  width: 240px;
+  padding: 12px;
+  background: #111;
+}
+
+.compose-btn {
+  background: #1a73e8;
+  padding: 12px;
+  border-radius: 24px;
+  text-align: center;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+/* LIST */
+.gmail-list {
+  width: 420px;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.gmail-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 42px;
+  padding: 0 12px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  overflow: hidden;
+}
+
+.gmail-row:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.gmail-row.selected {
+  background: rgba(26,115,232,0.2);
+}
+
+/* текст строки */
+.from {
+  width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subject {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  width: 60px;
+  text-align: right;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+
+
+.gmail-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.gmail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.gmail-body {
+  display: flex;
+  height: 100%;
+}
+
+
+
+.gmail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 40px;
+}
+
+.sys-notif {
+  position: fixed;
+
+  right: 20px;
+  bottom: 60px;
+
+  width: 320px;
+  padding: 14px;
+
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  background: rgba(25, 25, 35, 0.95);
+  backdrop-filter: blur(10px);
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  color: white;
+  font-size: 13px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+  /* 👇 важно для анимации */
+  opacity: 0;
+  transform: translateY(30px);
+
+  transition: 
+    opacity 0.3s ease,
+    transform 0.3s ease;
+
+  /* 👇 чтобы всегда было сверху */
+  z-index: 999999;
+
+  /* 👇 чтобы можно было кликать */
+  pointer-events: auto;
+}
+
+/* состояние появления */
+.sys-notif.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* небольшой hover как в системе */
+.sys-notif:hover {
+  background: rgba(40, 40, 55, 0.95);
+}
+
+/* CENTER FIX */
+.bhrome-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+}
+/* FIX CENTER HOME */
+.bhrome-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+.bhrome-content {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 700px;
+
+  margin: 0 auto;
+   text-align: center; /* чтобы текст тоже ровно был */
+}
+/* ===== BHROME HOME UI ===== */
+
+.bhrome-logo {
+  font-size: 48px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.bhrome-search {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 24px;
+  border: none;
+  outline: none;
+
+  background: rgba(255,255,255,0.08);
+  color: white;
+
+  font-size: 14px;
+
+  margin-bottom: 20px;
+}
+
+.bhrome-sites {
+  display: flex;
+  gap: 16px;
+  justify-content: center; /* центр карточек */
+}
+
+.site {
+  width: 110px;
+  height: 90px;
+
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.site:hover {
+  background: rgba(255,255,255,0.15);
+}
+.tab-title {
+  flex: 1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-close {
+  margin-left: 6px;
+  opacity: 0.5;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tab-close:hover {
+  opacity: 1;
+}
+/* ===== TABS FIX ===== */
+
+.bhrome-tabs {
+  height: 36px;
+
+  display: flex;
+  align-items: flex-end;
+
+  padding-left: 6px;
+
+  background: #1b1d23;
+  border-bottom: 1px solid #0a0b0f;
+
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.bhrome-tab {
+  display: flex;
+  align-items: center;
+
+  min-width: 120px;
+  max-width: 180px;
+
+  padding: 6px 10px;
+  margin-right: 4px;
+
+  background: #2a2d34;
+  border-radius: 8px 8px 0 0;
+
+  font-size: 12px;
+  cursor: pointer;
+
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bhrome-tab.active {
+  background: #3a3d44;
+  color: white;
+}
+
+.tab-title {
+  flex: 1;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tab-close {
+  margin-left: 6px;
+
+  opacity: 0.5;
+  cursor: pointer;
+
+  flex-shrink: 0;
+}
+
+.tab-close:hover {
+  opacity: 1;
+}
+/* ===== FIX WINDOW POSITION ===== */
+
+.window {
+  position: absolute;
+
+  /* УБРАЛИ top/left */
+
+  margin: 0;
+
+  transform-origin: bottom left;
+
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* ===== АНИМАЦИЯ СВОРАЧИВАНИЯ ===== */
+
+.win-minimizing {
+  transform: scale(0.2) translateY(200px);
+  opacity: 0;
+}
+
+/* ===== LOADING BAR (как в Chrome) ===== */
+
+.bhrome-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  height: 3px;
+  width: 0;
+
+  background: linear-gradient(90deg, #4cafef, #2196f3);
+
+  animation: bhromeLoad 0.8s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes bhromeLoad {
+  0% {
+    width: 0%;
+  }
+  70% {
+    width: 80%;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+.mail-attachment {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.mail-attachment:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.att-icon {
+  font-size: 22px;
+}
+
+.att-info {
+  flex: 1;
+}
+
+.att-name {
+  font-size: 14px;
+  color: #fff;
+}
+
+.att-meta {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.att-action {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.pdf-viewer {
+  background: #2b2b2b;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+}
+
+.pdf-paper {
+  width: 700px;
+  background: #fff;
+  color: #111;
+  padding: 40px;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  font-family: 'Times New Roman', serif;
+  line-height: 1.6;
+}
+
+.pdf-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.pdf-company {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.pdf-sub {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.pdf-case {
+  font-size: 13px;
+  border-top: 2px solid #000;
+  padding-top: 6px;
+}
+
+.pdf-block {
+  margin: 20px 0;
+}
+
+.pdf-section {
+  margin-top: 20px;
+}
+
+.pdf-footer {
+  margin-top: 40px;
+}
+.mail-text p {
+  margin: 12px 0;
+  line-height: 1.6;
+  color: #e6e6e6;
+  font-size: 14px;
+}
+
+.accent {
+  color: #4cafef;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 6px rgba(76, 175, 239, 0.5);
+}
+.gmail-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gmail-view {
+  background: red;
+}
+.mail-root {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+.gmail-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
