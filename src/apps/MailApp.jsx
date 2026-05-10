@@ -102,7 +102,14 @@ const INITIAL_MAILS = [
 Начальник Центрального Участка РПД ______________ /Капитан Майкл Бронсон/
 
 [Место для печати Департамента Полиции Ривертона]`,
-    attachments: [],
+    attachments: [
+      {
+        name: 'Заметка с телефона.jpg',
+        size: '1.8 МБ',
+        icon: '🖼️',
+        url: '/assets/images/phone_note_final.jpg'
+      }
+    ],
   },
 ]
 
@@ -347,11 +354,156 @@ function ReadingPane({ mail, onStar, onDelete, onBack, onOpenFile }) {
 }
 
 /* ═══════════════════════════════════════
+   LOGIN SCREEN
+═══════════════════════════════════════ */
+function LoginScreen({ onLogin }) {
+  const [login, setLogin] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
+
+    // Имитация проверки авторизации
+    setTimeout(() => {
+      if (login === 'Detectiv' && password === '12345') {
+        onLogin()
+      } else {
+        setError('Неверный логин или пароль')
+      }
+      setIsLoading(false)
+    }, 500)
+  }
+
+  return (
+    <div className="login-screen" style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+      background: '#131314'
+    }}>
+      <div className="login-container" style={{
+        background: '#1d1d1f',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: '8px',
+        padding: '40px',
+        width: '320px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+      }}>
+        <div className="login-header">
+          <div className="login-logo">✉</div>
+          <h1 className="login-title">OneMail</h1>
+          <p className="login-subtitle">Система безопасной почты</p>
+        </div>
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="login-field">
+            <label className="login-label">Логин</label>
+            <input
+              type="text"
+              className="login-input"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+              placeholder="Введите логин"
+              required
+            />
+          </div>
+
+          <div className="login-field">
+            <label className="login-label">Пароль</label>
+            <input
+              type="password"
+              className="login-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Введите пароль"
+              required
+            />
+          </div>
+
+          {error && <div className="login-error">{error}</div>}
+
+          <button 
+            type="submit" 
+            className="login-button"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Вход...' : 'Войти'}
+          </button>
+        </form>
+
+        <div className="login-footer">
+          <p className="login-hint">Подсказка: логин Detectiv, пароль 12345</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
    MAIN COMPONENT
 ═══════════════════════════════════════ */
-export default function MailApp({ onNotificationRead }) {
+export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return sessionStorage.getItem('mailApp_loggedIn') === 'true'
+  })
   const [openedFile, setOpenedFile] = useState(null);
-  const [mails,       setMails]       = useState(INITIAL_MAILS)
+  const [imageDimensions, setImageDimensions] = useState({ width: 700, height: 600 });
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  function handleOpenFile(file) {
+    setOpenedFile(file)
+    setZoom(1) // Сбрасываем зум при открытии нового файла
+    setPan({ x: 0, y: 0 }) // Сбрасываем позицию при открытии нового файла
+    // Загружаем изображение для определения его реальных размеров
+    const img = new Image()
+    img.onload = () => {
+      // Добавляем небольшой отступ (40px) для хедера и отступов
+      const maxWidth = Math.min(img.width + 40, window.innerWidth - 100)
+      const maxHeight = Math.min(img.height + 80, window.innerHeight - 100)
+      setImageDimensions({ width: maxWidth, height: maxHeight })
+    }
+    img.src = file.url
+  }
+
+  function handleWheel(e) {
+    e.preventDefault()
+    const delta = e.deltaY > 0 ? -0.1 : 0.1
+    setZoom(prev => Math.max(0.5, Math.min(5, prev + delta)))
+  }
+
+  function handleMouseDown(e) {
+    if (e.button === 0) { // Левая кнопка мыши
+      e.preventDefault()
+      setIsDragging(true)
+      setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y })
+    }
+  }
+
+  function handleMouseMove(e) {
+    if (isDragging) {
+      e.preventDefault()
+      setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y })
+    }
+  }
+
+  function handleMouseUp() {
+    setIsDragging(false)
+  }
+  const [mails, setMails] = useState(() => {
+    const savedMails = sessionStorage.getItem('mailApp_mails')
+    if (savedMails) {
+      return JSON.parse(savedMails)
+    }
+    return INITIAL_MAILS
+  })
   const [folder,      setFolder]      = useState('inbox')
   const [tab,         setTab]         = useState('primary')
   const [selectedId,  setSelectedId]  = useState(null)
@@ -359,6 +511,18 @@ export default function MailApp({ onNotificationRead }) {
   const [compose,     setCompose]     = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const timerRef = useRef(null)
+
+  // Сохраняем письма в sessionStorage при каждом изменении
+  useEffect(() => {
+    sessionStorage.setItem('mailApp_mails', JSON.stringify(mails))
+  }, [mails])
+
+  if (!isLoggedIn) {
+    return <LoginScreen onLogin={() => {
+      setIsLoggedIn(true)
+      sessionStorage.setItem('mailApp_loggedIn', 'true')
+    }} />
+  }
 
   /* ── Filter ── */
   const folderMails = (() => {
@@ -374,8 +538,8 @@ export default function MailApp({ onNotificationRead }) {
         m.from.name.toLowerCase().includes(search.toLowerCase()) ||
         m.subject.toLowerCase().includes(search.toLowerCase()) ||
         m.preview.toLowerCase().includes(search.toLowerCase())
-      )
-    : folderMails
+      ).sort((a, b) => b.id - a.id)
+    : folderMails.sort((a, b) => b.id - a.id)
 
   const selectedMail = mails.find(m => m.id === selectedId) ?? null
   const unreadCount  = mails.filter(m => m.folder === 'inbox' && !m.read).length
@@ -394,6 +558,11 @@ export default function MailApp({ onNotificationRead }) {
         setMails(prev => prev.map(m => 
           m.id === 5 ? { ...m, hidden: false } : m
         ))
+        // Воспроизводим звук уведомления
+        const audio = new Audio('/assets/sounds/notification.mp3');
+        audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));
+        // Вызываем callback для показа уведомления
+        if (onSecondMailArrived) onSecondMailArrived()
       }, 10000)
     }
     
@@ -546,21 +715,32 @@ export default function MailApp({ onNotificationRead }) {
   mail={selectedMail}
   onStar={toggleStar}
   onDelete={deleteMail}
-  onOpenFile={setOpenedFile}
+      onOpenFile={handleOpenFile}
 />
         </section>
       </div>
 {compose && <ComposeModal onClose={() => setCompose(false)} />}
       {/* ══ COMPOSE ══ */}
 {openedFile && createPortal(
-  <div className="file-window">
+  <div className="file-window" style={{
+    width: imageDimensions.width + 'px',
+    height: imageDimensions.height + 'px'
+  }}>
     <div className="file-window-header">
       <span>{openedFile.name}</span>
       <button onClick={() => setOpenedFile(null)}>✕</button>
     </div>
 
-    <div className="file-window-body">
-      <img src={openedFile.url} alt="file" />
+    <div className="file-window-body" onWheel={handleWheel} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+      <img src={openedFile.url} alt="file" style={{
+        maxWidth: '100%',
+        maxHeight: '100%',
+        objectFit: 'contain',
+        transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+        transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+        cursor: isDragging ? 'grabbing' : 'grab'
+      }} onMouseDown={handleMouseDown} />
+      <div className="zoom-indicator">{Math.round(zoom * 100)}%</div>
     </div>
   </div>,
   document.body

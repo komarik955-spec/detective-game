@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect, createContext, useContext } from 'react'
 import SystemNotification from './SystemNotification'
 import Browser from './Browser'
 import DesktopIcon from './DesktopIcon'
@@ -6,6 +6,8 @@ import Taskbar from './Taskbar'
 import Window from './Window'
 import FileExplorer from './FileExplorer'
 import { useWM, WindowManagerProvider } from './WindowManager'
+
+export const SecondMailContext = createContext(null)
 
 
 /* =========================
@@ -111,6 +113,11 @@ const DESKTOP_ICONS = [
 function DesktopInner() {
   const { open, windows, activeId, focus } = useWM()
   const [showNotif, setShowNotif] = useState(false)
+  const [showSecondNotif, setShowSecondNotif] = useState(false)
+
+  const handleSecondMailArrived = () => {
+    setShowSecondNotif(true)
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -148,7 +155,8 @@ function DesktopInner() {
     }
   })
   return (
-    <div className="desktop" onClick={handleDesktopClick}>
+    <SecondMailContext.Provider value={handleSecondMailArrived}>
+      <div className="desktop" onClick={handleDesktopClick}>
       
       {/* РРљРћРќРљР */}
       <div className="desktop-icons">
@@ -197,6 +205,20 @@ function DesktopInner() {
         />
       )}
 
+      {/* Р’РўРћР РћР• РЈР’Р•Р”РћРњР›Р•РќРР• */}
+      {showSecondNotif && (
+        <SystemNotification
+          title="OneMail"
+          text="Новое сообщение: Срочная информация"
+          onClick={() => {
+            const audio = new Audio('/assets/sounds/notification.mp3')
+            audio.play().catch(() => {})
+            setShowSecondNotif(false)
+            open('browser', WINDOW_REGISTRY['browser'])
+          }}
+        />
+      )}
+
       {/* РўРђРЎРљР‘РђР  */}
       <Taskbar
         openWindows={taskbarItems}
@@ -213,6 +235,7 @@ function DesktopInner() {
         onStartClick={() => {}}
       />
     </div>
+    </SecondMailContext.Provider>
   )
 }
 

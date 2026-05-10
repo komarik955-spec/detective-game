@@ -1,10 +1,12 @@
-﻿import { useState } from 'react'
+﻿import { useState, useContext } from 'react'
 import MailApp from '../apps/MailApp'
+import { SecondMailContext } from '../components/Desktop'
 let nextId = 2
 
 export default function Browser() {
   // tabs - вкладки браузера. Внутри вкладки page решает, что показывать: home или mail.
   const [loading, setLoading] = useState(false)
+  const onSecondMailArrived = useContext(SecondMailContext)
   const [tabs, setTabs] = useState([
     { id: 1, title: 'New tab', url: '', page: 'home', loading: false },
   ])
@@ -113,7 +115,7 @@ export default function Browser() {
       {/* PAGE */}
       <div className="bhrome-page">
         {activeTab.page === 'home' && <Home onOpenMail={() => navigate('onemail')} />}
-        {activeTab.page === 'mail' && <MailApp />}
+        {activeTab.page === 'mail' && <MailApp onSecondMailArrived={onSecondMailArrived} />}
       </div>
     </div>
   )

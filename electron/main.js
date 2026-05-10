@@ -9,7 +9,7 @@ function createWindow() {
     height: 800,
     minWidth: 1024,
     minHeight: 600,
-    frame: false,           // Custom titlebar
+    frame: false,
     titleBarStyle: 'hidden',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -17,15 +17,14 @@ function createWindow() {
       nodeIntegration: false,
     },
     backgroundColor: '#1a1a2e',
-    show: false,            // Prevent flash
+    show: false,
   })
 
-  // Load dev server or built files
   if (isDev) {
     win.loadURL('http://localhost:5173')
     win.webContents.openDevTools({ mode: 'detach' })
   } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'))
+    win.loadURL(`file://${path.join(__dirname, '..', 'dist', 'index.html')}`)
   }
 
   win.once('ready-to-show', () => win.show())
