@@ -117,7 +117,7 @@ export const WINDOW_REGISTRY = {
     title: 'Bhrome',
     icon: '🌐',
     content: <Browser />,
-    defaultWidth: 1000,
+    defaultWidth: 1100,
     defaultHeight: 720,
   },
 
