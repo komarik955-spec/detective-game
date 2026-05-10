@@ -1038,9 +1038,7 @@ html, body, #root {
 .mail-root {
   height: 100%;
 }
-.mail-rows .mail-row:not(:first-child) {
-  display: none;
-}
+/* Removed global rule that hid all mail rows except the first — allow list to show all items */
 .mail-body {
   display: flex;
   height: 100%;
