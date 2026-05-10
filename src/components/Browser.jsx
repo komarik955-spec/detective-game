@@ -1,5 +1,6 @@
 ﻿import { useState, useContext } from 'react'
 import MailApp from '../apps/MailApp'
+import DarkTraceSite from '../apps/DarkTraceSite'
 import { SecondMailContext } from '../components/Desktop'
 let nextId = 2
 
@@ -42,6 +43,13 @@ export default function Browser() {
           page: 'mail',
           url: 'https://onemail.darktrace.agency/inbox',
           title: 'OneMail',
+          loading: false
+        })
+      } else if (value.includes('darktrace.agency') || value.includes('darktrace')) {
+        updateTab(activeId, {
+          page: 'darktrace',
+          url: 'https://darktrace.agency',
+          title: 'DARK TRACE',
           loading: false
         })
       } else {
@@ -114,30 +122,35 @@ export default function Browser() {
 
       {/* PAGE */}
       <div className="bhrome-page">
-        {activeTab.page === 'home' && <Home onOpenMail={() => navigate('onemail')} />}
+        {activeTab.page === 'home' && <Home onOpenMail={() => navigate('onemail')} onOpenDarkTrace={() => navigate('darktrace.agency')} />}
         {activeTab.page === 'mail' && <MailApp onSecondMailArrived={onSecondMailArrived} />}
+        {activeTab.page === 'darktrace' && <DarkTraceSite />}
       </div>
     </div>
   )
 }
 
 /* HOME */
-function Home({ onOpenMail }) {
+function Home({ onOpenMail, onOpenDarkTrace }) {
   return (
     <div className="bhrome-home">
 
       <div className="bhrome-content">
 
-        <div className="bhrome-logo">Bhrome</div>
+        <div className="bhrome-logo">Googel</div>
 
         <input
           className="bhrome-search"
-          placeholder="Search in Bhrome"
+          placeholder="Search in Googel"
         />
 
         <div className="bhrome-sites">
           <div className="site" onClick={onOpenMail}>
             MAIL <span>OneMail</span>
+          </div>
+
+          <div className="site" onClick={onOpenDarkTrace}>
+            DARK TRACE <span>Investigation Agency</span>
           </div>
 
           <div className="site">

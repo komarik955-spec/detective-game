@@ -488,7 +488,7 @@ function LoadingScreen() {
           color: '#e8eaed',
           fontSize: '32px',
           fontWeight: 500,
-          fontFamily: "'Google Sans', 'Segoe UI', sans-serif",
+          fontFamily: "'Googel Sans', 'Segoe UI', sans-serif",
           margin: 0,
           letterSpacing: '-0.5px'
         }}>
@@ -517,7 +517,7 @@ function LoadingScreen() {
         <p style={{
           color: '#9aa0a6',
           fontSize: '14px',
-          fontFamily: "'Google Sans', 'Segoe UI', sans-serif",
+          fontFamily: "'Googel Sans', 'Segoe UI', sans-serif",
           margin: 0,
           marginTop: '12px'
         }}>
