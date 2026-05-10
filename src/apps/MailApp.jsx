@@ -361,6 +361,8 @@ function LoginScreen({ onLogin }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false)
+  const [showPasswordHint, setShowPasswordHint] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -370,12 +372,20 @@ function LoginScreen({ onLogin }) {
     // Имитация проверки авторизации
     setTimeout(() => {
       if (login === 'Detectiv' && password === '12345') {
-        onLogin()
+        // Показываем LoadingScreen перед переходом к почте
+        setShowLoadingScreen(true)
+        setTimeout(() => {
+          onLogin()
+        }, 2000) // 2 секунды показываем загрузку
       } else {
         setError('Неверный логин или пароль')
+        setIsLoading(false)
       }
-      setIsLoading(false)
     }, 500)
+  }
+
+  if (showLoadingScreen) {
+    return <LoadingScreen />
   }
 
   return (
@@ -414,7 +424,37 @@ function LoginScreen({ onLogin }) {
           </div>
 
           <div className="login-field">
-            <label className="login-label">Пароль</label>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label className="login-label">Пароль</label>
+              <div 
+                className="password-hint-icon" 
+                style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'help' }}
+                onMouseEnter={() => setShowPasswordHint(true)}
+                onMouseLeave={() => setShowPasswordHint(false)}
+              >
+                <span style={{ fontSize: '14px' }}>❓</span>
+                <span style={{ fontSize: '14px' }}>🔑</span>
+                {showPasswordHint && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '100%',
+                    right: 0,
+                    background: '#292a2d',
+                    color: '#e8eaed',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    whiteSpace: 'nowrap',
+                    marginBottom: '6px',
+                    border: '1px solid #3c4043',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                    zIndex: 10
+                  }}>
+                    Сохранил в надежном месте
+                  </div>
+                )}
+              </div>
+            </div>
             <input
               type="password"
               className="login-input"
@@ -435,10 +475,85 @@ function LoginScreen({ onLogin }) {
             {isLoading ? 'Вход...' : 'Войти'}
           </button>
         </form>
+      </div>
+    </div>
+  )
+}
 
-        <div className="login-footer">
-          <p className="login-hint">Подсказка: логин Detectiv, пароль 12345</p>
+/* ═══════════════════════════════════════
+   LOADING SCREEN (OneMail Style)
+═══════════════════════════════════════ */
+function LoadingScreen() {
+  return (
+    <div className="loading-screen" style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#202124',
+      zIndex: 1000
+    }}>
+      <div className="onemail-loader-container" style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '20px'
+      }}>
+        {/* Анимированный логотип OneMail - красный конверт */}
+        <div className="onemail-logo-animated" style={{
+          fontSize: '80px',
+          color: '#ea4335',
+          animation: 'logoPulse 2s ease-in-out infinite',
+          filter: 'drop-shadow(0 0 20px rgba(234, 67, 53, 0.5))'
+        }}>
+          ✉
         </div>
+        
+        {/* Название OneMail */}
+        <h1 style={{
+          color: '#e8eaed',
+          fontSize: '32px',
+          fontWeight: 500,
+          fontFamily: "'Google Sans', 'Segoe UI', sans-serif",
+          margin: 0,
+          letterSpacing: '-0.5px'
+        }}>
+          OneMail
+        </h1>
+        
+        {/* Прогресс бар */}
+        <div className="loading-progress" style={{
+          width: '200px',
+          height: '3px',
+          background: '#3c4043',
+          borderRadius: '2px',
+          overflow: 'hidden',
+          marginTop: '16px'
+        }}>
+          <div className="loading-progress-bar" style={{
+            height: '100%',
+            width: '40%',
+            background: '#c2e7ff',
+            borderRadius: '2px',
+            animation: 'progressMove 1.5s ease-in-out infinite'
+          }}/>
+        </div>
+        
+        {/* Текст загрузки */}
+        <p style={{
+          color: '#9aa0a6',
+          fontSize: '14px',
+          fontFamily: "'Google Sans', 'Segoe UI', sans-serif",
+          margin: 0,
+          marginTop: '12px'
+        }}>
+          Загрузка почты...
+        </p>
       </div>
     </div>
   )
@@ -499,8 +614,11 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
   }
   const [mails, setMails] = useState(() => {
     const savedMails = sessionStorage.getItem('mailApp_mails')
+    const secondMailShown = localStorage.getItem('secondMailShown') === 'true'
     if (savedMails) {
-      return JSON.parse(savedMails)
+      const parsed = JSON.parse(savedMails)
+      // Если второе письмо уже было показано ранее, оно должно быть видимым
+      return parsed.map(m => m.id === 5 ? { ...m, hidden: !secondMailShown } : m)
     }
     return INITIAL_MAILS
   })
@@ -510,18 +628,55 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
   const [search,      setSearch]      = useState('')
   const [compose,     setCompose]     = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [isAppLoading, setIsAppLoading] = useState(() => {
+    // Показываем загрузку только если пользователь только что вошел (не из sessionStorage)
+    return sessionStorage.getItem('mailApp_loggedIn') === 'true' && 
+           !sessionStorage.getItem('mailApp_loadingShown')
+  })
   const timerRef = useRef(null)
+
+  // Скрываем LoadingScreen через 1.5 секунды при первой загрузке
+  useEffect(() => {
+    if (isAppLoading) {
+      sessionStorage.setItem('mailApp_loadingShown', 'true')
+      const timer = setTimeout(() => {
+        setIsAppLoading(false)
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [isAppLoading])
 
   // Сохраняем письма в sessionStorage при каждом изменении
   useEffect(() => {
     sessionStorage.setItem('mailApp_mails', JSON.stringify(mails))
   }, [mails])
 
+  // Очищаем хранилище при перезагрузке страницы
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // При перезагрузке очищаем всё - начинаем игру заново
+      sessionStorage.removeItem('mailApp_mails')
+      sessionStorage.removeItem('mailApp_loggedIn')
+      sessionStorage.removeItem('mailApp_loadingShown')
+      localStorage.removeItem('secondMailShown')
+    }
+    
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
+
   if (!isLoggedIn) {
     return <LoginScreen onLogin={() => {
       setIsLoggedIn(true)
       sessionStorage.setItem('mailApp_loggedIn', 'true')
     }} />
+  }
+
+  // Показываем LoadingScreen при первой загрузке
+  if (isAppLoading) {
+    return <LoadingScreen />
   }
 
   /* ── Filter ── */
@@ -548,8 +703,8 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
   function selectMail(mail) {
     setSelectedId(mail.id)
     
-    // Если кликнули на письмо #1, запустить таймер для показа рапорта
-    if (mail.id === 1) {
+    // Если кликнули на письмо #1, запустить таймер для показа рапорта (только один раз за игру)
+    if (mail.id === 1 && !localStorage.getItem('secondMailShown')) {
       if (timerRef.current) {
         clearTimeout(timerRef.current)
       }
@@ -558,6 +713,8 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
         setMails(prev => prev.map(m => 
           m.id === 5 ? { ...m, hidden: false } : m
         ))
+        // Сохраняем флаг в localStorage (сбросится только при перезагрузке страницы)
+        localStorage.setItem('secondMailShown', 'true')
         // Воспроизводим звук уведомления
         const audio = new Audio('/assets/sounds/notification.mp3');
         audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));

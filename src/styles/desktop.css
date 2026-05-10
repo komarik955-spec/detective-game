@@ -32,58 +32,61 @@
   margin-top: 6px;
 }
 
-/* ===== BHROME ===== */
+/* ===== OPERA BROWSER ===== */
 .bhrome {
   display: flex;
   flex-direction: column;
   height: 100%;
 
-  background: #0c0d11;
-  color: #e6e6e6;
+  background: #1a1a2e;
+  color: #ffffff;
 
   position: relative;
-  z-index: 1; /* 👈 чтобы не перекрывал уведомление */
+  z-index: 1;
 }
 
-/* ===== BAR ===== */
+/* ===== TABS BAR ===== */
 .bhrome-bar {
-  height: 42px;
+  height: 40px;
 
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 
-  padding: 0 10px;
+  padding: 8px 8px 0 8px;
 
-  background: #14161b;
+  background: #23252b;
+  border-bottom: 1px solid #3a3d45;
 }
 
-/* адрес */
+/* адресная строка */
 .bhrome-address {
   flex: 1;
 
-  background: #0b0c10;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: #3a3d45;
+  border: 1px solid #4a4d55;
 
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
 
-  color: white;
+  color: #ffffff;
   font-size: 13px;
 
   outline: none;
 }
 
-/* фокус как в браузере */
+/* фокус */
 .bhrome-address:focus {
-  border-color: #4cafef;
+  border-color: #ff1b2d;
+  background: #4a4d55;
 }
 
 /* ===== PAGE ===== */
 .bhrome-page {
   display: flex;
   flex: 1;
-  overflow: hidden; /* ← ВАЖНО */
+  overflow: hidden;
+  background: #1a1a2e;
 }
 
 /* ============================= */
@@ -274,6 +277,7 @@
 
   width: 100%;
   height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 /* FIX CENTER HOME */
 .bhrome-home {
@@ -283,6 +287,7 @@
 
   width: 100%;
   height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
 .bhrome-content {
@@ -293,46 +298,58 @@
   justify-content: center;
 
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
 
   margin: 0 auto;
-   text-align: center; /* чтобы текст тоже ровно был */
+  text-align: center;
+  padding: 20px;
 }
-/* ===== BHROME HOME UI ===== */
+/* ===== OPERA HOME UI ===== */
 
 .bhrome-logo {
-  font-size: 48px;
-  margin-bottom: 20px;
-  opacity: 0.8;
+  font-size: 64px;
+  margin-bottom: 30px;
+  opacity: 0.9;
+  color: #ff1b2d;
+  filter: drop-shadow(0 0 20px rgba(255, 27, 45, 0.3));
 }
 
 .bhrome-search {
   width: 100%;
-  padding: 14px 18px;
-  border-radius: 24px;
-  border: none;
+  padding: 16px 24px;
+  border-radius: 30px;
+  border: 2px solid #3a3d45;
   outline: none;
 
-  background: rgba(255,255,255,0.08);
-  color: white;
+  background: #23252b;
+  color: #ffffff;
 
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
 
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.bhrome-search:focus {
+  border-color: #ff1b2d;
+  box-shadow: 0 0 0 3px rgba(255, 27, 45, 0.1);
 }
 
 .bhrome-sites {
   display: flex;
-  gap: 16px;
-  justify-content: center; /* центр карточек */
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .site {
-  width: 110px;
-  height: 90px;
+  width: 120px;
+  height: 100px;
 
-  background: rgba(255,255,255,0.06);
-  border-radius: 14px;
+  background: #23252b;
+  border: 1px solid #3a3d45;
+  border-radius: 16px;
 
   display: flex;
   flex-direction: column;
@@ -340,11 +357,14 @@
   justify-content: center;
 
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.3s ease;
 }
 
 .site:hover {
-  background: rgba(255,255,255,0.15);
+  background: #3a3d45;
+  border-color: #ff1b2d;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 .tab-title {
   flex: 1;
@@ -364,7 +384,7 @@
 .tab-close:hover {
   opacity: 1;
 }
-/* ===== TABS FIX ===== */
+/* ===== TABS ===== */
 
 .bhrome-tabs {
   height: 36px;
@@ -372,10 +392,10 @@
   display: flex;
   align-items: flex-end;
 
-  padding-left: 6px;
+  padding-left: 8px;
 
-  background: #1b1d23;
-  border-bottom: 1px solid #0a0b0f;
+  background: #23252b;
+  border-bottom: 1px solid #3a3d45;
 
   overflow-x: auto;
   white-space: nowrap;
@@ -385,25 +405,27 @@
   display: flex;
   align-items: center;
 
-  min-width: 120px;
-  max-width: 180px;
+  min-width: 140px;
+  max-width: 200px;
 
-  padding: 6px 10px;
+  padding: 8px 12px;
   margin-right: 4px;
 
-  background: #2a2d34;
-  border-radius: 8px 8px 0 0;
+  background: #3a3d45;
+  border-radius: 12px 12px 0 0;
 
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 
   overflow: hidden;
   flex-shrink: 0;
+  color: #9aa0a6;
 }
 
 .bhrome-tab.active {
-  background: #3a3d44;
-  color: white;
+  background: #4a4d55;
+  color: #ffffff;
+  border-bottom: 2px solid #ff1b2d;
 }
 
 .tab-title {
@@ -447,7 +469,7 @@
   opacity: 0;
 }
 
-/* ===== LOADING BAR (как в Chrome) ===== */
+/* ===== LOADING BAR ===== */
 
 .bhrome-loader {
   position: absolute;
@@ -457,7 +479,7 @@
   height: 3px;
   width: 0;
 
-  background: linear-gradient(90deg, #4cafef, #2196f3);
+  background: linear-gradient(90deg, #ff1b2d, #ff6b6b);
 
   animation: bhromeLoad 0.8s ease-out forwards;
   z-index: 9999;

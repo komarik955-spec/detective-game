@@ -114,17 +114,7 @@ html, body, #root {
 /* ═══════════════════════════════════════════
    DESKTOP
 ═══════════════════════════════════════════ */
-.desktop {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(ellipse at 20% 80%, rgba(233,69,96,0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(15,52,96,0.15) 0%, transparent 50%),
-    linear-gradient(160deg, #0d0d1a 0%, #111128 60%, #0a0a18 100%);
-  overflow: hidden;
-  cursor: default;
-}
+/* Фон рабочего стола задается в desktop.css */
 
 /* CRT scanlines overlay */
 .desktop-scanlines {

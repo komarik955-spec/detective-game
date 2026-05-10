@@ -43,6 +43,43 @@ function RecycleBinContent() {
   return <FileExplorer rootId="recycle" />
 }
 
+function PasswordNoteContent() {
+  return (
+    <div className="password-note-content" style={{
+      padding: '20px',
+      background: '#fff9c4',
+      height: '100%',
+      fontFamily: "'Segoe UI', sans-serif"
+    }}>
+      <div style={{
+        background: '#fffde7',
+        padding: '16px',
+        borderRadius: '4px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        border: '1px solid #f0e68c'
+      }}>
+        <h3 style={{ margin: '0 0 12px 0', color: '#5d4037', fontSize: '16px' }}>
+          📝 Данные для входа
+        </h3>
+        <div style={{ color: '#333', fontSize: '14px', lineHeight: '1.6' }}>
+          <p style={{ margin: '8px 0' }}>
+            <strong>OneMail:</strong>
+          </p>
+          <p style={{ margin: '4px 0' }}>
+            Логин: <code style={{ background: '#e8eaf6', padding: '2px 6px', borderRadius: '3px' }}>Detectiv</code>
+          </p>
+          <p style={{ margin: '4px 0' }}>
+            Пароль: <code style={{ background: '#e8eaf6', padding: '2px 6px', borderRadius: '3px' }}>12345</code>
+          </p>
+        </div>
+        <p style={{ margin: '16px 0 0 0', fontSize: '12px', color: '#666', fontStyle: 'italic' }}>
+          
+        </p>
+      </div>
+    </div>
+  )
+}
+
 /* =========================
    WINDOWS
 ========================= */
@@ -93,6 +130,14 @@ export const WINDOW_REGISTRY = {
     defaultWidth: 550,
     defaultHeight: 850,
   },
+
+  password_note: {
+    title: 'Заметка',
+    icon: '📝',
+    content: <PasswordNoteContent />,
+    defaultWidth: 280,
+    defaultHeight: 220,
+  },
 }
 
 /* =========================
@@ -104,6 +149,7 @@ const DESKTOP_ICONS = [
   { id: 'recycle', icon: '🗑️', label: 'Recycle Bin' },
   { id: 'case001', icon: '📁', label: 'Case 001' },
   { id: 'browser', icon: '🌐', label: 'Browser' },
+  { id: 'password_note', icon: '📝', label: 'Заметка' },
 ]
 
 /* =========================
