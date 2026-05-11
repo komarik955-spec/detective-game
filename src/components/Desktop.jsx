@@ -159,6 +159,7 @@ const DESKTOP_ICONS = [
   { id: 'recycle', icon: '🗑️', label: 'Recycle Bin' },
   { id: 'case001', icon: '📁', label: 'Case 001' },
   { id: 'browser', icon: '🌐', label: 'Bhrome' },
+  { id: 'darktrace', icon: '🔍', label: 'DARK TRACE' },
   { id: 'password_note', icon: '📝', label: 'Заметка' },
 ]
 

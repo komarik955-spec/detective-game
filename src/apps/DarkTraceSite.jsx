@@ -60,10 +60,14 @@ export default function DarkTraceSite({ onClose }) {
         return <LoginPage onLogin={handleLogin} loading={loading} />
       case 'dashboard':
         return <DashboardPage userLevel={userLevel} onNavigate={setCurrentPage} onLogout={handleLogout} />
-      case 'cases':
-        return <CasesDatabase userLevel={userLevel} onNavigate={setCurrentPage} />
+      case 'dossiers':
+        return <DossiersDatabase userLevel={userLevel} onNavigate={setCurrentPage} />
+      case 'statements':
+        return <StatementsDatabase userLevel={userLevel} onNavigate={setCurrentPage} />
       case 'evidence':
         return <EvidenceArchive userLevel={userLevel} onNavigate={setCurrentPage} />
+      case 'knowledge':
+        return <KnowledgeBase userLevel={userLevel} onNavigate={setCurrentPage} />
       case 'messages':
         return <InternalMessages userLevel={userLevel} onNavigate={setCurrentPage} />
       case 'archives':
@@ -83,15 +87,15 @@ export default function DarkTraceSite({ onClose }) {
           <div className="dt-logo">
             <span className="dt-logo-icon">🔍</span>
             <span className="dt-logo-text">DARK TRACE</span>
-            <span className="dt-logo-sub">INVESTIGATION AGENCY</span>
+            <span className="dt-logo-sub">СЛЕДСТВЕННОЕ АГЕНТСТВО</span>
           </div>
           <div className="dt-system-info">
             <div className="dt-status-indicator">
               <span className="dt-status-dot"></span>
-              <span className="dt-status-text">SYSTEM ONLINE</span>
+              <span className="dt-status-text">СИСТЕМА АКТИВНА</span>
             </div>
             <div className="dt-time">{systemTime.toLocaleTimeString()}</div>
-            <div className="dt-session">SESSION: {sessionId}</div>
+            <div className="dt-session">СЕССИЯ: {sessionId}</div>
           </div>
         </div>
               </header>
@@ -104,44 +108,44 @@ export default function DarkTraceSite({ onClose }) {
               className={`dt-nav-btn ${currentPage === 'dashboard' ? 'active' : ''}`}
               onClick={() => setCurrentPage('dashboard')}
             >
-              🏠 DASHBOARD
+              🏠 ГЛАВНАЯ
             </button>
             <button 
-              className={`dt-nav-btn ${currentPage === 'cases' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('cases')}
+              className={`dt-nav-btn ${currentPage === 'dossiers' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('dossiers')}
             >
-              📁 CASES
+              [03] Досье
+            </button>
+            <button 
+              className={`dt-nav-btn ${currentPage === 'statements' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('statements')}
+            >
+              [04] Показания
             </button>
             <button 
               className={`dt-nav-btn ${currentPage === 'evidence' ? 'active' : ''}`}
               onClick={() => setCurrentPage('evidence')}
             >
-              🗂️ EVIDENCE
+              [05] Улики
             </button>
             <button 
-              className={`dt-nav-btn ${currentPage === 'messages' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('messages')}
+              className={`dt-nav-btn ${currentPage === 'knowledge' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('knowledge')}
             >
-              💬 MESSAGES
-            </button>
-            <button 
-              className={`dt-nav-btn ${currentPage === 'archives' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('archives')}
-            >
-              📚 ARCHIVES
+              [06] База Знаний
             </button>
             {userLevel === 'admin' && (
               <button 
                 className={`dt-nav-btn ${currentPage === 'classified' ? 'active' : ''}`}
                 onClick={() => setCurrentPage('classified')}
               >
-                🔒 CLASSIFIED
+                🔒 СЕКРЕТНО
               </button>
             )}
           </div>
           <div className="dt-nav-right">
             <button className="dt-logout-btn" onClick={handleLogout}>
-              LOGOUT
+              ВЫЙТИ
             </button>
           </div>
         </nav>
@@ -155,13 +159,13 @@ export default function DarkTraceSite({ onClose }) {
       {/* System Footer */}
       <footer className="dt-footer">
         <div className="dt-footer-left">
-          © 2024 DARK TRACE INVESTIGATION AGENCY | RIVERTON, WA
+          2024 DARK TRACE СЛЕДСТВЕННОЕ АГЕНТСТВО | РИВЕРТОН, WA
         </div>
         <div className="dt-footer-center">
-          INTERNAL USE ONLY | UNAUTHORIZED ACCESS PROSECUTABLE UNDER RCW 9A.52.030
+          ТОЛЬКО ДЛЯ ВНУТРЕННЕГО ИСПОЛЬЗОВАНИЯ | НЕСАНКЦИОНИРОВАННЫЙ ДОСТУП НАКАЗУЕМ ПО RCW 9A.52.030
         </div>
         <div className="dt-footer-right">
-          SYSTEM VERSION 2.4.1 | LAST UPDATED: 2024-06-15
+          ВЕРСИЯ 2.4.1 | СБОРКА 20240621
         </div>
       </footer>
     </div>
@@ -187,16 +191,16 @@ function LoginPage({ onLogin, loading }) {
           <div className="dt-login-logo">
             <span className="dt-login-icon">🔍</span>
             <h1>DARK TRACE</h1>
-            <p>INTERNAL PORTAL</p>
+            <p>ВНУТРЕННИЙ ПОРТАЛ</p>
           </div>
           <div className="dt-login-warning">
-            ⚠️ RESTRICTED ACCESS - AUTHORIZED PERSONNEL ONLY
+            ⚠️ ОГРАНИЧЕННЫЙ ДОСТУП - ТОЛЬКО ДЛЯ УПОЛНОМОЧЕННЫХ
           </div>
         </div>
 
         <form className="dt-login-form" onSubmit={handleSubmit}>
           <div className="dt-form-group">
-            <label>USERNAME / BADGE ID</label>
+            <label>ИМЯ ПОЛЬЗОВАТЕЛЯ / ID ЖЕТОНА</label>
             <input
               type="text"
               value={credentials.username}
@@ -207,7 +211,7 @@ function LoginPage({ onLogin, loading }) {
           </div>
 
           <div className="dt-form-group">
-            <label>PASSWORD / ACCESS CODE</label>
+            <label>ПАРОЛЬ / КОД ДОСТУПА</label>
             <input
               type="password"
               value={credentials.password}
@@ -218,24 +222,24 @@ function LoginPage({ onLogin, loading }) {
           </div>
 
           <button type="submit" className="dt-login-btn" disabled={loading}>
-            {loading ? 'AUTHENTICATING...' : 'ACCESS SYSTEM'}
+            {loading ? 'АВТЕНТИФИКАЦИЯ...' : 'ДОСТУП К СИСТЕМЕ'}
           </button>
         </form>
 
         <div className="dt-login-footer">
           <div className="dt-system-status">
             <span className="dt-status-dot online"></span>
-            All systems operational
+            Все системы работают
           </div>
           <button 
             className="dt-help-link" 
             onClick={() => setShowHelp(!showHelp)}
           >
-            Need help?
+            Нужна помощь?
           </button>
           {showHelp && (
             <div className="dt-help-text">
-              Contact IT Support: ext. 555 | security@darktrace.agency
+              Связаться с IT поддержкой: доб. 555 | security@darktrace.agency
             </div>
           )}
         </div>
@@ -453,67 +457,84 @@ function CasesDatabase({ userLevel, onNavigate }) {
    EVIDENCE ARCHIVE
 ═══════════════════════════════════════ */
 function EvidenceArchive({ userLevel, onNavigate }) {
-  const [evidence] = useState([
+  const evidence = [
     {
       id: 'EVI-001',
       caseId: 'SB-2025-06-21',
-      type: 'Photo',
-      name: 'Missing Person Photo',
-      description: 'Recent photo of Sarah Black',
-      date: '2025-06-21',
-      status: 'processed'
+      type: 'Фото',
+      name: 'Фото пропавшего лица',
+      description: 'Недавнее фото Селены Блэк',
+      date: '21.06.2025',
+      status: 'обработано'
     },
     {
       id: 'EVI-002',
       caseId: 'SB-2025-06-21',
-      type: 'Document',
-      name: 'Police Report',
-      description: 'Initial missing person report',
-      date: '2025-06-21',
-      status: 'processed'
+      type: 'Документ',
+      name: 'Полицейский отчет',
+      description: 'Первоначальный отчет о пропаже лица',
+      date: '21.06.2025',
+      status: 'обработано'
     },
     {
       id: 'EVI-003',
       caseId: 'SB-2025-06-21',
-      type: 'Audio',
-      name: '911 Call Recording',
-      description: 'Emergency call from family',
-      date: '2025-06-21',
-      status: 'processing'
+      type: 'Аудио',
+      name: 'Запись звонка 911',
+      description: 'Экстренный звонок от семьи',
+      date: '21.06.2025',
+      status: 'обрабатывается'
     }
-  ])
+  ]
 
   return (
-    <div className="dt-evidence">
-      <div className="dt-page-header">
-        <h1>EVIDENCE ARCHIVE</h1>
-        <div className="dt-page-actions">
-          <button className="dt-btn">+ UPLOAD EVIDENCE</button>
-          <button className="dt-btn">SCAN NEW ITEM</button>
+    <div className="dt-investigative-database">
+      <div className="dt-database-sidebar">
+        <div className="dt-sidebar-header">
+          <h3>УЛИКИ</h3>
+        </div>
+        <div className="dt-sidebar-evidence">
+          {evidence.map(item => (
+            <div key={item.id} className="dt-sidebar-evidence-item">
+              <span className="dt-evidence-id">{item.id}</span>
+              <span className="dt-evidence-type">{item.type}</span>
+              <span className={`dt-evidence-status ${item.status === 'обработано' ? 'processed' : 'processing'}`}>{item.status}</span>
+            </div>
+          ))}
         </div>
       </div>
-
-      <div className="dt-evidence-grid">
-        {evidence.map(item => (
-          <div key={item.id} className="dt-evidence-card">
-            <div className="dt-evidence-header">
-              <span className="dt-evidence-type">{item.type}</span>
-              <span className="dt-evidence-id">{item.id}</span>
-            </div>
-            <div className="dt-evidence-body">
-              <h4>{item.name}</h4>
-              <p>{item.description}</p>
-              <div className="dt-evidence-meta">
-                <span>Case: {item.caseId}</span>
-                <span>Date: {item.date}</span>
+      
+      <div className="dt-database-content">
+        <div className="dt-content-header">
+          <h2>УЛИКИ</h2>
+          <div className="dt-content-meta">
+            <span>3 ОБЪЕКТА УЛИК</span>
+            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
+          </div>
+        </div>
+        
+        <div className="dt-evidence-list">
+          {evidence.map(item => (
+            <div key={item.id} className="dt-evidence-item">
+              <div className="dt-evidence-header">
+                <span className="dt-evidence-id">{item.id}</span>
+                <span className="dt-evidence-type">{item.type}</span>
+                <span className={`dt-evidence-status ${item.status === 'обработано' ? 'processed' : 'processing'}`}>{item.status}</span>
+              </div>
+              <div className="dt-evidence-body">
+                <h3>{item.name}</h3>
+                <p>{item.description}</p>
+                <div className="dt-evidence-meta">
+                  <span>Дело: {item.caseId}</span>
+                  <span>Дата: {item.date}</span>
+                </div>
+              </div>
+              <div className="dt-evidence-actions">
+                <button className="dt-btn-small">ПРОСМОТР</button>
               </div>
             </div>
-            <div className="dt-evidence-footer">
-              <span className={`dt-status ${item.status}`}>{item.status}</span>
-              <button className="dt-btn-small">VIEW</button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -622,6 +643,256 @@ function AccessDenied() {
         <h1>🚫 ACCESS DENIED</h1>
         <p>You do not have sufficient privileges to access this section.</p>
         <p>Please contact your system administrator for access requests.</p>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
+   DOSSIERS DATABASE
+═══════════════════════════════════════ */
+function DossiersDatabase({ userLevel, onNavigate }) {
+  const dossiers = [
+    {
+      id: 'DS-001',
+      name: 'СЕЛЕНА БЛЭК',
+      status: 'ПРОПАЛА',
+      age: 28,
+      lastSeen: 'Закусочная Ривертон - 21.06.2025',
+      priority: 'ВЫСОКИЙ',
+      caseId: 'SB-2025-06-21'
+    },
+    {
+      id: 'DS-002', 
+      name: 'ЭВАН АНДЕРВУД',
+      status: 'СВИДЕТЕЛЬ',
+      age: 32,
+      lastSeen: 'Закусочная Ривертон - 21.06.2025',
+      priority: 'СРЕДНИЙ',
+      caseId: 'SB-2025-06-21'
+    },
+    {
+      id: 'DS-003',
+      name: 'МАРКУС ФЛИНН',
+      status: 'ЗАИНТЕРЕСОВАННОЕ ЛИЦО',
+      age: 35,
+      lastSeen: 'Центр города - 20.06.2025',
+      priority: 'СРЕДНИЙ',
+      caseId: 'SB-2025-06-21'
+    },
+    {
+      id: 'DS-004',
+      name: 'ВЕСПЕР УЭЙНРАЙТ',
+      status: 'СВИДЕТЕЛЬ',
+      age: 29,
+      lastSeen: 'Закусочная Ривертон - 21.06.2025',
+      priority: 'НИЗКИЙ',
+      caseId: 'SB-2025-06-21'
+    }
+  ]
+
+  return (
+    <div className="dt-investigative-database">
+      <div className="dt-database-sidebar">
+        <div className="dt-sidebar-header">
+          <h3>АКТИВНЫЕ ДЕЛА</h3>
+        </div>
+        <div className="dt-sidebar-cases">
+          {dossiers.map(dossier => (
+            <div key={dossier.id} className="dt-sidebar-case">
+              <span className="dt-case-id">{dossier.id}</span>
+              <span className="dt-case-name">{dossier.name}</span>
+              <span className={`dt-case-status ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="dt-database-content">
+        <div className="dt-content-header">
+          <h2>ДОСЬЕ</h2>
+          <div className="dt-content-meta">
+            <span>4 АКТИВНЫХ ЗАПИСИ</span>
+            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
+          </div>
+        </div>
+        
+        <div className="dt-dossiers-list">
+          {dossiers.map(dossier => (
+            <div key={dossier.id} className="dt-dossier-item">
+              <div className="dt-dossier-header">
+                <span className="dt-dossier-id">{dossier.id}</span>
+                <span className={`dt-status ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
+                <span className={`dt-priority ${dossier.priority.toLowerCase()}`}>{dossier.priority}</span>
+              </div>
+              <div className="dt-dossier-body">
+                <h3>{dossier.name}</h3>
+                <div className="dt-dossier-info">
+                  <span>Возраст: {dossier.age}</span>
+                  <span>Дело: {dossier.caseId}</span>
+                </div>
+                <p className="dt-dossier-location">Последний раз видели: {dossier.lastSeen}</p>
+              </div>
+              <div className="dt-dossier-actions">
+                <button className="dt-btn-small">ПОЛНОЕ ДОСЬЕ</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
+   STATEMENTS DATABASE
+═══════════════════════════════════════ */
+function StatementsDatabase({ userLevel, onNavigate }) {
+  const statements = [
+    {
+      id: 'ST-001',
+      witness: 'ЭВАН АНДЕРВУД',
+      date: '21.06.2025',
+      time: '19:45',
+      location: 'Закусочная Ривертон',
+      caseId: 'SB-2025-06-21',
+      summary: 'Свидетель видел, как Селена Блэк покинула закусочную одна около 19:30. Необычного поведения не замечено.'
+    },
+    {
+      id: 'ST-002',
+      witness: 'ВЕСПЕР УЭЙНРАЙТ',
+      date: '21.06.2025', 
+      time: '20:15',
+      location: 'Закусочная Ривертон',
+      caseId: 'SB-2025-06-21',
+      summary: 'Свидетель сообщает о подозрительном автомобиле у парковки закусочной. Темный седан, номера не видны.'
+    }
+  ]
+
+  return (
+    <div className="dt-investigative-database">
+      <div className="dt-database-sidebar">
+        <div className="dt-sidebar-header">
+          <h3>СВИДЕТЕЛИ</h3>
+        </div>
+        <div className="dt-sidebar-witnesses">
+          {statements.map(statement => (
+            <div key={statement.id} className="dt-sidebar-witness">
+              <span className="dt-witness-id">{statement.id}</span>
+              <span className="dt-witness-name">{statement.witness}</span>
+              <span className="dt-witness-time">{statement.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="dt-database-content">
+        <div className="dt-content-header">
+          <h2>ПОКАЗАНИЯ</h2>
+          <div className="dt-content-meta">
+            <span>2 ЗАПИСАННЫХ ПОКАЗАНИЯ</span>
+            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
+          </div>
+        </div>
+        
+        <div className="dt-statements-list">
+          {statements.map(statement => (
+            <div key={statement.id} className="dt-statement-item">
+              <div className="dt-statement-header">
+                <span className="dt-statement-id">{statement.id}</span>
+                <span className="dt-witness">{statement.witness}</span>
+                <span className="dt-datetime">{statement.date} {statement.time}</span>
+              </div>
+              <div className="dt-statement-body">
+                <p className="dt-statement-location">Место: {statement.location}</p>
+                <p className="dt-statement-summary">{statement.summary}</p>
+                <div className="dt-statement-meta">
+                  <span>Дело: {statement.caseId}</span>
+                </div>
+              </div>
+              <div className="dt-statement-actions">
+                <button className="dt-btn-small">ПОЛНЫЕ ПОКАЗАНИЯ</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
+   KNOWLEDGE BASE
+═══════════════════════════════════════ */
+function KnowledgeBase({ userLevel, onNavigate }) {
+  const articles = [
+    {
+      id: 'KB-001',
+      title: 'Протокол по пропавшим лицам',
+      category: 'ПРОЦЕДУРЫ',
+      lastUpdated: '15.06.2025',
+      summary: 'Стандартные операционные процедуры для расследований пропавших лиц в юрисдикции Ривертон.'
+    },
+    {
+      id: 'KB-002',
+      title: 'Руководство по сбору улик',
+      category: 'ПРОЦЕДУРЫ', 
+      lastUpdated: '10.06.2025',
+      summary: 'Правильный сбор, сохранение и документация физических улик.'
+    },
+    {
+      id: 'KB-003',
+      title: 'Техники допроса свидетелей',
+      category: 'ОБУЧЕНИЕ',
+      lastUpdated: '01.06.2025',
+      summary: 'Лучшие практики проведения эффективных допросов свидетелей.'
+    }
+  ]
+
+  return (
+    <div className="dt-investigative-database">
+      <div className="dt-database-sidebar">
+        <div className="dt-sidebar-header">
+          <h3>КАТЕГОРИИ</h3>
+        </div>
+        <div className="dt-sidebar-categories">
+          {articles.map(article => (
+            <div key={article.id} className="dt-sidebar-category">
+              <span className="dt-category-id">{article.id}</span>
+              <span className="dt-category-name">{article.category}</span>
+              <span className="dt-category-updated">{article.lastUpdated}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="dt-database-content">
+        <div className="dt-content-header">
+          <h2>БАЗА ЗНАНИЙ</h2>
+          <div className="dt-content-meta">
+            <span>3 СТАТЬИ</span>
+            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 15.06.2025</span>
+          </div>
+        </div>
+        
+        <div className="dt-knowledge-list">
+          {articles.map(article => (
+            <div key={article.id} className="dt-knowledge-item">
+              <div className="dt-knowledge-header">
+                <span className="dt-knowledge-id">{article.id}</span>
+                <span className="dt-category">{article.category}</span>
+                <span className="dt-updated">{article.lastUpdated}</span>
+              </div>
+              <div className="dt-knowledge-body">
+                <h3>{article.title}</h3>
+                <p>{article.summary}</p>
+              </div>
+              <div className="dt-knowledge-actions">
+                <button className="dt-btn-small">ЧИТАТЬ СТАТЬЮ</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

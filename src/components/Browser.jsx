@@ -1,6 +1,7 @@
 ﻿import { useState, useContext } from 'react'
 import MailApp from '../apps/MailApp'
 import DarkTraceSite from '../apps/DarkTraceSite'
+import DarkTracePublic from '../apps/DarkTracePublic'
 import { SecondMailContext } from '../components/Desktop'
 let nextId = 2
 
@@ -45,7 +46,14 @@ export default function Browser() {
           title: 'OneMail',
           loading: false
         })
-      } else if (value.includes('darktrace.agency') || value.includes('darktrace')) {
+      } else if (value.includes('agency.darktrace') || value.includes('darktrace.agency/public')) {
+        updateTab(activeId, {
+          page: 'darktrace-public',
+          url: 'https://agency.darktrace',
+          title: 'Dark Trace Agency',
+          loading: false
+        })
+      } else if (value.includes('darktrace') && !value.includes('agency')) {
         updateTab(activeId, {
           page: 'darktrace',
           url: 'https://darktrace.agency',
@@ -122,16 +130,17 @@ export default function Browser() {
 
       {/* PAGE */}
       <div className="bhrome-page">
-        {activeTab.page === 'home' && <Home onOpenMail={() => navigate('onemail')} onOpenDarkTrace={() => navigate('darktrace.agency')} />}
+        {activeTab.page === 'home' && <Home onOpenMail={() => navigate('onemail')} onOpenDarkTrace={() => navigate('darktrace.agency')} navigate={navigate} />}
         {activeTab.page === 'mail' && <MailApp onSecondMailArrived={onSecondMailArrived} />}
         {activeTab.page === 'darktrace' && <DarkTraceSite />}
+        {activeTab.page === 'darktrace-public' && <DarkTracePublic />}
       </div>
     </div>
   )
 }
 
 /* HOME */
-function Home({ onOpenMail, onOpenDarkTrace }) {
+function Home({ onOpenMail, onOpenDarkTrace, navigate }) {
   return (
     <div className="bhrome-home">
 
@@ -151,6 +160,10 @@ function Home({ onOpenMail, onOpenDarkTrace }) {
 
           <div className="site" onClick={onOpenDarkTrace}>
             DARK TRACE <span>Investigation Agency</span>
+          </div>
+
+          <div className="site" onClick={() => navigate('agency.darktrace')}>
+            DARK TRACE <span>Public Agency</span>
           </div>
 
           <div className="site">

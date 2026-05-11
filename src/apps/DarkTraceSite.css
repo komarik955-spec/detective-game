@@ -73,7 +73,7 @@ body {
 
 .dt-logo-icon {
   font-size: 24px;
-  color: #ff1b2d;
+  color: #b58b63;
   filter: drop-shadow(0 0 10px rgba(255, 27, 45, 0.8));
 }
 
@@ -230,9 +230,9 @@ body {
 .dt-logout-btn {
   padding: 8px 16px;
   background: rgba(255, 27, 45, 0.2);
-  border: 1px solid #ff1b2d;
+  border: 1px solid #b58b63;
   border-radius: 6px;
-  color: #ff1b2d;
+  color: #b58b63;
   cursor: pointer;
   font-size: 11px;
   font-weight: 600;
@@ -1106,6 +1106,509 @@ body {
   border: 1px solid rgba(255, 27, 45, 0.3);
   border-radius: 8px;
   padding: 40px;
+}
+
+/* ===== INVESTIGATIVE DATABASE ===== */
+.dt-investigative-database {
+  display: flex;
+  height: 100%;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+}
+
+.dt-database-sidebar {
+  width: 280px;
+  background: rgba(26, 26, 46, 0.95);
+  border-right: 1px solid rgba(255, 27, 45, 0.2);
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.dt-sidebar-header h3 {
+  color: #ff1b2d;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dt-sidebar-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dt-sidebar-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 27, 45, 0.05);
+  border: 1px solid rgba(255, 27, 45, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dt-sidebar-section:hover {
+  background: rgba(255, 27, 45, 0.1);
+  border-color: rgba(255, 27, 45, 0.3);
+}
+
+.dt-sidebar-section.active {
+  background: rgba(255, 27, 45, 0.15);
+  border-color: rgba(255, 27, 45, 0.4);
+}
+
+.dt-section-id {
+  color: #4cafef;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dt-section-name {
+  color: #e8eaed;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dt-database-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.dt-content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+}
+
+.dt-content-header h2 {
+  color: #e8eaed;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dt-content-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: #9aa0a6;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+/* Dossiers List */
+.dt-dossiers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dt-dossier-item {
+  background: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(255, 27, 45, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.dt-dossier-item:hover {
+  border-color: rgba(255, 27, 45, 0.4);
+}
+
+.dt-dossier-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dt-dossier-id {
+  color: #4cafef;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dt-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dt-status.missing {
+  background: rgba(255, 27, 45, 0.2);
+  color: #ff1b2d;
+}
+
+.dt-status.witness {
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
+}
+
+.dt-status.person-of-interest {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.dt-priority {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dt-priority.high {
+  background: rgba(255, 27, 45, 0.2);
+  color: #ff1b2d;
+}
+
+.dt-priority.medium {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.dt-priority.low {
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
+}
+
+.dt-dossier-body h3 {
+  color: #e8eaed;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.dt-dossier-info {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #9aa0a6;
+}
+
+.dt-dossier-location {
+  color: #e8eaed;
+  font-size: 13px;
+  margin: 0 0 16px 0;
+}
+
+.dt-dossier-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Statements List */
+.dt-statements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dt-statement-item {
+  background: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(255, 27, 45, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.dt-statement-item:hover {
+  border-color: rgba(255, 27, 45, 0.4);
+}
+
+.dt-statement-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dt-statement-id {
+  color: #4cafef;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dt-witness {
+  color: #e8eaed;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dt-datetime {
+  color: #9aa0a6;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.dt-statement-location {
+  color: #9aa0a6;
+  font-size: 12px;
+  margin: 0 0 8px 0;
+}
+
+.dt-statement-summary {
+  color: #e8eaed;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.dt-statement-meta {
+  font-size: 12px;
+  color: #9aa0a6;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.dt-statement-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Knowledge Base List */
+.dt-knowledge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dt-knowledge-item {
+  background: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(255, 27, 45, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.dt-knowledge-item:hover {
+  border-color: rgba(255, 27, 45, 0.4);
+}
+
+.dt-knowledge-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dt-knowledge-id {
+  color: #4cafef;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dt-category {
+  padding: 4px 8px;
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dt-updated {
+  color: #9aa0a6;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.dt-knowledge-body h3 {
+  color: #e8eaed;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.dt-knowledge-body p {
+  color: #e8eaed;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.dt-knowledge-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ===== CONTEXTUAL SIDEBAR ELEMENTS ===== */
+.dt-sidebar-cases,
+.dt-sidebar-witnesses,
+.dt-sidebar-evidence,
+.dt-sidebar-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dt-sidebar-case,
+.dt-sidebar-witness,
+.dt-sidebar-evidence-item,
+.dt-sidebar-category {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: rgba(255, 27, 45, 0.05);
+  border: 1px solid rgba(255, 27, 45, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dt-sidebar-case:hover,
+.dt-sidebar-witness:hover,
+.dt-sidebar-evidence-item:hover,
+.dt-sidebar-category:hover {
+  background: rgba(255, 27, 45, 0.1);
+  border-color: rgba(255, 27, 45, 0.3);
+}
+
+.dt-case-id,
+.dt-witness-id,
+.dt-evidence-id,
+.dt-category-id {
+  color: #4cafef;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.dt-case-name,
+.dt-witness-name {
+  color: #e8eaed;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dt-case-status {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.dt-case-status.пропала {
+  background: rgba(255, 27, 45, 0.2);
+  color: #ff1b2d;
+}
+
+.dt-case-status.свидетель {
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
+}
+
+.dt-case-status.заинтересованное-лицо {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.dt-witness-time {
+  color: #9aa0a6;
+  font-size: 11px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.dt-evidence-type,
+.dt-category-name {
+  color: #e8eaed;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.dt-evidence-status {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.dt-evidence-status.processed {
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
+}
+
+.dt-evidence-status.processing {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.dt-category-updated {
+  color: #9aa0a6;
+  font-size: 10px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+/* ===== EVIDENCE LIST ===== */
+.dt-evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dt-evidence-item {
+  background: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(255, 27, 45, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.dt-evidence-item:hover {
+  border-color: rgba(255, 27, 45, 0.4);
+}
+
+.dt-evidence-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dt-evidence-body h3 {
+  color: #e8eaed;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.dt-evidence-body p {
+  color: #e8eaed;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.dt-evidence-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #9aa0a6;
+}
+
+.dt-evidence-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .dt-denied-content h1 {
