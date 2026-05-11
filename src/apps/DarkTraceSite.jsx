@@ -6,22 +6,17 @@ import './DarkTraceSite.css'
    INTERNAL PORTAL SYSTEM
 ═══════════════════════════════════════ */
 
-export default function DarkTraceSite({ onClose, initialPage = 'login', onNavigate }) {
-  const [currentPage, setCurrentPage] = useState(initialPage)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userLevel, setUserLevel] = useState('guest')
+export default function DarkTraceSite({ onClose, darkTraceState, onNavigate }) {
+  // Use props as single source of truth - no internal state duplication
+  const currentPage = darkTraceState?.currentPage || 'login'
+  const isLoggedIn = darkTraceState?.isLoggedIn || false
+  const userLevel = darkTraceState?.userLevel || 'guest'
+  
   const [loading, setLoading] = useState(false)
   const [systemTime, setSystemTime] = useState(new Date())
   const [sessionId, setSessionId] = useState(null)
 
-  useEffect(() => {
-    setCurrentPage(initialPage)
-  }, [initialPage])
-
-  useEffect(() => {
-    if (typeof onNavigate === 'function') onNavigate(currentPage)
-  }, [currentPage, onNavigate])
-
+  
   useEffect(() => {
     const timer = setInterval(() => {
       setSystemTime(new Date())
@@ -36,19 +31,21 @@ export default function DarkTraceSite({ onClose, initialPage = 'login', onNaviga
 
   const handleLogin = (credentials) => {
     setLoading(true)
-    
+
     // Simulate authentication with Dark Trace internal system
     setTimeout(() => {
       if (credentials.username === 'agent' && credentials.password === '12345') {
-        setIsLoggedIn(true)
-        setUserLevel('detective')
-        setCurrentPage('dashboard')
         setLoading(false)
+        // Update parent state with new login info and page
+        if (onNavigate) {
+          onNavigate('dashboard', { isLoggedIn: true, userLevel: 'detective' })
+        }
       } else if (credentials.username === 'admin.slate' && credentials.password === 'DT-ADMIN-2024') {
-        setIsLoggedIn(true)
-        setUserLevel('admin')
-        setCurrentPage('dashboard')
         setLoading(false)
+        // Update parent state with new login info and page
+        if (onNavigate) {
+          onNavigate('dashboard', { isLoggedIn: true, userLevel: 'admin' })
+        }
       } else {
         setLoading(false)
         alert('Authentication failed. Access denied.')
@@ -57,9 +54,9 @@ export default function DarkTraceSite({ onClose, initialPage = 'login', onNaviga
   }
 
   const handleLogout = () => {
-    setIsLoggedIn(false)
-    setUserLevel('guest')
-    setCurrentPage('login')
+    if (onNavigate) {
+      onNavigate('login', { isLoggedIn: false, userLevel: 'guest' })
+    }
   }
 
   const renderPage = () => {
@@ -67,21 +64,21 @@ export default function DarkTraceSite({ onClose, initialPage = 'login', onNaviga
       case 'login':
         return <LoginPage onLogin={handleLogin} loading={loading} />
       case 'dashboard':
-        return <DashboardPage userLevel={userLevel} onNavigate={setCurrentPage} onLogout={handleLogout} />
+        return <DashboardPage userLevel={userLevel} onNavigate={onNavigate} onLogout={handleLogout} />
       case 'dossiers':
-        return <DossiersDatabase userLevel={userLevel} onNavigate={setCurrentPage} />
+        return <DossiersDatabase userLevel={userLevel} onNavigate={onNavigate} />
       case 'statements':
-        return <StatementsDatabase userLevel={userLevel} onNavigate={setCurrentPage} />
+        return <StatementsDatabase userLevel={userLevel} onNavigate={onNavigate} />
       case 'evidence':
-        return <EvidenceArchive userLevel={userLevel} onNavigate={setCurrentPage} />
+        return <EvidenceArchive userLevel={userLevel} onNavigate={onNavigate} />
       case 'knowledge':
-        return <KnowledgeBase userLevel={userLevel} onNavigate={setCurrentPage} />
-      case 'messages':
-        return <InternalMessages userLevel={userLevel} onNavigate={setCurrentPage} />
+        return <KnowledgeBase userLevel={userLevel} onNavigate={onNavigate} />
+      case 'internal':
+        return <InternalMessages userLevel={userLevel} onNavigate={onNavigate} />
       case 'archives':
-        return <ArchivedCases userLevel={userLevel} onNavigate={setCurrentPage} />
+        return <ArchivedCases userLevel={userLevel} onNavigate={onNavigate} />
       case 'classified':
-        return userLevel === 'admin' ? <ClassifiedFiles onNavigate={setCurrentPage} /> : <AccessDenied />
+        return userLevel === 'admin' ? <ClassifiedFiles onNavigate={onNavigate} /> : <AccessDenied />
       default:
         return <LoginPage onLogin={handleLogin} loading={loading} />
     }
@@ -93,9 +90,11 @@ export default function DarkTraceSite({ onClose, initialPage = 'login', onNaviga
       <header className="dt-header">
         <div className="dt-header-top">
           <div className="dt-logo">
-            <span className="dt-logo-icon">🔍</span>
-            <span className="dt-logo-text">DARK TRACE</span>
-            <span className="dt-logo-sub">СЛЕДСТВЕННОЕ АГЕНТСТВО</span>
+            <img 
+              src="/assets/images/darktrace-logo-v2.png" 
+              alt="Dark Trace Agency" 
+              className="dt-logo-img"
+            />
           </div>
           <div className="dt-system-info">
             <div className="dt-status-indicator">
@@ -112,40 +111,54 @@ export default function DarkTraceSite({ onClose, initialPage = 'login', onNaviga
       {isLoggedIn && (
         <nav className="dt-nav">
           <div className="dt-nav-left">
-            <button 
+            <button
               className={`dt-nav-btn ${currentPage === 'dashboard' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('dashboard')}
+              onClick={() => {
+                if (onNavigate) onNavigate('dashboard')
+              }}
             >
               🏠 ГЛАВНАЯ
             </button>
-            <button 
+            <button
               className={`dt-nav-btn ${currentPage === 'dossiers' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('dossiers')}
+              onClick={() => {
+                if (onNavigate) onNavigate('dossiers')
+              }}
             >
               [03] Досье
             </button>
-            <button 
+            <button
               className={`dt-nav-btn ${currentPage === 'statements' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('statements')}
+              onClick={() => {
+                if (onNavigate) onNavigate('statements')
+              }}
             >
               [04] Показания
             </button>
-            <button 
+            <button
               className={`dt-nav-btn ${currentPage === 'evidence' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('evidence')}
+              onClick={() => {
+                if (onNavigate) onNavigate('evidence')
+              }}
             >
               [05] Улики
             </button>
             <button 
               className={`dt-nav-btn ${currentPage === 'knowledge' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('knowledge')}
+              onClick={() => {
+                setCurrentPage('knowledge')
+                if (onNavigate) onNavigate('knowledge')
+              }}
             >
               [06] База Знаний
             </button>
             {userLevel === 'admin' && (
               <button 
                 className={`dt-nav-btn ${currentPage === 'classified' ? 'active' : ''}`}
-                onClick={() => setCurrentPage('classified')}
+                onClick={() => {
+                  setCurrentPage('classified')
+                  if (onNavigate) onNavigate('classified')
+                }}
               >
                 🔒 СЕКРЕТНО
               </button>
@@ -161,7 +174,9 @@ export default function DarkTraceSite({ onClose, initialPage = 'login', onNaviga
 
       {/* Main Content */}
       <main className={`dt-main ${currentPage === 'login' ? 'login' : ''}`}>
-        {renderPage()}
+        <div className="dt-content">
+          {renderPage()}
+        </div>
       </main>
 
       {/* System Footer */}
@@ -197,9 +212,11 @@ function LoginPage({ onLogin, loading }) {
       <div className="dt-login-card">
         <div className="dt-login-header">
           <div className="dt-login-logo">
-            <span className="dt-login-icon">🔍</span>
-            <h1>DARK TRACE</h1>
-            <p>ВНУТРЕННИЙ ПОРТАЛ</p>
+            <img 
+              src="/assets/images/darktrace-logo-v3.png" 
+              alt="Dark Trace Agency" 
+              className="dt-login-logo-v3"
+            />
           </div>
           <div className="dt-login-warning">
             ⚠️ ОГРАНИЧЕННЫЙ ДОСТУП - ТОЛЬКО ДЛЯ УПОЛНОМОЧЕННЫХ
@@ -230,7 +247,7 @@ function LoginPage({ onLogin, loading }) {
           </div>
 
           <button type="submit" className="dt-login-btn" disabled={loading}>
-            {loading ? 'АВТЕНТИФИКАЦИЯ...' : 'ДОСТУП К СИСТЕМЕ'}
+            {loading ? 'Аутентификация...' : 'ДОСТУП К СИСТЕМЕ'}
           </button>
         </form>
 
@@ -901,6 +918,40 @@ function KnowledgeBase({ userLevel, onNavigate }) {
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
+   DOSSIERS PAGE
+═══════════════════════════════════════ */
+function DossiersPage({ userLevel, onNavigate }) {
+  const dossiers = [
+    {
+      id: 'DS-001',
+      name: 'СЕЛЕНА БЛЭК',
+      status: 'ПРОПАЛА',
+      age: 28,
+      lastSeen: 'Закусочная Ривертон - 21.06.2025',
+      priority: 'ВЫСОКИЙ',
+      caseId: 'SB-2025-06-21'
+    }
+  ]
+
+  return (
+    <div className="dt-dossiers">
+      <div className="dt-page-header">
+        <h2>ДОСЬЕ</h2>
+        <div className="dt-case-info">Дело №SB-2025-06-21</div>
+      </div>
+      <div className="dt-dossiers-grid">
+        {dossiers.map(dossier => (
+          <div key={dossier.id} className="dt-dossier-card">
+            <div className="dt-dossier-name">{dossier.name}</div>
+            <div className="dt-dossier-info">{dossier.status}</div>
+          </div>
+        ))}
       </div>
     </div>
   )

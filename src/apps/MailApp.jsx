@@ -592,11 +592,13 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
   }
   const [mails, setMails] = useState(() => {
     const savedMails = sessionStorage.getItem('mailApp_mails')
-    const secondMailShown = localStorage.getItem('secondMailShown') === 'true'
+    const secondMailShown = sessionStorage.getItem('secondMailShown') === 'true'
     if (savedMails) {
       const parsed = JSON.parse(savedMails)
       // Если второе письмо уже было показано ранее, оно должно быть видимым
-      return parsed.map(m => m.id === 5 ? { ...m, hidden: !secondMailShown } : m)
+      return parsed.map(mail => 
+        mail.id === 5 && secondMailShown ? { ...mail, hidden: false } : mail
+      )
     }
     return INITIAL_MAILS
   })
@@ -606,39 +608,33 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
   const [search,      setSearch]      = useState('')
   const [compose,     setCompose]     = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [isAppLoading, setIsAppLoading] = useState(() => {
-    // Показываем загрузку только если пользователь только что вошел (не из sessionStorage)
-    return sessionStorage.getItem('mailApp_loggedIn') === 'true' && 
-           !sessionStorage.getItem('mailApp_loadingShown')
+  const [isAppLoading, setIsAppLoading] = useState(false)
+  const [secondMailShown, setSecondMailShown] = useState(() => {
+    return sessionStorage.getItem('secondMailShown') === 'true'
   })
   const timerRef = useRef(null)
-
-  // Скрываем LoadingScreen через 1.5 секунды при первой загрузке
-  useEffect(() => {
-    if (isAppLoading) {
-      sessionStorage.setItem('mailApp_loadingShown', 'true')
-      const timer = setTimeout(() => {
-        setIsAppLoading(false)
-      }, 1500)
-      return () => clearTimeout(timer)
-    }
-  }, [isAppLoading])
 
   // Сохраняем письма в sessionStorage при каждом изменении
   useEffect(() => {
     sessionStorage.setItem('mailApp_mails', JSON.stringify(mails))
   }, [mails])
 
-  // Очищаем хранилище при перезагрузке страницы
+  // Очищаем sessionStorage только при page reload (F5), не при закрытии браузера
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      // При перезагрузке очищаем всё - начинаем игру заново
-      sessionStorage.removeItem('mailApp_mails')
-      sessionStorage.removeItem('mailApp_loggedIn')
-      sessionStorage.removeItem('mailApp_loadingShown')
-      localStorage.removeItem('secondMailShown')
+    const handleBeforeUnload = (e) => {
+      // Проверяем тип события - page reload vs browser close
+      const performanceEntries = performance.getEntriesByType('navigation')
+      const isReload = performanceEntries.length > 0 && 
+                       performanceEntries[0].type === 'reload'
+      
+      if (isReload) {
+        // Только при F5/reload очищаем состояние
+        sessionStorage.removeItem('mailApp_mails')
+        sessionStorage.removeItem('mailApp_loggedIn')
+        sessionStorage.removeItem('secondMailShown')
+      }
     }
-    
+
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
@@ -649,6 +645,8 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
     return <LoginScreen onLogin={() => {
       setIsLoggedIn(true)
       sessionStorage.setItem('mailApp_loggedIn', 'true')
+      setIsAppLoading(true)
+      setTimeout(() => setIsAppLoading(false), 1500)
     }} />
   }
 
@@ -682,7 +680,7 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
     setSelectedId(mail.id)
     
     // Если кликнули на письмо #1, запустить таймер для показа рапорта (только один раз за игру)
-    if (mail.id === 1 && !localStorage.getItem('secondMailShown')) {
+    if (mail.id === 1 && !secondMailShown) {
       if (timerRef.current) {
         clearTimeout(timerRef.current)
       }
@@ -691,8 +689,8 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived }) {
         setMails(prev => prev.map(m => 
           m.id === 5 ? { ...m, hidden: false } : m
         ))
-        // Сохраняем флаг в localStorage (сбросится только при перезагрузке страницы)
-        localStorage.setItem('secondMailShown', 'true')
+        setSecondMailShown(true)
+        sessionStorage.setItem('secondMailShown', 'true')
         // Воспроизводим звук уведомления
         const audio = new Audio('/assets/sounds/notification.mp3');
         audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));
