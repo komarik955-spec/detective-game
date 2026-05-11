@@ -118,8 +118,11 @@ export default function DarkTracePublic() {
         <nav className="hero-nav">
           <div className="nav-container">
             <div className="nav-brand">
-              <div className="brand-icon">🔍</div>
-              <div className="brand-text">DARK TRACE</div>
+              <img 
+                src="/assets/images/darktrace-logo-v2.png" 
+                alt="Dark Trace Agency" 
+                className="brand-logo"
+              />
             </div>
             <div className="nav-menu">
               {navigation.map((item) => (
