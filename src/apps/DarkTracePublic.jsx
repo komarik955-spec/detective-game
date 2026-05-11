@@ -112,32 +112,29 @@ export default function DarkTracePublic() {
 
   return (
     <div className="dark-trace-public">
-      {/* Navigation */}
-      <nav className="public-nav">
-        <div className="nav-container">
-          <div className="nav-brand">
-            <span className="brand-icon">🔍</span>
-            <span className="brand-text">DARK TRACE</span>
-          </div>
-          
-          <div className="nav-menu">
-            {navigation.map((item, index) => (
-              <a key={index} href={item.href} className="nav-link">
-                {item.name}
-              </a>
-            ))}
-          </div>
-          
-          <div className="nav-actions">
-            <button className="login-btn" onClick={handleLoginClick}>
-              Вход в личный кабинет
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
+      {/* Hero Section with Integrated Navigation */}
       <section className="hero-section">
+        {/* Integrated Navigation */}
+        <nav className="hero-nav">
+          <div className="nav-container">
+            <div className="nav-brand">
+              <div className="brand-icon">🔍</div>
+              <div className="brand-text">DARK TRACE</div>
+            </div>
+            <div className="nav-menu">
+              {navigation.map((item) => (
+                <a key={item.name} href={item.href} className="nav-link">
+                  {item.name}
+                </a>
+              ))}
+            </div>
+            <div className="nav-actions">
+              <button className="login-btn" onClick={handleLoginClick}>
+                Вход в личный кабинет
+              </button>
+            </div>
+          </div>
+        </nav>
         <div className="hero-background">
           <div className="hero-overlay"></div>
           <div className="hero-atmosphere"></div>
