@@ -1,7 +1,6 @@
 ﻿import React, { useState, useEffect, createContext, useContext } from 'react'
 import SystemNotification from './SystemNotification'
 import Browser from './Browser'
-import DarkTraceSite from '../apps/DarkTraceSite'
 import DesktopIcon from './DesktopIcon'
 import Taskbar from './Taskbar'
 import Window from './Window'
@@ -121,14 +120,6 @@ export const WINDOW_REGISTRY = {
     defaultHeight: 720,
   },
 
-  darktrace: {
-    title: 'DARK TRACE',
-    icon: '🔍',
-    content: <DarkTraceSite />,
-    defaultWidth: 1200,
-    defaultHeight: 800,
-  },
-
   case_file: {
     title: 'Case DT-2025-08-21-SB',
     icon: '📄',
@@ -159,7 +150,6 @@ const DESKTOP_ICONS = [
   { id: 'recycle', icon: '🗑️', label: 'Recycle Bin' },
   { id: 'case001', icon: '📁', label: 'Case 001' },
   { id: 'browser', icon: '🌐', label: 'Bhrome' },
-  { id: 'darktrace', icon: '🔍', label: 'DARK TRACE' },
   { id: 'password_note', icon: '📝', label: 'Заметка' },
 ]
 

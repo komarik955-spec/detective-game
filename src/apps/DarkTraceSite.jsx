@@ -6,13 +6,21 @@ import './DarkTraceSite.css'
    INTERNAL PORTAL SYSTEM
 ═══════════════════════════════════════ */
 
-export default function DarkTraceSite({ onClose }) {
-  const [currentPage, setCurrentPage] = useState('login')
+export default function DarkTraceSite({ onClose, initialPage = 'login', onNavigate }) {
+  const [currentPage, setCurrentPage] = useState(initialPage)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userLevel, setUserLevel] = useState('guest')
   const [loading, setLoading] = useState(false)
   const [systemTime, setSystemTime] = useState(new Date())
   const [sessionId, setSessionId] = useState(null)
+
+  useEffect(() => {
+    setCurrentPage(initialPage)
+  }, [initialPage])
+
+  useEffect(() => {
+    if (typeof onNavigate === 'function') onNavigate(currentPage)
+  }, [currentPage, onNavigate])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -31,7 +39,7 @@ export default function DarkTraceSite({ onClose }) {
     
     // Simulate authentication with Dark Trace internal system
     setTimeout(() => {
-      if (credentials.username === 'miller' && credentials.password === 'archive22') {
+      if (credentials.username === 'agent' && credentials.password === '12345') {
         setIsLoggedIn(true)
         setUserLevel('detective')
         setCurrentPage('dashboard')
@@ -205,7 +213,7 @@ function LoginPage({ onLogin, loading }) {
               type="text"
               value={credentials.username}
               onChange={(e) => setCredentials({...credentials, username: e.target.value})}
-              placeholder="miller"
+              placeholder="agent"
               required
             />
           </div>

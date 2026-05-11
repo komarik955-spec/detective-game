@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './DarkTracePublic.css'
 
-export default function DarkTracePublic() {
-  const [showLogin, setShowLogin] = useState(false)
+export default function DarkTracePublic({ onLogin }) {
 
   // Editable data arrays
   const navigation = [
@@ -97,17 +96,11 @@ export default function DarkTracePublic() {
   }
 
   const handleLoginClick = () => {
-    setShowLogin(true)
+    if (typeof onLogin === 'function') onLogin()
   }
 
   const renderStars = (rating) => {
     return Array(rating).fill('⭐').join('')
-  }
-
-  if (showLogin) {
-    // Import and render the internal portal
-    const DarkTraceSite = require('./DarkTraceSite').default
-    return <DarkTraceSite />
   }
 
   return (

@@ -3,7 +3,7 @@ import MailApp from '../apps/MailApp'
 import DarkTraceSite from '../apps/DarkTraceSite'
 import DarkTracePublic from '../apps/DarkTracePublic'
 import { SecondMailContext } from '../components/Desktop'
-let nextId = 2
+let nextId = 4
 
 export default function Browser() {
   // tabs - вкладки браузера. Внутри вкладки page решает, что показывать: home или mail.
@@ -11,8 +11,12 @@ export default function Browser() {
   const onSecondMailArrived = useContext(SecondMailContext)
   const [tabs, setTabs] = useState([
     { id: 1, title: 'New tab', url: '', page: 'home', loading: false },
+    { id: 2, title: 'OneMail', url: 'https://onemail.darktrace.agency/inbox', page: 'mail', loading: false },
+    { id: 3, title: 'Dark Trace Agency', url: 'https://agency.darktrace', page: 'darktrace-public', loading: false },
   ])
   const [activeId, setActiveId] = useState(1)
+
+  const [darkTracePage, setDarkTracePage] = useState('home')
 
   const activeTab = tabs.find(t => t.id === activeId)
 
@@ -30,6 +34,15 @@ export default function Browser() {
 
   function updateTab(id, data) {
     setTabs(tabs.map(t => t.id === id ? { ...t, ...data } : t))
+  }
+
+  function openDarkTraceLogin() {
+    setDarkTracePage('login')
+    updateTab(activeId, {
+      page: 'darktrace',
+      url: 'https://darktrace.agency/login',
+      title: 'DARK TRACE'
+    })
   }
 
   function navigate(value) {
@@ -53,6 +66,23 @@ export default function Browser() {
           title: 'Dark Trace Agency',
           loading: false
         })
+        setDarkTracePage('home')
+      } else if (value.includes('darktrace.agency/login')) {
+        updateTab(activeId, {
+          page: 'darktrace',
+          url: 'https://darktrace.agency/login',
+          title: 'DARK TRACE',
+          loading: false
+        })
+        setDarkTracePage('login')
+      } else if (value.includes('darktrace.agency/dashboard')) {
+        updateTab(activeId, {
+          page: 'darktrace',
+          url: 'https://darktrace.agency/dashboard',
+          title: 'DARK TRACE',
+          loading: false
+        })
+        setDarkTracePage('dashboard')
       } else if (value.includes('darktrace') && !value.includes('agency')) {
         updateTab(activeId, {
           page: 'darktrace',
@@ -60,6 +90,7 @@ export default function Browser() {
           title: 'DARK TRACE',
           loading: false
         })
+        setDarkTracePage('login')
       } else {
         updateTab(activeId, {
           page: 'home',
@@ -132,8 +163,8 @@ export default function Browser() {
       <div className="bhrome-page">
         {activeTab.page === 'home' && <Home onOpenMail={() => navigate('onemail')} onOpenDarkTrace={() => navigate('darktrace.agency')} navigate={navigate} />}
         {activeTab.page === 'mail' && <MailApp onSecondMailArrived={onSecondMailArrived} />}
-        {activeTab.page === 'darktrace' && <DarkTraceSite />}
-        {activeTab.page === 'darktrace-public' && <DarkTracePublic />}
+        {activeTab.page === 'darktrace' && <DarkTraceSite initialPage={darkTracePage} onNavigate={setDarkTracePage} />}
+        {activeTab.page === 'darktrace-public' && <DarkTracePublic onLogin={openDarkTraceLogin} />}
       </div>
     </div>
   )
@@ -158,20 +189,12 @@ function Home({ onOpenMail, onOpenDarkTrace, navigate }) {
             MAIL <span>OneMail</span>
           </div>
 
-          <div className="site" onClick={onOpenDarkTrace}>
-            DARK TRACE <span>Investigation Agency</span>
-          </div>
-
           <div className="site" onClick={() => navigate('agency.darktrace')}>
             DARK TRACE <span>Public Agency</span>
           </div>
 
           <div className="site">
             NEWS <span>News</span>
-          </div>
-
-          <div className="site">
-            ARCH <span>Archive</span>
           </div>
         </div>
 

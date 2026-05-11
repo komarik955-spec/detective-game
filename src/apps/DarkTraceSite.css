@@ -3,6 +3,14 @@
    INTERNAL PORTAL STYLES
 ═══════════════════════════════════════ */
 
+:root {
+  --accent-color: #b58b63;
+  --accent-color-light: #c4a078;
+  --accent-color-dark: #9a7654;
+  --accent-color-soft: rgba(181, 139, 99, 0.2);
+  --accent-border: rgba(181, 139, 99, 0.3);
+}
+
 /* ===== RESET & BASE ===== */
 * {
   margin: 0;
@@ -30,7 +38,7 @@ body {
 /* ===== SYSTEM HEADER ===== */
 .dt-header {
   background: transparent;
-  border-bottom: 2px solid #ff1b2d;
+  border-bottom: 2px solid var(--accent-color);
   position: relative;
   z-index: 100;
 }
@@ -44,9 +52,9 @@ body {
   height: 1px;
   background: linear-gradient(90deg, 
     transparent 0%, 
-    #ff1b2d 20%, 
-    #ff6b6b 50%, 
-    #ff1b2d 80%, 
+    var(--accent-color) 20%, 
+    var(--accent-color-light) 50%, 
+    var(--accent-color) 80%, 
     transparent 100%);
   animation: scanLine 3s ease-in-out infinite;
 }
@@ -62,7 +70,7 @@ body {
   align-items: center;
   padding: 12px 20px;
   background: rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
 }
 
 .dt-logo {
@@ -74,15 +82,15 @@ body {
 .dt-logo-icon {
   font-size: 24px;
   color: #b58b63;
-  filter: drop-shadow(0 0 10px rgba(255, 27, 45, 0.8));
+  filter: drop-shadow(0 0 10px rgba(181, 139, 99, 0.45));
 }
 
 .dt-logo-text {
   font-size: 18px;
   font-weight: 700;
-  color: #ff1b2d;
+  color: var(--accent-color);
   letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(255, 27, 45, 0.5);
+  text-shadow: 0 0 10px rgba(181, 139, 99, 0.35);
 }
 
 .dt-logo-sub {
@@ -135,7 +143,7 @@ body {
 }
 
 .dt-session {
-  color: #ff1b2d;
+  color: var(--accent-color);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -172,7 +180,7 @@ body {
 }
 
 .dt-security-level {
-  color: #ff1b2d;
+  color: var(--accent-color);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -186,7 +194,7 @@ body {
   align-items: center;
   padding: 0 20px;
   background: rgba(26, 26, 46, 0.8);
-  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
 }
 
 .dt-nav-left {
@@ -212,14 +220,14 @@ body {
 }
 
 .dt-nav-btn:hover {
-  background: rgba(255, 27, 45, 0.1);
-  color: #ff6b6b;
+  background: rgba(181, 139, 99, 0.12);
+  color: var(--accent-color-light);
 }
 
 .dt-nav-btn.active {
-  background: rgba(255, 27, 45, 0.2);
-  color: #ff1b2d;
-  border-bottom: 2px solid #ff1b2d;
+  background: rgba(181, 139, 99, 0.18);
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
 }
 
 .dt-nav-right {
@@ -229,10 +237,10 @@ body {
 
 .dt-logout-btn {
   padding: 8px 16px;
-  background: rgba(255, 27, 45, 0.2);
-  border: 1px solid #b58b63;
+  background: rgba(181, 139, 99, 0.14);
+  border: 1px solid var(--accent-border);
   border-radius: 6px;
-  color: #b58b63;
+  color: var(--accent-color);
   cursor: pointer;
   font-size: 11px;
   font-weight: 600;
@@ -242,8 +250,8 @@ body {
 }
 
 .dt-logout-btn:hover {
-  background: rgba(255, 27, 45, 0.3);
-  color: #ff6b6b;
+  background: rgba(181, 139, 99, 0.22);
+  color: var(--accent-color-light);
 }
 
 /* ===== MAIN CONTENT ===== */
@@ -267,12 +275,12 @@ body {
 }
 
 .dt-main::-webkit-scrollbar-thumb {
-  background: rgba(255, 27, 45, 0.5);
+  background: rgba(181, 139, 99, 0.55);
   border-radius: 4px;
 }
 
 .dt-main::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 27, 45, 0.8);
+  background: rgba(181, 139, 99, 0.8);
 }
 
 /* ===== FOOTER ===== */
@@ -282,14 +290,14 @@ body {
   align-items: center;
   padding: 12px 20px;
   background: rgba(26, 26, 46, 0.95);
-  border-top: 1px solid rgba(255, 27, 45, 0.2);
+  border-top: 1px solid rgba(181, 139, 99, 0.2);
   font-size: 10px;
   color: #9aa0a6;
   letter-spacing: 0.5px;
 }
 
 .dt-footer-center {
-  color: #ff1b2d;
+  color: var(--accent-color);
   font-weight: 600;
 }
 
@@ -310,7 +318,7 @@ body {
 
 .dt-login-card {
   background: rgba(26, 26, 46, 0.98);
-  border: 1px solid rgba(255, 27, 45, 0.3);
+  border: 1px solid rgba(181, 139, 99, 0.3);
   border-radius: 12px;
   padding: 8px 10px;
   width: 280px;
@@ -334,14 +342,14 @@ body {
 
 .dt-login-icon {
   font-size: 48px;
-  color: #ff1b2d;
-  filter: drop-shadow(0 0 20px rgba(255, 27, 45, 0.5));
+  color: var(--accent-color);
+  filter: drop-shadow(0 0 20px rgba(181, 139, 99, 0.35));
 }
 
 .dt-login-logo h1 {
   font-size: 24px;
   font-weight: 700;
-  color: #ff1b2d;
+  color: var(--accent-color);
   margin: 8px 0 4px 0;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -355,11 +363,11 @@ body {
 }
 
 .dt-login-warning {
-  background: rgba(255, 27, 45, 0.1);
-  border-left: 3px solid #ff1b2d;
+  background: rgba(181, 139, 99, 0.1);
+  border-left: 3px solid var(--accent-color);
   padding: 12px;
   font-size: 11px;
-  color: #ff6b6b;
+  color: var(--accent-color-light);
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -388,7 +396,7 @@ body {
 
 .dt-form-group input {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(181, 139, 99, 0.22);
   border-radius: 6px;
   padding: 12px 16px;
   color: #e8eaed;
@@ -399,7 +407,7 @@ body {
 }
 
 .dt-form-group input:focus {
-  border-color: #ff1b2d;
+  border-color: var(--accent-color);
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -408,7 +416,7 @@ body {
 }
 
 .dt-login-btn {
-  background: linear-gradient(135deg, #ff1b2d 0%, #ff6b6b 100%);
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-color-light) 100%);
   border: none;
   border-radius: 6px;
   padding: 14px 24px;
@@ -423,7 +431,7 @@ body {
 
 .dt-login-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 27, 45, 0.5);
+  box-shadow: 0 6px 20px rgba(181, 139, 99, 0.35);
 }
 
 .dt-login-btn:disabled {
@@ -437,7 +445,7 @@ body {
   align-items: center;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 27, 45, 0.2);
+  border-top: 1px solid rgba(181, 139, 99, 0.2);
 }
 
 .dt-system-status {
@@ -488,7 +496,7 @@ body {
   bottom: 0;
   background: linear-gradient(
     transparent 50%,
-    rgba(255, 27, 45, 0.03) 50%
+    rgba(181, 139, 99, 0.03) 50%
   );
   background-size: 100% 4px;
   animation: scanlines 8s linear infinite;
@@ -516,13 +524,13 @@ body {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
 }
 
 .dt-dashboard-header h1 {
   font-size: 24px;
   font-weight: 700;
-  color: #ff1b2d;
+  color: var(--accent-color);
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -535,8 +543,8 @@ body {
 }
 
 .dt-badge {
-  background: rgba(255, 27, 45, 0.2);
-  color: #ff1b2d;
+  background: rgba(181, 139, 99, 0.18);
+  color: var(--accent-color);
   padding: 4px 8px;
   border-radius: 12px;
   font-weight: 600;
@@ -553,7 +561,7 @@ body {
 
 .dt-card {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(181, 139, 99, 0.2);
   border-radius: 8px;
   padding: 20px;
   backdrop-filter: blur(10px);
@@ -562,7 +570,7 @@ body {
 .dt-card h3 {
   font-size: 14px;
   font-weight: 600;
-  color: #ff1b2d;
+  color: var(--accent-color);
   margin-bottom: 16px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -604,14 +612,14 @@ body {
   align-items: center;
   padding: 12px;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 27, 45, 0.1);
+  border: 1px solid rgba(181, 139, 99, 0.1);
   border-radius: 6px;
   transition: all 0.2s ease;
 }
 
 .dt-case-item:hover {
-  background: rgba(255, 27, 45, 0.05);
-  border-color: rgba(255, 27, 45, 0.3);
+  background: rgba(181, 139, 99, 0.06);
+  border-color: rgba(181, 139, 99, 0.28);
 }
 
 .dt-case-info {
@@ -688,8 +696,8 @@ body {
 }
 
 .dt-notification.urgent {
-  background: rgba(255, 27, 45, 0.1);
-  border-left-color: #ff1b2d;
+  background: rgba(181, 139, 99, 0.12);
+  border-left-color: var(--accent-color);
 }
 
 .dt-notification.info {
@@ -722,7 +730,7 @@ body {
 
 .dt-action-btn {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(181, 139, 99, 0.22);
   border-radius: 6px;
   padding: 12px;
   color: #e8eaed;
@@ -738,9 +746,9 @@ body {
 }
 
 .dt-action-btn:hover {
-  background: rgba(255, 27, 45, 0.1);
-  border-color: #ff1b2d;
-  color: #ff6b6b;
+  background: rgba(181, 139, 99, 0.12);
+  border-color: var(--accent-color);
+  color: var(--accent-color-light);
 }
 
 /* ===== PAGE HEADERS ===== */
@@ -750,13 +758,13 @@ body {
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
 }
 
 .dt-page-header h1 {
   font-size: 24px;
   font-weight: 700;
-  color: #ff1b2d;
+  color: var(--accent-color);
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -767,7 +775,7 @@ body {
 }
 
 .dt-btn {
-  background: linear-gradient(135deg, #ff1b2d 0%, #ff6b6b 100%);
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-color-light) 100%);
   border: none;
   border-radius: 6px;
   padding: 8px 16px;
@@ -782,7 +790,7 @@ body {
 
 .dt-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 27, 45, 0.4);
+  box-shadow: 0 4px 12px rgba(181, 139, 99, 0.35);
 }
 
 /* ===== CASES DATABASE ===== */
@@ -796,7 +804,7 @@ body {
 .dt-filter-select,
 .dt-filter-input {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(181, 139, 99, 0.2);
   border-radius: 6px;
   padding: 8px 12px;
   color: #e8eaed;
@@ -807,13 +815,13 @@ body {
 
 .dt-filter-select:focus,
 .dt-filter-input:focus {
-  border-color: #ff1b2d;
+  border-color: var(--accent-color);
   background: rgba(255, 255, 255, 0.08);
 }
 
 .dt-cases-table {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(181, 139, 99, 0.2);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -828,20 +836,20 @@ body {
   color: #9aa0a6;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
 }
 
 .dt-table-row {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr 1.5fr 1fr 1fr 1fr;
   padding: 12px;
-  border-bottom: 1px solid rgba(255, 27, 45, 0.1);
+  border-bottom: 1px solid rgba(181, 139, 99, 0.1);
   font-size: 12px;
   transition: all 0.2s ease;
 }
 
 .dt-table-row:hover {
-  background: rgba(255, 27, 45, 0.05);
+  background: rgba(181, 139, 99, 0.05);
 }
 
 .dt-table-row:last-child {
@@ -882,8 +890,8 @@ body {
 }
 
 .dt-priority.high {
-  background: rgba(255, 27, 45, 0.2);
-  color: #ff1b2d;
+  background: rgba(181, 139, 99, 0.2);
+  color: var(--accent-color);
 }
 
 .dt-priority.medium {
@@ -898,10 +906,10 @@ body {
 
 .dt-action-small {
   background: none;
-  border: 1px solid rgba(255, 27, 45, 0.3);
+  border: 1px solid rgba(181, 139, 99, 0.3);
   border-radius: 4px;
   padding: 4px 8px;
-  color: #ff1b2d;
+  color: var(--accent-color);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -911,7 +919,7 @@ body {
 }
 
 .dt-action-small:hover {
-  background: rgba(255, 27, 45, 0.1);
+  background: rgba(181, 139, 99, 0.1);
 }
 
 /* ===== EVIDENCE ARCHIVE ===== */
@@ -923,14 +931,14 @@ body {
 
 .dt-evidence-card {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(76, 175, 239, 0.2);
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.2s ease;
 }
 
 .dt-evidence-card:hover {
-  border-color: rgba(255, 27, 45, 0.4);
+  border-color: rgba(76, 175, 239, 0.4);
   transform: translateY(-2px);
 }
 
@@ -940,7 +948,7 @@ body {
   align-items: center;
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+  border-bottom: 1px solid rgba(76, 175, 239, 0.2);
 }
 
 .dt-evidence-type {
@@ -988,15 +996,15 @@ body {
   align-items: center;
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
-  border-top: 1px solid rgba(255, 27, 45, 0.2);
+  border-top: 1px solid rgba(76, 175, 239, 0.2);
 }
 
 .dt-btn-small {
-  background: rgba(255, 27, 45, 0.2);
-  border: 1px solid rgba(255, 27, 45, 0.3);
+  background: rgba(76, 175, 239, 0.2);
+  border: 1px solid rgba(76, 175, 239, 0.3);
   border-radius: 4px;
   padding: 4px 8px;
-  color: #ff1b2d;
+  color: #4cafef;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -1006,8 +1014,8 @@ body {
 }
 
 .dt-btn-small:hover {
-  background: rgba(255, 27, 45, 0.3);
-  border-color: #ff1b2d;
+  background: rgba(76, 175, 239, 0.3);
+  border-color: #4cafef;
 }
 
 /* ===== MESSAGES ===== */
@@ -1019,14 +1027,14 @@ body {
 
 .dt-message {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(76, 175, 239, 0.2);
   border-radius: 8px;
   padding: 16px;
   transition: all 0.2s ease;
 }
 
 .dt-message:hover {
-  border-color: rgba(255, 27, 45, 0.4);
+  border-color: rgba(76, 175, 239, 0.4);
 }
 
 .dt-message.unread {
@@ -1068,15 +1076,15 @@ body {
 /* ===== ARCHIVES & CLASSIFIED ===== */
 .dt-archive-warning,
 .dt-classified-warning {
-  background: rgba(255, 27, 45, 0.1);
-  border: 1px solid rgba(255, 27, 45, 0.3);
+  background: rgba(181, 139, 99, 0.1);
+  border: 1px solid rgba(181, 139, 99, 0.3);
   border-radius: 8px;
   padding: 20px;
   text-align: center;
   margin-bottom: 20px;
   font-size: 14px;
   font-weight: 600;
-  color: #ff1b2d;
+  color: var(--accent-color);
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -1084,7 +1092,7 @@ body {
 .dt-archive-content,
 .dt-classified-content {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(181, 139, 99, 0.2);
   border-radius: 8px;
   padding: 20px;
   font-size: 12px;
@@ -1103,7 +1111,7 @@ body {
 .dt-denied-content {
   text-align: center;
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.3);
+  border: 1px solid rgba(181, 139, 99, 0.3);
   border-radius: 8px;
   padding: 40px;
 }
@@ -1118,13 +1126,13 @@ body {
 .dt-database-sidebar {
   width: 280px;
   background: rgba(26, 26, 46, 0.95);
-  border-right: 1px solid rgba(255, 27, 45, 0.2);
+  border-right: 1px solid rgba(181, 139, 99, 0.2);
   padding: 20px;
   overflow-y: auto;
 }
 
 .dt-sidebar-header h3 {
-  color: #ff1b2d;
+  color: var(--accent-color);
   font-size: 14px;
   font-weight: 600;
   margin: 0 0 20px 0;
@@ -1143,21 +1151,21 @@ body {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: rgba(255, 27, 45, 0.05);
-  border: 1px solid rgba(255, 27, 45, 0.1);
+  background: rgba(181, 139, 99, 0.05);
+  border: 1px solid rgba(181, 139, 99, 0.1);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .dt-sidebar-section:hover {
-  background: rgba(255, 27, 45, 0.1);
-  border-color: rgba(255, 27, 45, 0.3);
+  background: rgba(181, 139, 99, 0.1);
+  border-color: rgba(181, 139, 99, 0.3);
 }
 
 .dt-sidebar-section.active {
-  background: rgba(255, 27, 45, 0.15);
-  border-color: rgba(255, 27, 45, 0.4);
+  background: rgba(181, 139, 99, 0.15);
+  border-color: rgba(181, 139, 99, 0.4);
 }
 
 .dt-section-id {
@@ -1187,7 +1195,7 @@ body {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 27, 45, 0.2);
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
 }
 
 .dt-content-header h2 {
@@ -1214,14 +1222,14 @@ body {
 
 .dt-dossier-item {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(181, 139, 99, 0.2);
   border-radius: 8px;
   padding: 20px;
   transition: all 0.2s ease;
 }
 
 .dt-dossier-item:hover {
-  border-color: rgba(255, 27, 45, 0.4);
+  border-color: rgba(181, 139, 99, 0.4);
 }
 
 .dt-dossier-header {
@@ -1247,8 +1255,8 @@ body {
 }
 
 .dt-status.missing {
-  background: rgba(255, 27, 45, 0.2);
-  color: #ff1b2d;
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
 }
 
 .dt-status.witness {
@@ -1270,8 +1278,8 @@ body {
 }
 
 .dt-priority.high {
-  background: rgba(255, 27, 45, 0.2);
-  color: #ff1b2d;
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
 }
 
 .dt-priority.medium {
@@ -1319,14 +1327,14 @@ body {
 
 .dt-statement-item {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(76, 175, 239, 0.2);
   border-radius: 8px;
   padding: 20px;
   transition: all 0.2s ease;
 }
 
 .dt-statement-item:hover {
-  border-color: rgba(255, 27, 45, 0.4);
+  border-color: rgba(76, 175, 239, 0.4);
 }
 
 .dt-statement-header {
@@ -1388,14 +1396,14 @@ body {
 
 .dt-knowledge-item {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(76, 175, 239, 0.2);
   border-radius: 8px;
   padding: 20px;
   transition: all 0.2s ease;
 }
 
 .dt-knowledge-item:hover {
-  border-color: rgba(255, 27, 45, 0.4);
+  border-color: rgba(76, 175, 239, 0.4);
 }
 
 .dt-knowledge-header {
@@ -1465,8 +1473,8 @@ body {
   flex-direction: column;
   gap: 4px;
   padding: 12px;
-  background: rgba(255, 27, 45, 0.05);
-  border: 1px solid rgba(255, 27, 45, 0.1);
+  background: rgba(76, 175, 239, 0.05);
+  border: 1px solid rgba(76, 175, 239, 0.1);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1476,8 +1484,8 @@ body {
 .dt-sidebar-witness:hover,
 .dt-sidebar-evidence-item:hover,
 .dt-sidebar-category:hover {
-  background: rgba(255, 27, 45, 0.1);
-  border-color: rgba(255, 27, 45, 0.3);
+  background: rgba(76, 175, 239, 0.1);
+  border-color: rgba(76, 175, 239, 0.3);
 }
 
 .dt-case-id,
@@ -1507,8 +1515,8 @@ body {
 }
 
 .dt-case-status.пропала {
-  background: rgba(255, 27, 45, 0.2);
-  color: #ff1b2d;
+  background: rgba(76, 175, 239, 0.2);
+  color: #4cafef;
 }
 
 .dt-case-status.свидетель {
@@ -1568,14 +1576,14 @@ body {
 
 .dt-evidence-item {
   background: rgba(26, 26, 46, 0.8);
-  border: 1px solid rgba(255, 27, 45, 0.2);
+  border: 1px solid rgba(76, 175, 239, 0.2);
   border-radius: 8px;
   padding: 20px;
   transition: all 0.2s ease;
 }
 
 .dt-evidence-item:hover {
-  border-color: rgba(255, 27, 45, 0.4);
+  border-color: rgba(76, 175, 239, 0.4);
 }
 
 .dt-evidence-header {
@@ -1613,7 +1621,7 @@ body {
 
 .dt-denied-content h1 {
   font-size: 24px;
-  color: #ff1b2d;
+  color: #4cafef;
   margin-bottom: 16px;
 }
 
