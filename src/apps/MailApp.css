@@ -624,6 +624,27 @@
 .att-name { font-size: 13px; color: var(--mail-text); font-weight: 500; }
 .att-size { font-size: 11px; color: var(--mail-text-dimmer); margin-top: 1px; }
 
+.att-download-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(79, 142, 247, 0.2);
+  color: #4f8ef7;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.att-download-btn:hover {
+  background: rgba(79, 142, 247, 0.3);
+  transform: scale(1.05);
+}
+
 /* Reply bar */
 .reading-reply-bar {
   display: flex;

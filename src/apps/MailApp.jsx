@@ -4,6 +4,8 @@ import './MailApp.css'
 
 import { createPortal } from 'react-dom'
 
+import { saveFileToDesktop } from '../utils/fileActions'
+
 
 
 
@@ -86,13 +88,21 @@ Password: archive22
 
       {
 
+        id: 'mail-att-001',
+
         name: 'Приветственное письмо.jpg',
+
+        type: 'image',
 
         size: '2.4 МБ',
 
         icon: '🖼️',
 
-        url: '/assets/images/case-file.jpg'
+        url: '/assets/images/case-file.jpg',
+
+        downloadable: true,
+
+        saveToDesktop: true
 
       }
 
@@ -154,25 +164,41 @@ Password: archive22
 
       {
 
+        id: 'mail-att-002',
+
         name: 'Riverton_PD_Incident_Report_0078.pdf',
+
+        type: 'pdf',
 
         size: '2.4 МБ',
 
         icon: '📄',
 
-        url: '/assets/images/Riverton_PD_Incident_Report_0078.jpg'
+        url: '/assets/images/Riverton_PD_Incident_Report_0078.jpg',
+
+        downloadable: true,
+
+        saveToDesktop: true
 
       },
 
       {
 
+        id: 'mail-att-003',
+
         name: 'Заметка с телефона.jpg',
+
+        type: 'image',
 
         size: '1.8 МБ',
 
         icon: '🖼️',
 
-        url: '/assets/images/phone_note_final.jpg'
+        url: '/assets/images/phone_note_final.jpg',
+
+        downloadable: true,
+
+        saveToDesktop: true
 
       }
 
@@ -629,6 +655,34 @@ function ReadingPane({ mail, onStar, onDelete, onBack, onOpenFile }) {
                     <div className="att-size">{att.size}</div>
 
                   </div>
+
+                  {att.downloadable && (
+
+                    <button 
+
+                      className="att-download-btn"
+
+                      onClick={(e) => {
+
+                        e.stopPropagation()
+
+                        saveFileToDesktop(att, () => {
+
+                          window.dispatchEvent(new Event('savedFilesChanged'))
+
+                        })
+
+                      }}
+
+                      title="Скачать"
+
+                    >
+
+                      ⬇️
+
+                    </button>
+
+                  )}
 
                 </div>
 

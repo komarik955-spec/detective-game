@@ -14,6 +14,8 @@ import FileExplorer from './FileExplorer'
 
 import { useWM, WindowManagerProvider } from './WindowManager'
 
+import { getSavedFiles, removeSavedFile } from '../utils/fileActions'
+
 
 
 export const SecondMailContext = createContext(null)
@@ -330,6 +332,30 @@ function DesktopInner({ playerData }) {
 
   const [showSecondNotif, setShowSecondNotif] = useState(false)
 
+  const [savedFiles, setSavedFiles] = useState([])
+
+  // Load saved files from sessionStorage
+  useEffect(() => {
+    const files = getSavedFiles()
+    setSavedFiles(files)
+  }, [])
+
+  // Listen for changes to saved files (from other components)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const files = getSavedFiles()
+      setSavedFiles(files)
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    window.addEventListener('savedFilesChanged', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('savedFilesChanged', handleStorageChange)
+    }
+  }, [])
+
 
 
   const handleSecondMailArrived = () => {
@@ -360,6 +386,68 @@ function DesktopInner({ playerData }) {
 
     if (meta) open(id, meta)
 
+  }
+
+  // Function to open saved files
+  function openSavedFile(file) {
+    const windowId = `saved_file_${file.id}`
+    
+    // Check if window is already open
+    if (windows.some(w => w.id === windowId)) {
+      focus(windowId)
+      return
+    }
+
+    // Create window metadata for saved file
+    const fileWindowMeta = {
+      title: file.name,
+      icon: getFileIcon(file.type),
+      defaultWidth: 600,
+      defaultHeight: 500,
+      content: (
+        <div className="saved-file-viewer">
+          <div className="file-viewer-header">
+            <span className="file-name">{file.name}</span>
+            <span className="file-size">{file.size}</span>
+          </div>
+          <div className="file-viewer-content">
+            {file.type === 'image' ? (
+              <img src={file.url} alt={file.name} style={{ maxWidth: '100%', maxHeight: '100%' }} />
+            ) : (
+              <div className="file-placeholder">
+                <div className="placeholder-icon">{getFileIcon(file.type)}</div>
+                <p>File: {file.name}</p>
+                <p>Type: {file.type}</p>
+                <p>Size: {file.size}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    }
+
+    open(windowId, fileWindowMeta)
+  }
+
+  // Helper to get file icon
+  function getFileIcon(type) {
+    const icons = {
+      pdf: '📄',
+      image: '🖼️',
+      text: '📝',
+      archive: '📦',
+      video: '🎬',
+      audio: '🎵'
+    }
+    return icons[type] || '📁'
+  }
+
+  // Function to delete saved file
+  function deleteSavedFile(fileId) {
+    if (removeSavedFile(fileId)) {
+      const files = getSavedFiles()
+      setSavedFiles(files)
+    }
   }
 
 
@@ -418,7 +506,7 @@ function DesktopInner({ playerData }) {
 
       
 
-      {/* РРљРћРќРљР */}
+      {/* ИКОНКИ */}
 
       <div className="desktop-icons">
 
@@ -428,11 +516,33 @@ function DesktopInner({ playerData }) {
 
         ))}
 
+        {/* Saved files icons */}
+
+        {savedFiles.map(file => (
+
+          <DesktopIcon
+
+            key={file.id}
+
+            id={`saved_${file.id}`}
+
+            icon={getFileIcon(file.type)}
+
+            label={file.name}
+
+            onOpen={() => openSavedFile(file)}
+
+            onDelete={() => deleteSavedFile(file.id)}
+
+          />
+
+        ))}
+
       </div>
 
 
 
-      {/* Р’РћР”РЇРќРћР™ Р—РќРђРљ */}
+      {/* ВОДЯНОЙ ЗНАК */}
 
       <div className="desktop-watermark">
 

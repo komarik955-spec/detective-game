@@ -1048,6 +1048,16 @@ body {
   border-color: #4cafef;
 }
 
+.dt-download-icon {
+  margin-left: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
 /* ===== MESSAGES ===== */
 .dt-message-list {
   display: flex;

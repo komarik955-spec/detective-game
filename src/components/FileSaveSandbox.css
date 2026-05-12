@@ -1,0 +1,270 @@
+/* ═══════════════════════════════════════
+   FILE ACTIONS SANDBOX STYLES
+═══════════════════════════════════════ */
+
+.file-save-sandbox {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);
+  padding: 40px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  color: #e8eaed;
+}
+
+.sandbox-header {
+  text-align: center;
+  margin-bottom: 60px;
+  padding-bottom: 30px;
+  border-bottom: 2px solid rgba(181, 139, 99, 0.3);
+}
+
+.sandbox-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #b58b63;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin: 0 0 12px 0;
+}
+
+.sandbox-header p {
+  font-size: 16px;
+  color: #888;
+  margin: 0;
+}
+
+.sandbox-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  gap: 40px;
+}
+
+.sandbox-section {
+  background: rgba(10, 10, 15, 0.95);
+  border: 2px solid rgba(181, 139, 99, 0.3);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 0 30px rgba(181, 139, 99, 0.1);
+}
+
+.sandbox-section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #e8eaed;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 8px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
+}
+
+.section-desc {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 24px 0;
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Mail Attachment Style */
+.mail-attachment {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(181, 139, 99, 0.2);
+  border-radius: 6px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.mail-attachment:hover {
+  border-color: rgba(181, 139, 99, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.attachment-icon {
+  font-size: 40px;
+  flex-shrink: 0;
+}
+
+.attachment-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.attachment-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e8eaed;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.attachment-meta {
+  font-size: 12px;
+  color: #888;
+}
+
+/* File Actions Buttons */
+.file-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.file-action-btn {
+  background: linear-gradient(135deg, #b58b63 0%, #9a7654 100%);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.file-action-btn:hover {
+  background: linear-gradient(135deg, #c4a078 0%, #b58b63 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(181, 139, 99, 0.3);
+}
+
+.file-action-btn.download {
+  background: linear-gradient(135deg, #4f8ef7 0%, #3b82f6 100%);
+}
+
+.file-action-btn.download:hover {
+  background: linear-gradient(135deg, #6ba3f9 0%, #4f8ef7 100%);
+}
+
+/* Compact File Actions */
+.file-actions-compact {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.file-action-icon {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(181, 139, 99, 0.3);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e8eaed;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.file-action-icon:hover {
+  background: rgba(181, 139, 99, 0.2);
+  border-color: rgba(181, 139, 99, 0.5);
+  transform: scale(1.05);
+}
+
+/* Evidence File Style */
+.evidence-file {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(181, 139, 99, 0.2);
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.evidence-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.evidence-id {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b58b63;
+  background: rgba(181, 139, 99, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.evidence-type {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.evidence-body h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e8eaed;
+  margin: 0 0 8px 0;
+}
+
+.evidence-body p {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.evidence-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Usage Code */
+.usage-code {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(181, 139, 99, 0.2);
+  border-radius: 6px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.usage-code pre {
+  margin: 0;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4ade80;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .file-save-sandbox {
+    padding: 20px;
+  }
+
+  .sandbox-header h1 {
+    font-size: 24px;
+  }
+
+  .mail-attachment {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .file-actions {
+    width: 100%;
+  }
+
+  .file-action-btn {
+    flex: 1;
+  }
+}

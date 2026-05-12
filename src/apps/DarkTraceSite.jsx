@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './DarkTraceSite.css'
+import { saveFileToDesktop } from '../utils/fileActions'
 
 /* ═══════════════════════════════════════
    DARK TRACE INVESTIGATION AGENCY
@@ -494,7 +495,16 @@ function EvidenceArchive({ userLevel, onNavigate }) {
       name: 'Фото пропавшего лица',
       description: 'Недавнее фото Селены Блэк',
       date: '21.06.2025',
-      status: 'обработано'
+      status: 'обработано',
+      file: {
+        id: 'evi-001',
+        name: 'Фото_Селены_Блэк.jpg',
+        type: 'image',
+        size: '1.8 МБ',
+        url: '/assets/images/phone_note_final.jpg',
+        downloadable: true,
+        saveToDesktop: true
+      }
     },
     {
       id: 'EVI-002',
@@ -503,7 +513,16 @@ function EvidenceArchive({ userLevel, onNavigate }) {
       name: 'Полицейский отчет',
       description: 'Первоначальный отчет о пропаже лица',
       date: '21.06.2025',
-      status: 'обработано'
+      status: 'обработано',
+      file: {
+        id: 'evi-002',
+        name: 'Полицейский_отчет.pdf',
+        type: 'pdf',
+        size: '2.4 МБ',
+        url: '/assets/images/case-file.jpg',
+        downloadable: true,
+        saveToDesktop: true
+      }
     },
     {
       id: 'EVI-003',
@@ -512,7 +531,16 @@ function EvidenceArchive({ userLevel, onNavigate }) {
       name: 'Запись звонка 911',
       description: 'Экстренный звонок от семьи',
       date: '21.06.2025',
-      status: 'обрабатывается'
+      status: 'обработано',
+      file: {
+        id: 'evi-003',
+        name: 'Звонок_911.mp3',
+        type: 'audio',
+        size: '3.2 МБ',
+        url: '#',
+        downloadable: false,
+        saveToDesktop: false
+      }
     }
   ]
 
@@ -560,6 +588,19 @@ function EvidenceArchive({ userLevel, onNavigate }) {
               </div>
               <div className="dt-evidence-actions">
                 <button className="dt-btn-small">ПРОСМОТР</button>
+                {item.file?.downloadable && (
+                  <button 
+                    className="dt-btn-small dt-download-icon"
+                    onClick={() => {
+                      saveFileToDesktop(item.file, () => {
+                        window.dispatchEvent(new Event('savedFilesChanged'))
+                      })
+                    }}
+                    title="Скачать"
+                  >
+                    ⬇️
+                  </button>
+                )}
               </div>
             </div>
           ))}
