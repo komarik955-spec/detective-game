@@ -6,7 +6,7 @@ import './DarkTraceSite.css'
    INTERNAL PORTAL SYSTEM
 ═══════════════════════════════════════ */
 
-export default function DarkTraceSite({ onClose, darkTraceState, onNavigate }) {
+export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, playerData }) {
   // Use props as single source of truth - no internal state duplication
   const currentPage = darkTraceState?.currentPage || 'login'
   const isLoggedIn = darkTraceState?.isLoggedIn || false
@@ -64,7 +64,7 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate }) {
       case 'login':
         return <LoginPage onLogin={handleLogin} loading={loading} />
       case 'dashboard':
-        return <DashboardPage userLevel={userLevel} onNavigate={onNavigate} onLogout={handleLogout} />
+        return <DashboardPage userLevel={userLevel} onNavigate={onNavigate} onLogout={handleLogout} playerData={playerData} />
       case 'dossiers':
         return <DossiersDatabase userLevel={userLevel} onNavigate={onNavigate} />
       case 'statements':
@@ -281,7 +281,7 @@ function LoginPage({ onLogin, loading }) {
 /* ═══════════════════════════════════════
    DASHBOARD PAGE
 ═══════════════════════════════════════ */
-function DashboardPage({ userLevel, onNavigate, onLogout }) {
+function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'urgent', message: 'New evidence uploaded to Case SB-2025-06-21', time: '5 min ago' },
     { id: 2, type: 'info', message: 'System backup completed successfully', time: '1 hour ago' },
@@ -294,12 +294,16 @@ function DashboardPage({ userLevel, onNavigate, onLogout }) {
     { id: 'DT-2025-04-02', title: 'Cybersecurity Breach', status: 'closed', priority: 'low' }
   ])
 
+  const detectiveName = playerData?.fullName?.toUpperCase() || 'DETECTIVE MILLER'
+  const employeeId = playerData?.employeeId || 'DT-0000'
+
   return (
     <div className="dt-dashboard">
       <div className="dt-dashboard-header">
         <h1>DASHBOARD</h1>
         <div className="dt-user-info">
-          <span>DETECTIVE MILLER</span>
+          <span>{detectiveName}</span>
+          <span className="dt-badge">{employeeId}</span>
           <span className="dt-badge">LEVEL {userLevel.toUpperCase()}</span>
         </div>
       </div>
