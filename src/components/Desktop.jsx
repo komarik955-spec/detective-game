@@ -16,6 +16,8 @@ import { useWM, WindowManagerProvider } from './WindowManager'
 
 import { getSavedFiles, removeSavedFile } from '../utils/fileActions'
 
+import VesperCallSystem from './VesperCallSystem'
+
 
 
 export const SecondMailContext = createContext(null)
@@ -334,6 +336,8 @@ function DesktopInner({ playerData }) {
 
   const [savedFiles, setSavedFiles] = useState([])
 
+  const [vesperCallCompleted, setVesperCallCompleted] = useState(false)
+
   // Load saved files from sessionStorage
   useEffect(() => {
     const files = getSavedFiles()
@@ -366,17 +370,16 @@ function DesktopInner({ playerData }) {
 
 
 
-  useEffect(() => {
 
-    const timer = setTimeout(() => {
 
+  // Handle Vesper call completion
+  const handleVesperCallComplete = () => {
+    setVesperCallCompleted(true)
+    // After endCall(): wait 2 seconds, then show existing OneMail notification
+    setTimeout(() => {
       setShowNotif(true)
-
-    }, 3000)
-
-    return () => clearTimeout(timer)
-
-  }, [])
+    }, 2000)
+  }
 
 
 
@@ -549,6 +552,9 @@ function DesktopInner({ playerData }) {
         CLASSIFIED вЂ” DARK TRACE OS вЂ” CASE #001
 
       </div>
+
+       {/* VESPER CALL */}
+       <VesperCallSystem onCallComplete={handleVesperCallComplete} />
 
 
 
