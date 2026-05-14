@@ -234,7 +234,7 @@
   width: min(640px, calc(100vw - 48px));
   z-index: 1001;
   pointer-events: auto;
-  top: min(calc(50% + 260px), calc(100vh - 170px));
+  top: min(calc(50% + 230px), calc(100vh - 190px));
 }
 
 .subtitle-content {
