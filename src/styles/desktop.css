@@ -446,6 +446,24 @@
   transition: all 0.3s ease;
 }
 
+.site-icon {
+  font-size: 34px;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  user-select: none;
+}
+
+.site-label {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.3px;
+  text-transform: none;
+  user-select: none;
+}
+
 .site:hover {
   background: #3a3d45;
   border-color: #ff1b2d;

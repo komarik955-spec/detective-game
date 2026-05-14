@@ -1134,14 +1134,9 @@ function Home({ navigateInNewTab }) {
 
 
 
-          <div className="site" onClick={openMailInNewTab}>
-
-
-
-            MAIL <span>OneMail</span>
-
-
-
+          <div className="site" onClick={openMailInNewTab} title="OneMail" aria-label="OneMail">
+            <div className="site-icon" aria-hidden="true">✉</div>
+            <div className="site-label">OneMail</div>
           </div>
 
 
@@ -1150,14 +1145,9 @@ function Home({ navigateInNewTab }) {
 
 
 
-          <div className="site" onClick={openDarkTraceInNewTab}>
-
-
-
-            DARK TRACE <span>Public Agency</span>
-
-
-
+          <div className="site" onClick={openDarkTraceInNewTab} title="DARK TRACE" aria-label="DARK TRACE">
+            <div className="site-icon" aria-hidden="true">🕵</div>
+            <div className="site-label">Dark Trace</div>
           </div>
 
 
@@ -1166,14 +1156,9 @@ function Home({ navigateInNewTab }) {
 
 
 
-          <div className="site" onClick={openNewsInNewTab}>
-
-
-
-            NEWS <span>News</span>
-
-
-
+          <div className="site" onClick={openNewsInNewTab} title="News" aria-label="News">
+            <div className="site-icon" aria-hidden="true">📰</div>
+            <div className="site-label">News</div>
           </div>
 
 
