@@ -159,6 +159,23 @@ export default function VesperCall({ onCallComplete }) {
     advanceDialogue()
   }
 
+  // Handle skip dialogue (Далее button)
+  const handleSkipDialogue = () => {
+    if (callCompleted || !audioRef.current) return
+    
+    // Pause and stop the current audio
+    audioRef.current.pause()
+    audioRef.current.currentTime = 0
+    
+    // Clear the onended handler to prevent it from triggering
+    if (audioRef.current.onended) {
+      audioRef.current.onended = null
+    }
+    
+    // Advance to next dialogue line
+    advanceDialogue()
+  }
+
   // End call
   const endCall = () => {
     // Mark call as completed to prevent any restart
@@ -294,6 +311,13 @@ export default function VesperCall({ onCallComplete }) {
          <div className="cinematic-subtitle">
            <span className="subtitle-speaker">VESPER:</span>
            <span className="subtitle-text">{currentDialogue.text}</span>
+           <button 
+             className="subtitle-next-btn"
+             onClick={handleSkipDialogue}
+             title="Пропустить строку"
+           >
+             Далее
+           </button>
          </div>
        )}
 

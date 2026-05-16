@@ -105,6 +105,7 @@ export default function VesperCallSystem({ onCallComplete }) {
   const isCallActiveRef = useRef(false)
   const dialogueTimeoutsRef = useRef([])
   const dialogueIndexRef = useRef(0)
+  const advanceTokenRef = useRef(0)
 
   // Start call after 3 seconds
   useEffect(() => {
@@ -238,7 +239,7 @@ export default function VesperCallSystem({ onCallComplete }) {
   }
 
   // Advance to next dialogue line
-  const advanceDialogue = () => {
+  const advanceDialogue = ({ immediate = false } = {}) => {
     console.log('[DIALOGUE] Advancing dialogue')
     
     if (callCompleted) return // Block if call already completed
@@ -249,12 +250,14 @@ export default function VesperCallSystem({ onCallComplete }) {
     setDialogueIndex(nextIndex)
     console.log('[REF] dialogueIndexRef:', dialogueIndexRef.current)
     setShowSubtitle(false)
-    
+
+    const token = ++advanceTokenRef.current
+    const delayMs = immediate ? 0 : 500 // Keep existing fade timing by default
     const timeoutId = setTimeout(() => {
-      if (isCallActiveRef.current) {
+      if (isCallActiveRef.current && advanceTokenRef.current === token) {
         playDialogueLine(nextIndex)
       }
-    }, 500) // Small delay for subtitle fade
+    }, delayMs)
     dialogueTimeoutsRef.current.push(timeoutId)
   }
 
@@ -267,6 +270,38 @@ export default function VesperCallSystem({ onCallComplete }) {
     
     setWaitingForPlayer(false)
     advanceDialogue()
+  }
+
+  const handleSkipDialogue = () => {
+    if (callCompleted) return
+    if (!isCallActiveRef.current) return
+
+    const line = DIALOGUE_SEQUENCE[dialogueIndexRef.current]
+    const isSkippableVesperLine = line?.speaker === 'vesper' && !waitingForPlayer
+    if (!isSkippableVesperLine) return
+
+    console.log('[DIALOGUE] Skip clicked - stopping audio and advancing immediately')
+
+    // Cancel any pending dialogue timers to avoid duplication/races
+    dialogueTimeoutsRef.current.forEach(timeoutId => clearTimeout(timeoutId))
+    dialogueTimeoutsRef.current = []
+
+    // Stop and detach any current audio listeners
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+        audioRef.current.src = ''
+
+        const newAudio = audioRef.current.cloneNode(true)
+        audioRef.current.parentNode.replaceChild(newAudio, audioRef.current)
+        audioRef.current = newAudio
+      } catch (err) {
+        console.error('[AUDIO] Skip cleanup error:', err)
+      }
+    }
+
+    advanceDialogue({ immediate: true })
   }
 
   // End call
@@ -341,6 +376,11 @@ export default function VesperCallSystem({ onCallComplete }) {
   }
 
   const currentDialogue = DIALOGUE_SEQUENCE[dialogueIndex]
+  const shouldShowNextButton =
+    callState === 'connected' &&
+    showSubtitle &&
+    !waitingForPlayer &&
+    currentDialogue?.speaker === 'vesper'
 
   return (
     <div className="vesper-call-system">
@@ -446,6 +486,16 @@ export default function VesperCallSystem({ onCallComplete }) {
               </button>
             ) : (
               <span className="subtitle-text">{currentDialogue.text}</span>
+            )}
+            {shouldShowNextButton && (
+              <button
+                type="button"
+                className="subtitle-next"
+                onClick={handleSkipDialogue}
+                aria-label="Далее"
+              >
+                Далее
+              </button>
             )}
           </div>
         </div>
