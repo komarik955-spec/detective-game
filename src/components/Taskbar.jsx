@@ -37,7 +37,14 @@ export default function Taskbar({
             className={`taskbar-btn ${
               w.id === activeWindowId && !w.minimized ? 'tb-active' : ''
             } ${w.minimized ? 'tb-minimized' : ''}`}
-            onClick={() => onWindowFocus(w.id)}
+            onClick={() => {
+              if (w.id === activeWindowId && !w.minimized && window.innerWidth <= 768) {
+                // На мобилках повторный клик по активному окну может его сворачивать
+                onWindowFocus(w.id) 
+              } else {
+                onWindowFocus(w.id)
+              }
+            }}
             title={w.title}
           >
             <span className="tb-icon">{w.icon}</span>

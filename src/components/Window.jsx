@@ -7,9 +7,10 @@ const TASKBAR  = 44
 const MARGIN   = 12
 
 function getViewport() {
+  const isMobile = window.innerWidth <= 768
   return {
     w: window.innerWidth,
-    h: Math.max(0, window.innerHeight - TASKBAR),
+    h: Math.max(0, window.innerHeight - (isMobile ? 50 : TASKBAR)),
   }
 }
 
@@ -19,6 +20,12 @@ function clamp(n, min, max) {
 
 function clampSize(width, height) {
   const vp = getViewport()
+  const isMobile = window.innerWidth <= 768
+  
+  if (isMobile) {
+    return { w: vp.w, h: vp.h }
+  }
+
   const maxW = Math.max(MIN_W, Math.floor(vp.w - MARGIN * 2))
   const maxH = Math.max(MIN_H, Math.floor(vp.h - MARGIN * 2))
   return {
@@ -29,6 +36,9 @@ function clampSize(width, height) {
 
 function centerPos(w, h) {
   const vp = getViewport()
+  const isMobile = window.innerWidth <= 768
+  if (isMobile) return { x: 0, y: 0 }
+
   return {
     x: Math.floor((vp.w - w) / 2),
     y: Math.floor((vp.h - h) / 2),
@@ -37,11 +47,15 @@ function centerPos(w, h) {
 
 function clampPos(x, y, w, h) {
   const vp = getViewport()
+  const isMobile = window.innerWidth <= 768
+  if (isMobile) return { x: 0, y: 0 }
+
   return {
     x: clamp(Math.floor(x), 0, Math.max(0, vp.w - w)),
     y: clamp(Math.floor(y), 0, Math.max(0, vp.h - h)),
   }
 }
+
 
 export default function Window({
   id, title, icon, children,
@@ -185,8 +199,8 @@ useEffect(() => {
     }
   }
 
-  const style = maximized
-    ? { left: 0, top: 0, width: '100vw', height: `calc(100vh - ${TASKBAR}px)`, zIndex, borderRadius: 0 }
+  const style = (maximized || window.innerWidth <= 768)
+    ? { left: 0, top: 0, width: '100vw', height: `calc(100vh - ${window.innerWidth <= 768 ? 44 : TASKBAR}px)`, zIndex, borderRadius: 0 }
     : { left: pos.x, top: pos.y, width: size.w, height: size.h, zIndex }
 
 
@@ -200,9 +214,10 @@ useEffect(() => {
   onMouseDown={() => focus(id)}
 >
       {/* Resize handles */}
-      {!maximized && handles.map(dir => (
+      {(!maximized && window.innerWidth > 768) && handles.map(dir => (
         <div key={dir} className={`rh rh-${dir}`} onMouseDown={e => onResizeDown(e, dir)} />
       ))}
+
 
   {/* Title bar */}
 <div

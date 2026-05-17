@@ -102,3 +102,19 @@ body {
     transform: none;
   }
 }
+
+/* MOBILE ADAPTATION */
+@media (max-width: 600px) {
+  .time {
+    font-size: 56px;
+  }
+  
+  .login-box input {
+    width: 80%;
+    max-width: 280px;
+  }
+  
+  .logo {
+    width: 70px;
+  }
+}

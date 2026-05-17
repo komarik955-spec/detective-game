@@ -1093,3 +1093,94 @@
   opacity: 1;
   visibility: visible;
 }
+
+/* ═══════════════════════════════════════
+   MOBILE RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .mail-root {
+    overflow: auto !important;
+  }
+
+  .mail-topbar {
+    padding: 8px !important;
+    height: 56px !important;
+  }
+
+  .mail-brand-name {
+    display: none !important;
+  }
+
+  .mail-search-box {
+    height: 40px !important;
+    padding: 0 12px !important;
+  }
+
+  .mail-search-input {
+    font-size: 14px !important;
+  }
+
+  .mail-sidebar {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    z-index: 100 !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  .mail-sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .mail-list-section {
+    width: 100% !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mail-row {
+    padding: 8px !important;
+  }
+
+  .mail-row-content {
+    min-width: 0 !important;
+  }
+
+  .reading-pane {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 50 !important;
+    background: var(--mail-bg) !important;
+  }
+
+  .reading-header {
+    padding: 12px !important;
+  }
+
+  .reading-subject {
+    font-size: 18px !important;
+  }
+
+  .reading-body {
+    padding: 12px !important;
+  }
+
+  .reading-body-text {
+    font-size: 13px !important;
+  }
+
+  .compose-modal {
+    width: 100% !important;
+    right: 0 !important;
+    left: 0 !important;
+    max-height: 100vh !important;
+  }
+
+  .compose-textarea {
+    min-height: 200px !important;
+  }
+}

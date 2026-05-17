@@ -4,9 +4,290 @@
   height: 100vh;
   background: url('/assets/images/desktop.jpg') center / cover no-repeat;
   position: relative;
+  overflow: hidden;
 }
 
+/* ===== TASKBAR ===== */
+.taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 10px;
+}
+
+.taskbar-start {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 34px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+  color: white;
+}
+
+.taskbar-start:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.start-icon {
+  font-size: 18px;
+}
+
+.taskbar-windows {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  padding: 0 10px;
+  overflow-x: auto;
+}
+
+.taskbar-btn {
+  height: 34px;
+  min-width: 40px;
+  max-width: 160px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.taskbar-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.taskbar-btn.tb-active {
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid #b58b63;
+}
+
+.tb-icon {
+  font-size: 16px;
+}
+
+.tb-label {
+  font-size: 12px;
+}
+
+.taskbar-tray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px;
+  color: white;
+  font-size: 12px;
+}
+
+.tray-item {
+  opacity: 0.8;
+}
+
+/* ===== WINDOWS ===== */
+.window {
+  position: absolute;
+  background: #1a1a2e;
+  border: 1px solid rgba(181, 139, 99, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.win-titlebar {
+  height: 36px;
+  background: #23252b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  cursor: default;
+  user-select: none;
+  position: relative;
+}
+
+.win-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e8eaed;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.win-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.win-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.win-btn.win-cls:hover {
+  background: #e81123;
+}
+
+.win-body {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Resize handles */
+.rh {
+  position: absolute;
+  z-index: 10;
+}
+.rh-n { top: -2px; left: 0; right: 0; height: 4px; cursor: ns-resize; }
+.rh-s { bottom: -2px; left: 0; right: 0; height: 4px; cursor: ns-resize; }
+.rh-e { top: 0; bottom: 0; right: -2px; width: 4px; cursor: ew-resize; }
+.rh-w { top: 0; bottom: 0; left: -2px; width: 4px; cursor: ew-resize; }
+.rh-ne { top: -2px; right: -2px; width: 8px; height: 8px; cursor: nesw-resize; }
+.rh-nw { top: -2px; left: -2px; width: 8px; height: 8px; cursor: nwse-resize; }
+.rh-se { bottom: -2px; right: -2px; width: 8px; height: 8px; cursor: nwse-resize; }
+.rh-sw { bottom: -2px; left: -2px; width: 8px; height: 8px; cursor: nesw-resize; }
+
+/* ===== MOBILE ADAPTATION ===== */
+@media (max-width: 768px) {
+  .taskbar-logo-text, .tb-label, .tray-item {
+    display: none;
+  }
+  
+  .taskbar-windows {
+    padding: 0 5px;
+  }
+  
+  .taskbar-btn {
+    min-width: 36px;
+    padding: 0;
+    justify-content: center;
+  }
+  
+  .desktop-icons {
+    padding: 10px;
+    flex-wrap: wrap;
+    height: calc(100vh - 60px);
+    align-content: flex-start;
+  }
+  
+  .desktop-icon {
+    width: 70px;
+    margin-bottom: 10px;
+  }
+  
+  .desktop-icon .icon {
+    font-size: 28px;
+  }
+  
+  /* Browser & Gmail Mobile */
+  .gmail-sidebar {
+    width: 60px !important;
+  }
+  
+  .compose-btn span {
+    display: none;
+  }
+  
+  .gmail-list {
+    width: 100% !important;
+  }
+  
+  .gmail-sidebar {
+    width: 50px !important;
+    padding: 8px 4px !important;
+  }
+
+  .gmail-row .from {
+    width: 80px;
+  }
+  
+  .gmail-row .time {
+    display: none;
+  }
+  
+  .bhrome-sites {
+    gap: 10px;
+  }
+  
+  .site {
+    width: 90px;
+    height: 80px;
+  }
+
+  .site-icon {
+    font-size: 24px;
+  }
+
+  .site-label {
+    font-size: 11px;
+  }
+
+  .bhrome-logo {
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+
+  .bhrome-search {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .bhrome-tabs {
+    height: 32px;
+  }
+  
+  .bhrome-tab {
+    min-width: 40px;
+    max-width: 100px;
+    padding: 4px 8px;
+  }
+  
+  .tab-title {
+    font-size: 11px;
+  }
+  
+  .pdf-paper {
+    width: 100% !important;
+    padding: 20px !important;
+  }
+}
+
+
 /* ===== ИКОНКИ ===== */
+
 .desktop-icons {
   position: relative;
   z-index: 2;

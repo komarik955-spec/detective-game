@@ -450,8 +450,60 @@ html, body, #root {
   overflow: hidden;
   min-width: 280px;
   min-height: 180px;
+  max-width: 100vw;
+  max-height: calc(100vh - 44px);
   animation: winOpen 0.15s cubic-bezier(0.2, 0, 0, 1);
   transition: box-shadow 0.15s;
+}
+
+@media (max-width: 768px) {
+  .window {
+    width: 96% !important;
+    height: 85% !important;
+    left: 2% !important;
+    top: 2% !important;
+    transform: none !important;
+    min-width: 0 !important;
+  }
+  
+  .desktop-icons {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+
+  .desktop-icon {
+    width: 65px !important;
+    padding: 4px !important;
+  }
+
+  .desktop-icon-img {
+    font-size: 1.8rem !important;
+  }
+
+  .desktop-icon-label {
+    font-size: 9px !important;
+    max-width: 60px !important;
+  }
+
+  .taskbar {
+    height: 50px !important;
+  }
+
+  .taskbar-logo-text {
+    display: none !important;
+  }
+
+  .taskbar-tray {
+    padding: 0 5px !important;
+  }
+
+  .tray-clock {
+    font-size: 11px !important;
+  }
 }
 
 .window-active {

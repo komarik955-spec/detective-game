@@ -200,11 +200,69 @@ body {
 .dt-nav {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  background: rgba(26, 26, 46, 0.8);
+  background: rgba(18, 18, 34, 0.95);
   border-bottom: 1px solid rgba(181, 139, 99, 0.2);
+  padding: 0 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
+.dt-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.dt-nav-left {
+  display: flex;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .dt-header-top {
+    padding: 10px !important;
+  }
+  
+  .dt-system-info {
+    display: none !important;
+  }
+  
+  .dt-nav-btn {
+    padding: 10px 8px !important;
+    font-size: 10px !important;
+    min-width: auto !important;
+  }
+  
+  .dt-dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .dt-interview-viewer {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .dt-database-sidebar {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(181, 139, 99, 0.2) !important;
+    max-height: 150px !important;
+  }
+  
+  .dt-investigative-database {
+    flex-direction: column !important;
+  }
+  
+  .dt-dossier-body {
+    flex-direction: column !important;
+  }
+
+  .dt-dossier-right {
+    border-left: none !important;
+    border-top: 1px solid rgba(181, 139, 99, 0.14) !important;
+    padding-left: 0 !important;
+    padding-top: 15px !important;
+    align-items: center !important;
+  }
+}
+
 
 .dt-nav-left {
   display: flex;
