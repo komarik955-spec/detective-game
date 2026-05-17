@@ -734,7 +734,8 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       gender: 'Женский',
       birthDate: '22.01.1998',
       birthPlace: 'г. Ривертон',
-      portrait: '/assets/characters/selena_black.jpg'
+      portrait: '/assets/characters/selena_black.jpg',
+      fullDossier: '/assets/dossiers/selena_black_dossier.jpg'
     },
     {
       id: 'DS-002',
@@ -747,7 +748,8 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       gender: 'Мужской',
       birthDate: '15.08.1993',
       birthPlace: 'г. Ривертон',
-      portrait: '/assets/characters/evan_underwood.jpg'
+      portrait: '/assets/characters/evan_underwood.jpg',
+      fullDossier: '/assets/dossiers/evan_underwood_dossier.jpg'
     },
     {
       id: 'DS-003',
@@ -760,7 +762,8 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       gender: 'Мужской',
       birthDate: '03.12.1990',
       birthPlace: 'г. Ривертон',
-      portrait: '/assets/characters/marcus_flynn.jpg'
+      portrait: '/assets/characters/marcus_flynn.jpg',
+      fullDossier: '/assets/dossiers/marcus_flynn_dossier.jpg'
     },
     {
       id: 'DS-004',
@@ -773,12 +776,24 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       gender: 'Женский',
       birthDate: '27.04.1996',
       birthPlace: 'г. Ривертон',
-      portrait: '/assets/characters/vesper_wainwright.jpg'
+      portrait: '/assets/characters/vesper_wainwright.jpg',
+      fullDossier: '/assets/dossiers/vesper_wainwright_dossier.jpg'
     }
   ]
 
   const [selectedDossierId, setSelectedDossierId] = useState(dossiers[0]?.id)
   const selectedDossier = dossiers.find(d => d.id === selectedDossierId) || dossiers[0]
+  const [openFullDossier, setOpenFullDossier] = useState(null)
+
+  function openDossierViewer(dossier) {
+    const src = dossier?.fullDossier
+    if (!src) return
+    setOpenFullDossier({
+      src,
+      title: dossier?.name ?? 'DOSSIER',
+      meta: `${dossier?.id ?? ''}${dossier?.caseId ? ` • ${dossier.caseId}` : ''}`.trim(),
+    })
+  }
 
   return (
     <div className="dt-investigative-database">
@@ -862,12 +877,168 @@ function DossiersDatabase({ userLevel, onNavigate }) {
                 <div className="dt-dossier-status-panel">
                   <span className={`dt-status dt-status-stack ${selectedDossier.status.toLowerCase()}`}>{selectedDossier.status}</span>
                 </div>
-                <button className="dt-btn-premium">ПОЛНОЕ ДОСЬЕ</button>
+                <button
+                  className="dt-btn-premium"
+                  onClick={() => openDossierViewer(selectedDossier)}
+                  disabled={!selectedDossier?.fullDossier}
+                  title={selectedDossier?.fullDossier ? undefined : 'Dossier file missing'}
+                >
+                  ПОЛНОЕ ДОСЬЕ
+                </button>
               </div>
             </div>
             </div>
           )}
         </div>
+      </div>
+
+      <FullDossierModal
+        open={Boolean(openFullDossier)}
+        dossier={openFullDossier}
+        onClose={() => setOpenFullDossier(null)}
+      />
+    </div>
+  )
+}
+
+function FullDossierModal({ open, dossier, onClose }) {
+  const [phase, setPhase] = useState(open ? 'open' : 'closed') // 'open' | 'closing' | 'closed'
+  const [zoom, setZoom] = useState(1)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const [drag, setDrag] = useState(null) // { startX, startY, originX, originY, pointerId }
+
+  useEffect(() => {
+    if (open) {
+      setPhase('open')
+      setZoom(1)
+      setOffset({ x: 0, y: 0 })
+      return
+    }
+
+    if (phase === 'open') {
+      setPhase('closing')
+      const t = setTimeout(() => setPhase('closed'), 220)
+      return () => clearTimeout(t)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    function onKeyDown(e) {
+      if (e.key === 'Escape') onClose?.()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [open, onClose])
+
+  useEffect(() => {
+    if (!open) return
+    document.body.classList.add('dt-full-dossier-open')
+    return () => document.body.classList.remove('dt-full-dossier-open')
+  }, [open])
+
+  if (phase === 'closed') return null
+
+  const canRender = Boolean(dossier?.src)
+
+  function clampZoom(next) {
+    return Math.min(3, Math.max(0.6, next))
+  }
+
+  function zoomBy(delta) {
+    setZoom(z => clampZoom(z + delta))
+  }
+
+  function resetView() {
+    setZoom(1)
+    setOffset({ x: 0, y: 0 })
+  }
+
+  function onPointerDown(e) {
+    if (e.button != null && e.button !== 0) return
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+    setDrag({
+      startX: e.clientX,
+      startY: e.clientY,
+      originX: offset.x,
+      originY: offset.y,
+      pointerId: e.pointerId,
+    })
+  }
+
+  function onPointerMove(e) {
+    if (!drag) return
+    if (drag.pointerId != null && e.pointerId !== drag.pointerId) return
+    const dx = e.clientX - drag.startX
+    const dy = e.clientY - drag.startY
+    setOffset({ x: drag.originX + dx, y: drag.originY + dy })
+  }
+
+  function onPointerUp(e) {
+    if (!drag) return
+    if (drag.pointerId != null && e.pointerId !== drag.pointerId) return
+    setDrag(null)
+  }
+
+  function onWheel(e) {
+    e.preventDefault?.()
+    const delta = e.deltaY > 0 ? -0.12 : 0.12
+    setZoom(z => clampZoom(z + delta))
+  }
+
+  return (
+    <div
+      className={`dt-full-dossier-overlay ${phase === 'open' && open ? 'open' : ''} ${phase === 'closing' ? 'closing' : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Full dossier viewer"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose?.()
+      }}
+    >
+      <div className="dt-full-dossier-shell">
+        <div className="dt-full-dossier-topbar">
+          <div className="dt-full-dossier-title">
+            <div className="dt-full-dossier-kicker">CLASSIFIED • FULL DOSSIER</div>
+            <div className="dt-full-dossier-heading">{dossier?.title ?? 'DOSSIER'}</div>
+            {dossier?.meta && <div className="dt-full-dossier-meta">{dossier.meta}</div>}
+          </div>
+
+          <div className="dt-full-dossier-tools">
+            <button className="dt-dossier-toolbtn" onClick={() => zoomBy(-0.2)} aria-label="Zoom out">-</button>
+            <span className="dt-dossier-zoom">{Math.round(zoom * 100)}%</span>
+            <button className="dt-dossier-toolbtn" onClick={() => zoomBy(0.2)} aria-label="Zoom in">+</button>
+            <button className="dt-dossier-toolbtn" onClick={resetView} aria-label="Reset view">Reset</button>
+            <button className="dt-dossier-closebtn" onClick={() => onClose?.()} aria-label="Close dossier">✕</button>
+          </div>
+        </div>
+
+        <div className="dt-full-dossier-canvas" onWheel={onWheel}>
+          <div
+            className={`dt-full-dossier-stage ${drag ? 'dragging' : ''}`}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+          >
+            {canRender ? (
+              <img
+                className="dt-full-dossier-image"
+                src={dossier.src}
+                alt={dossier.title ?? 'Full dossier'}
+                draggable={false}
+                style={{ transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${zoom})` }}
+              />
+            ) : (
+              <div className="dt-full-dossier-missing">
+                <div className="dt-full-dossier-missing-title">FILE NOT FOUND</div>
+                <div className="dt-full-dossier-missing-sub">This dossier is unavailable in the current build.</div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="dt-full-dossier-hint">Wheel: zoom • Drag: pan • ESC: close</div>
       </div>
     </div>
   )
