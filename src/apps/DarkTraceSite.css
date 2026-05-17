@@ -1437,7 +1437,107 @@ body {
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
 }
 
-/* Dossiers List */
+/* City Info Styles */
+.dt-city-info-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(28, 28, 50, 0.95), rgba(18, 18, 34, 0.98));
+  border: 1px solid rgba(181, 139, 99, 0.3);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.dt-city-info-body h3 {
+  color: var(--accent-color);
+  font-size: 22px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(181, 139, 99, 0.2);
+  padding-bottom: 10px;
+}
+
+.dt-info-section {
+  margin-bottom: 24px;
+}
+
+.dt-info-section h4 {
+  color: #4cafef;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.dt-info-row {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.dt-info-row strong {
+  color: var(--accent-color-light);
+}
+
+.dt-city-info-body p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e8eaed;
+}
+
+.dt-city-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.dt-city-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dt-city-list li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
+  font-family: 'SF Mono', monospace;
+}
+
+.dt-legends-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dt-legend-item {
+  background: rgba(0,0,0,0.2);
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  border-left: 2px solid var(--accent-color);
+}
+
+.dt-legend-item strong {
+  color: var(--accent-color-light);
+}
+
+.dt-recommendation {
+  background: rgba(181, 139, 99, 0.1);
+  padding: 16px;
+  border: 1px dashed var(--accent-color);
+  border-radius: 4px;
+}
+
+.dt-recommendation strong {
+  color: var(--accent-color);
+  display: block;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
 .dt-dossiers-list {
   display: flex;
   flex-direction: column;
@@ -1775,7 +1875,188 @@ body {
   justify-content: flex-end;
 }
 
+/* ===== INTERVIEW ARCHIVE ===== */
+.dt-interview-archive .dt-database-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.dt-interview-viewer {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  flex: 1;
+}
+
+.dt-video-container {
+  position: relative;
+  background: #000;
+  border: 1px solid rgba(76, 175, 239, 0.3);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 100px rgba(76, 175, 239, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dt-main-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dt-video-overlay-info {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 5;
+  font-family: 'SF Mono', monospace;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+
+.dt-rec-indicator {
+  color: #ff4444;
+  animation: pulse 1s infinite;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dt-video-glitch {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.dt-interview-info-panel {
+  background: rgba(181, 139, 99, 0.03);
+  border: 1px solid rgba(181, 139, 99, 0.15);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dt-info-label {
+  display: block;
+  font-size: 9px;
+  color: var(--accent-color);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.dt-info-name {
+  font-size: 18px;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.dt-info-status {
+  font-size: 12px;
+  color: var(--accent-color-light);
+  font-weight: 600;
+}
+
+.dt-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+
+.dt-info-value {
+  font-size: 13px;
+  color: #e8eaed;
+  font-family: 'SF Mono', monospace;
+}
+
+.dt-classified-stamp {
+  margin-top: auto;
+  border: 2px solid rgba(255, 68, 68, 0.3);
+  color: rgba(255, 68, 68, 0.4);
+  padding: 10px;
+  text-align: center;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 2px;
+  transform: rotate(-3deg);
+  user-select: none;
+}
+
+.dt-witness-thumb-mini {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(181, 139, 99, 0.2);
+}
+
+.dt-witness-thumb-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dt-sidebar-witness {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(181, 139, 99, 0.1);
+  transition: all 0.2s ease;
+  min-height: 54px;
+}
+
+.dt-witness-meta-mini {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.dt-witness-id {
+  font-size: 9px;
+  color: #4cafef;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.dt-witness-name {
+  font-size: 13px;
+  color: #e8eaed;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+}
+
+
+
+
 /* Knowledge Base List */
+
 .dt-knowledge-list {
   display: flex;
   flex-direction: column;

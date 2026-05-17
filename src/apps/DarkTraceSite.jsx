@@ -641,9 +641,10 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
               <p className="dt-objective-text">{currentStage.objective}</p>
               <div className="dt-objective-hint">
                 {currentStage.id === 'initial_analysis' ? 
-                  "Откройте раздел «Досье» и изучите полные версии документов всех фигурантов дела." : 
+                  "Откройте раздел «Досье» и «Видеопротоколы» и изучите материалы всех фигурантов дела." : 
                   "Изучите новые материалы в архиве улик и показаний."}
               </div>
+
             </div>
 
 
@@ -1559,42 +1560,25 @@ function DossiersDatabase({ userLevel, onNavigate }) {
     },
 
     {
-
       id: 'DS-008',
-
       name: 'АРТУР ЛЭНГСТОН ПЕЙН',
-
       status: 'СВИДЕТЕЛЬ',
-
       age: 54,
-
       lastSeen: 'г. Ривертон - 21.06.2025',
-
       priority: 'ВЫСОКИЙ',
-
       caseId: 'SB-2025-06-21',
-
       gender: 'Мужской',
-
       birthDate: '18.08.1970',
-
       birthPlace: 'г. Ривертон',
-
       portrait: '/assets/characters/arthur_payne.jpg',
-
       fullDossier: '/assets/dossiers/arthur_payne_dossier.jpg',
-
       summary:
-
         'Уважаемый ривертонский предприниматель, меценат и коллекционер произведений молодых художников. Именно он обнаружил тело Селены Блэк вечером 21 июня при попытке забрать заказанную картину.'
-
     }
-
   ]
 
-
-
   const [selectedDossierId, setSelectedDossierId] = useState(dossiers[0]?.id)
+
 
   const selectedDossier = dossiers.find(d => d.id === selectedDossierId) || dossiers[0]
 
@@ -1711,10 +1695,11 @@ function DossiersDatabase({ userLevel, onNavigate }) {
         
 
         <div className="dt-dossiers-list dt-dossiers-single">
-
           {selectedDossier && (
-
             <div key={selectedDossier.id} className="dt-dossier-item dt-dossier-item-single dt-dossier-swap">
+
+
+
 
               <div className="dt-dossier-header">
 
@@ -2133,164 +2118,166 @@ function FullDossierModal({ open, dossier, onClose }) {
 
 
 /* ═══════════════════════════════════════
-
-   STATEMENTS DATABASE
-
+   STATEMENTS DATABASE -> VIDEO INTERVIEW ARCHIVE
 ═══════════════════════════════════════ */
-
 function StatementsDatabase({ userLevel, onNavigate }) {
+  const { markFileAsReviewed } = useInvestigation()
 
-  const statements = [
-
+  const interviews = [
     {
-
-      id: 'ST-001',
-
+      id: 'INT-001',
       witness: 'ЭВАН АНДЕРВУД',
-
-      date: '21.06.2025',
-
-      time: '19:45',
-
-      location: 'Закусочная Ривертон',
-
-      caseId: 'SB-2025-06-21',
-
-      summary: 'Свидетель видел, как Селена Блэк покинула закусочную одна около 19:30. Необычного поведения не замечено.'
-
+      status: 'ЖЕНИХ / ПОДОЗРЕВАЕМЫЙ',
+      date: '22.06.2025',
+      time: '02:15',
+      location: 'Допросная №4',
+      video: '/assets/interviews/evan_underwood_interview.mp4',
+      
     },
-
     {
-
-      id: 'ST-002',
-
+      id: 'INT-002',
       witness: 'ВЕСПЕР УЭЙНРАЙТ',
-
+      status: 'СВИДЕТЕЛЬ',
       date: '21.06.2025', 
-
-      time: '20:15',
-
-      location: 'Закусочная Ривертон',
-
-      caseId: 'SB-2025-06-21',
-
-      summary: 'Свидетель сообщает о подозрительном автомобиле у парковки закусочной. Темный седан, номера не видны.'
-
+      time: '23:40',
+      location: 'Ривертон ПД',
+      video: '/assets/interviews/vesper_wainwright_interview.mp4',
+      thumbnail: '/assets/characters/vesper_wainwright.jpg'
+    },
+    {
+      id: 'INT-003',
+      witness: 'РОЗАЛИЯ МАРИ АНДЕРВУД',
+      status: 'СВИДЕТЕЛЬ / МАТЬ ПОДОЗРЕВАЕМОГО',
+      date: '22.06.2025',
+      time: '11:20',
+      location: 'Особняк Андервуд',
+      video: '/assets/interviews/rosalia_underwood_interview.mp4',
+      thumbnail: '/assets/characters/rosalia_underwood.jpg'
+    },
+    {
+      id: 'INT-004',
+      witness: 'АЛАРИК ВИНСЕНТ РАВЕНСВУД',
+      status: 'СВИДЕТЕЛЬ / ДРУГ ЖЕРТВЫ',
+      date: '22.06.2025',
+      time: '14:45',
+      location: 'Ривертон ПД',
+      video: '/assets/interviews/alaric_ravenwood_interview.mp4',
+      thumbnail: '/assets/characters/alaric_ravenwood.jpg'
+    },
+    {
+      id: 'INT-005',
+      witness: 'МАРКУС ФЛИНН',
+      status: 'СВИДЕТЕЛЬ',
+      date: '22.06.2025',
+      time: '09:00',
+      location: 'Допросная №2',
+      video: '/assets/interviews/marcus_flynn_interview.mp4',
+      thumbnail: '/assets/characters/marcus_flynn.jpg'
     }
 
   ]
 
+  const [selectedId, setSelectedId] = useState(interviews[0].id)
+  const current = interviews.find(i => i.id === selectedId) || interviews[0]
 
+  const handleSelect = (id) => {
+    setSelectedId(id)
+    markFileAsReviewed(id)
+  }
 
   return (
-
-    <div className="dt-investigative-database">
-
+    <div className="dt-investigative-database dt-interview-archive">
       <div className="dt-database-sidebar">
-
         <div className="dt-sidebar-header">
-
-          <h3>СВИДЕТЕЛИ</h3>
-
+          <h3>ВИДЕОПРОТОКОЛЫ</h3>
         </div>
-
         <div className="dt-sidebar-witnesses">
-
-          {statements.map(statement => (
-
-            <div key={statement.id} className="dt-sidebar-witness">
-
-              <span className="dt-witness-id">{statement.id}</span>
-
-              <span className="dt-witness-name">{statement.witness}</span>
-
-              <span className="dt-witness-time">{statement.time}</span>
-
+          {interviews.map(item => (
+            <div 
+              key={item.id} 
+              className={`dt-sidebar-witness ${selectedId === item.id ? 'active' : ''}`}
+              onClick={() => handleSelect(item.id)}
+            >
+              <div className="dt-witness-meta-mini">
+                <span className="dt-witness-id">{item.id}</span>
+                <span className="dt-witness-name">{item.witness}</span>
+              </div>
             </div>
-
           ))}
-
         </div>
 
       </div>
-
-      
 
       <div className="dt-database-content">
-
         <div className="dt-content-header">
-
-          <h2>ПОКАЗАНИЯ</h2>
-
+          <h2>ВИДЕОПРОТОКОЛЫ ДОПРОСОВ</h2>
           <div className="dt-content-meta">
+            <span>{interviews.length} ЗАПИСЕЙ В АРХИВЕ</span>
+            <span>СТАТУС: ДОСТУП РАЗРЕШЕН</span>
+          </div>
+        </div>
 
-            <span>2 ЗАПИСАННЫХ ПОКАЗАНИЯ</span>
-
-            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
-
+        <div className="dt-interview-viewer">
+          <div className="dt-video-container">
+            <div className="dt-video-overlay-info">
+              <div className="dt-rec-indicator">● REC</div>
+              <div className="dt-cam-label">CAM 01 - INTERROGATION ROOM</div>
+            </div>
+            <video 
+              key={current.video}
+              controls 
+              className="dt-main-video"
+              poster={current.thumbnail}
+            >
+              <source src={current.video} type="video/mp4" />
+              Ваш браузер не поддерживает видео.
+            </video>
+            <div className="dt-video-glitch"></div>
           </div>
 
-        </div>
-
-        
-
-        <div className="dt-statements-list">
-
-          {statements.map(statement => (
-
-            <div key={statement.id} className="dt-statement-item">
-
-              <div className="dt-statement-header">
-
-                <span className="dt-statement-id">{statement.id}</span>
-
-                <span className="dt-witness">{statement.witness}</span>
-
-                <span className="dt-datetime">{statement.date} {statement.time}</span>
-
+          <div className="dt-interview-info-panel">
+            <div className="dt-info-header">
+              <div className="dt-info-title-group">
+                <span className="dt-info-label">ФИО ДОПРАШИВАЕМОГО</span>
+                <h3 className="dt-info-name">{current.witness}</h3>
               </div>
-
-              <div className="dt-statement-body">
-
-                <p className="dt-statement-location">Место: {statement.location}</p>
-
-                <p className="dt-statement-summary">{statement.summary}</p>
-
-                <div className="dt-statement-meta">
-
-                  <span>Дело: {statement.caseId}</span>
-
-                </div>
-
+              <div className="dt-info-status-group">
+                <span className="dt-info-label">СТАТУС</span>
+                <span className="dt-info-status">{current.status}</span>
               </div>
-
-              <div className="dt-statement-actions">
-
-                <button className="dt-btn-small">ПОЛНЫЕ ПОКАЗАНИЯ</button>
-
-              </div>
-
             </div>
 
-          ))}
+            <div className="dt-info-grid">
+              <div className="dt-info-item">
+                <span className="dt-info-label">ДАТА ЗАПИСИ</span>
+                <span className="dt-info-value">{current.date}</span>
+              </div>
+              <div className="dt-info-item">
+                <span className="dt-info-label">ВРЕМЯ НАЧАЛА</span>
+                <span className="dt-info-value">{current.time}</span>
+              </div>
+              <div className="dt-info-item">
+                <span className="dt-info-label">МЕСТО ПРОВЕДЕНИЯ</span>
+                <span className="dt-info-value">{current.location}</span>
+              </div>
+              <div className="dt-info-item">
+                <span className="dt-info-label">ID ПРОТОКОЛА</span>
+                <span className="dt-info-value">{current.id}</span>
+              </div>
+            </div>
 
+            <div className="dt-classified-stamp">TOP SECRET - DT INTERNAL USE ONLY</div>
+          </div>
         </div>
-
       </div>
-
     </div>
-
   )
-
 }
 
-
-
 /* ═══════════════════════════════════════
-
    KNOWLEDGE BASE
-
 ═══════════════════════════════════════ */
+
 
 function KnowledgeBase({ userLevel, onNavigate }) {
 
@@ -2336,9 +2323,32 @@ function KnowledgeBase({ userLevel, onNavigate }) {
 
       summary: 'Лучшие практики проведения эффективных допросов свидетелей.'
 
+    },
+
+    {
+      id: 'KB-004',
+      title: 'ДОСЬЕ: г. Ривертон (Общая Сводка)',
+      category: 'АНАЛИТИКА',
+      lastUpdated: '21.06.2025',
+      summary: 'Справка о городе Ривертон: социальная структура, экономика, локальные риски и оперативные рекомендации для следствия.',
+      isCityInfo: true,
+      population: '~85,000 жителей',
+      economy: 'Исторически — промышленность, лесозаготовка. В настоящее время — банковский сектор ("Ривертон Коммершл Банк"), логистика (речной порт), частное образование (Академия Ривертона).',
+      geography: {
+        west: 'Западный Берег ("Золотые Холмы", Деловой Квартал): Мир "старых денег", дорогих фасадов и корпоративной власти. Здесь заключаются сделки и хранятся главные секреты города. Жизнь здесь течет медленно и подчинена строгим, неписаным правилам.',
+        east: 'Восточный Берег (Старый Город, Промышленные Районы): Мир богемы, рабочих и теней. Узкие, туманные улочки, арт-галереи, антикварные лавки и бары, где можно услышать то, о чем не напишут в "Ривертонских Хрониках". Это место, где кипит настоящая жизнь и проливается настоящая кровь.'
+      },
+      syndrome: 'Неофициальный термин, описывающий специфический менталитет местных жителей. Характеризуется повышенной скрытностью, недоверием к чужакам и властям. Главный принцип синдрома — "не выносить сор из избы". Проблемы решаются внутри семьи или общины, а обращение в полицию считается последним делом и часто — предательством. Этот "кодекс молчания" делает официальные расследования практически безрезультатными и является основной причиной существования нашего агентства.',
+      legends: [
+        { title: 'Река Блэкуотер', text: 'Городская легенда гласит, что река "никогда не отдает своих мертвецов". Утопление — удобный способ скрыть следы для тех, кто знает ее течения.' },
+        { title: 'Переулок Элайджи', text: 'Небольшой переулок в Старом Городе, где, по слухам, можно купить что угодно: от запрещенных веществ до фальшивых документов. Полиция предпочитает туда не заглядывать.' },
+        { title: 'Фестиваль Потерянных Фонарей', text: 'Ежегодный осенний фестиваль, когда жители спускают на воду фонарики в память об ушедших. Считается, что в эту ночь город "говорит" со своими призраками, и можно узнать много старых тайн, если слушать правильных людей.' }
+      ],
+      recommendation: 'В Ривертоне фасад — это все. Доверяйте только проверенным фактам, ищите противоречия и всегда помните: чем идеальнее картинка, тем страшнее то, что она скрывает.'
     }
 
   ]
+
 
 
 
@@ -2384,11 +2394,12 @@ function KnowledgeBase({ userLevel, onNavigate }) {
 
           <div className="dt-content-meta">
 
-            <span>3 СТАТЬИ</span>
+            <span>{articles.length} СТАТЬИ</span>
 
-            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 15.06.2025</span>
+            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
 
           </div>
+
 
         </div>
 
@@ -2416,7 +2427,38 @@ function KnowledgeBase({ userLevel, onNavigate }) {
 
                 <p>{article.summary}</p>
 
+                {article.isCityInfo && (
+                  <div className="dt-kb-city-details">
+                    <div className="dt-kb-city-row"><strong>Население:</strong> {article.population}</div>
+                    <div className="dt-kb-city-row"><strong>Основа экономики:</strong> {article.economy}</div>
+
+                    <h4>Социальная структура и география</h4>
+                    <ul className="dt-kb-city-list">
+                      <li>{article.geography.west}</li>
+                      <li>{article.geography.east}</li>
+                    </ul>
+
+                    <h4>"Ривертонский Синдром" и Кодекс Молчания</h4>
+                    <p>{article.syndrome}</p>
+
+                    <h4>Местные легенды и "Красные флаги" для детектива</h4>
+                    <div className="dt-kb-city-legends">
+                      {article.legends.map((legend, idx) => (
+                        <div key={idx} className="dt-kb-city-legend-item">
+                          <strong>{legend.title}:</strong> {legend.text}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="dt-kb-city-recommendation">
+                      <strong>Рекомендация для оперативной работы:</strong>
+                      <p>{article.recommendation}</p>
+                    </div>
+                  </div>
+                )}
+
               </div>
+
 
               <div className="dt-knowledge-actions">
 

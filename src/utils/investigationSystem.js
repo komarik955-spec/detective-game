@@ -6,7 +6,7 @@ const INITIAL_STAGE = {
   id: 'initial_analysis',
   title: 'Initial Personnel Analysis',
   objective: 'Review all available personnel dossiers.',
-    requiredFiles: [
+  requiredFiles: [
     'selena_black_dossier',
     'evan_underwood_dossier',
     'vesper_wainwright_dossier',
@@ -14,7 +14,12 @@ const INITIAL_STAGE = {
     'alaric_ravenwood_dossier',
     'rosalia_underwood_dossier',
     'michael_elliot_dossier',
-    'arthur_payne_dossier'
+    'arthur_payne_dossier',
+    'INT-001',
+    'INT-002',
+    'INT-003',
+    'INT-004',
+    'INT-005'
   ],
 
   nextStageId: 'evidence_collection'

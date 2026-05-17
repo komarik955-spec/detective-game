@@ -3,18 +3,11 @@
 
 
 import MailApp from '../apps/MailApp'
-
-
-
 import DarkTraceSite from '../apps/DarkTraceSite'
-
-
-
 import DarkTracePublic from '../apps/DarkTracePublic'
-
-
-
+import PharmaNet from '../apps/PharmaNet'
 import { SecondMailContext } from '../components/Desktop'
+
 
 
 
@@ -425,34 +418,21 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
       } else if (value.includes('news')) {
-
-
-
         updateTab(activeId, {
-
-
-
           page: 'news',
-
-
-
           url: 'https://news.darktrace.agency',
-
-
-
           title: 'NEWS',
-
-
-
           loading: false
-
-
-
         })
-
-
-
+      } else if (value.includes('pharmanet.com') || value.includes('pharma')) {
+        updateTab(activeId, {
+          page: 'pharma',
+          url: 'https://pharmanet.com',
+          title: 'PharmaNet Online',
+          loading: false
+        })
       } else {
+
 
 
 
@@ -1001,12 +981,9 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
         {activeTab && activeTab.page === 'darktrace-public' && <DarkTracePublic onLogin={openDarkTraceLogin} />}
-
-
-
-
-
+        {activeTab && activeTab.page === 'pharma' && <PharmaNet />}
       </div>
+
 
 
 
