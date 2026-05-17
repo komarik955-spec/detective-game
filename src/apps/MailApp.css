@@ -34,13 +34,15 @@
 .mail-root {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  background: var(--mail-bg);
-  color: var(--mail-text);
-  font-family: var(--mail-font);
+  width: 100%;
+  min-height: 100%;
+  background: #131314;
+  color: #e8eaed;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
   overflow: hidden;
-  font-size: 14px;
 }
+
+
 
 /* ═══════════════════════════════════════
    TOP BAR

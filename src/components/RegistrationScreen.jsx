@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './RegistrationScreen.css'
+import { detectGender, getAgentAvatarPath } from '../utils/agentProfile'
 
 export default function RegistrationScreen({ onRegistration }) {
   const [formData, setFormData] = useState({
@@ -21,11 +22,16 @@ export default function RegistrationScreen({ onRegistration }) {
     const employeeId = `DT-${Math.floor(Math.random() * 9000) + 1000}`
     
     // Создаем объект с данными игрока
+    const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`
+    const gender = detectGender(fullName)
+    const avatarPath = getAgentAvatarPath(fullName)
     const playerData = {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
-      fullName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
-      employeeId
+      fullName,
+      employeeId,
+      gender,
+      avatarPath,
     }
 
     // Имитируем обработку

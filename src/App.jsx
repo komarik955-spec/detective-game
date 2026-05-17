@@ -21,12 +21,27 @@ export default function App() {
     }
 
     setTimeout(() => {
+      const saved = localStorage.getItem('dt_playerData')
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          if (parsed?.fullName && parsed?.employeeId) {
+            setPlayerData(parsed)
+            setStage('login')
+            return
+          }
+        } catch {}
+      }
+
       setStage('registration')
     }, 2000)
   }, [])
 
   const handleRegistration = (data) => {
     setPlayerData(data)
+    try {
+      localStorage.setItem('dt_playerData', JSON.stringify(data))
+    } catch {}
     setStage('login')
   }
 

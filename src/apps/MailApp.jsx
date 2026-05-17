@@ -17,81 +17,43 @@ import { saveFileToDesktop } from '../utils/fileActions'
 ═══════════════════════════════════════ */
 
 const getInitialMails = (playerData) => [
-
   {
-
     id: 1,
-
     folder: 'inbox',
-
     tab: 'primary',
-
     starred: false,
-
     read: false,
-
     from: {
-
       name: 'Дэвид Слейт',
-
       email: 'd.slate@ashford-pd.gov',
-
       avatar: '👮'
-
     },
-
     subject: 'Инструктаж по делу',
-
     preview: `${playerData?.firstName || 'Детектив'}, все материалы по делу №DT-2025-06-21-SB загружены в систему. Ознакомьтесь...`,
-
     date: '09:03',
-
-
 
     body: `Добро пожаловать, детектив ${playerData?.fullName || ''}.
 
-
-
 Вы вошли в систему Dark Trace.
 
-
-
 Первое дело уже ожидает вас.
-
 Ознакомьтесь с письмом.
-
-
 
 И помните: правда редко лежит на поверхности.
 
 
-
-
-
 Данные для доступа к системе:
-
 Username: ${playerData?.firstName?.toLowerCase() || 'detective'}
-
 Password: archive22
 
 
-
-
-
 — Дэвид Слейт
-
 `,
 
-
-
     attachments: [
-
       {
-
         id: 'mail-att-001',
-
         name: 'Приветственное письмо.jpg',
-
         type: 'image',
 
         size: '2.4 МБ',
@@ -109,6 +71,43 @@ Password: archive22
     ]
 
   },
+
+  {
+    id: 999,
+    folder: 'inbox', 
+    tab: 'primary', 
+    starred: false, 
+    read: false,
+    hidden: true,
+    triggerStage: 'initial_analysis',
+    from: { 
+      name: 'Дэвид Слейт',
+      email: 'd.slate@ashford-pd.gov',
+      avatar: '👮' 
+    },
+    subject: 'НОВЫЕ МАТЕРИАЛЫ: Улики и показания',
+    preview: 'Детектив, отличная работа с досье. Я разблокировал доступ к новым материалам...',
+    date: '10:15',
+    body: `Детектив,
+
+Отличная работа с анализом личного состава. Это дало нам необходимую базу.
+
+Как и обещал, я разблокировал доступ к новым материалам дела. В системе Dark Trace теперь доступны:
+- Фотографии с места происшествия (Раздел "Улики")
+- Первичные протоколы допросов (Раздел "Показания")
+- Дополнительные отчеты экспертов
+
+Ваша следующая задача:
+1. Изучить все новые фотографии в архиве улик.
+2. Сопоставить их с показаниями свидетелей.
+
+Старые файлы остаются доступны в архиве. Продолжайте копать.
+
+— Дэвид Слейт
+Шеф-детектив`,
+    attachments: []
+  },
+
 
 
 
@@ -1242,13 +1241,15 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
     const secondMailShown = sessionStorage.getItem('secondMailShown') === 'true'
 
+    let initialMails = getInitialMails(playerData)
+
     if (savedMails) {
 
       const parsed = JSON.parse(savedMails)
 
       // Если второе письмо уже было показано ранее, оно должно быть видимым
 
-      return parsed.map(mail => 
+      initialMails = parsed.map(mail => 
 
         mail.id === 5 && secondMailShown ? { ...mail, hidden: false } : mail
 
@@ -1256,7 +1257,24 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
     }
 
-    return getInitialMails(playerData)
+    // Check for pending investigation emails from progression system
+    const pendingEmail = localStorage.getItem('pendingInvestigationEmail')
+    if (pendingEmail) {
+      try {
+        const emailData = JSON.parse(pendingEmail)
+        // Check if this email hasn't been added yet
+        const emailExists = initialMails.some(m => m.subject === emailData.subject && m.from.name === emailData.from.name)
+        if (!emailExists) {
+          initialMails = [emailData, ...initialMails]
+          // Clear the pending email after injecting
+          localStorage.removeItem('pendingInvestigationEmail')
+        }
+      } catch (e) {
+        console.error('Failed to parse pending investigation email:', e)
+      }
+    }
+
+    return initialMails
 
   })
 
@@ -1284,7 +1302,38 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
 
 
+  // Handle investigation stage completions
+  useEffect(() => {
+    const handleStageComplete = (e) => {
+      const { stageId } = e.detail;
+
+      // Look for hidden mails that should be triggered by this stage
+      setMails(prev => {
+        const hasTriggeredMail = prev.some(m => m.triggerStage === stageId && m.hidden);
+        if (!hasTriggeredMail) return prev;
+        
+        // Show the notification via callback
+        if (onSecondMailArrived) {
+          // Small delay for dramatic effect
+          setTimeout(() => {
+            onSecondMailArrived();
+            const audio = new Audio('/assets/sounds/notification.mp3');
+            audio.play().catch(() => {});
+          }, 1500);
+        }
+        
+        return prev.map(m => 
+          m.triggerStage === stageId ? { ...m, hidden: false } : m
+        );
+      });
+    };
+
+    window.addEventListener('dt_stage_completed', handleStageComplete);
+    return () => window.removeEventListener('dt_stage_completed', handleStageComplete);
+  }, [onSecondMailArrived]);
+
   // Сохраняем письма в sessionStorage при каждом изменении
+
 
   useEffect(() => {
 

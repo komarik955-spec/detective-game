@@ -175,38 +175,25 @@ function PasswordNoteContent() {
 
 
 export const WINDOW_REGISTRY = {
-
   // Здесь перечислены приложения/окна, которые можно открыть с рабочего стола.
-
   // Для нового ярлыка добавь объект сюда и id в DESKTOP_ICONS ниже.
-
   mycomputer: {
-
     title: 'My Computer',
-
     icon: '🖥️',
-
     content: <MyComputerContent />,
-
-    defaultWidth: 600,
-
-    defaultHeight: 400,
-
+    defaultWidth: 800,
+    defaultHeight: 550,
   },
 
-
-
   recycle: {
-
     title: 'Recycle Bin',
-
     icon: '🗑️',
 
     content: <RecycleBinContent />,
 
-    defaultWidth: 700,
+    defaultWidth: 800,
 
-    defaultHeight: 500,
+    defaultHeight: 550,
 
   },
 
@@ -220,9 +207,9 @@ export const WINDOW_REGISTRY = {
 
     content: <Case001Content />,
 
-    defaultWidth: 860,
+    defaultWidth: 1000,
 
-    defaultHeight: 560,
+    defaultHeight: 700,
 
   },
 
@@ -238,9 +225,9 @@ export const WINDOW_REGISTRY = {
 
     content: (playerData) => <Browser playerData={playerData} />,
 
-    defaultWidth: 1100,
+    defaultWidth: 1200,
 
-    defaultHeight: 720,
+    defaultHeight: 800,
 
   },
 
@@ -262,11 +249,12 @@ export const WINDOW_REGISTRY = {
 
     ),
 
-    defaultWidth: 550,
+    defaultWidth: 600,
 
     defaultHeight: 850,
 
   },
+
 
 
 

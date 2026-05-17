@@ -551,12 +551,9 @@ html, body, #root {
   scrollbar-gutter: stable;
 }
 
-/* Universal fix: allow app roots to grow beyond viewport when needed.
-   Many app roots use height:100% + overflow:hidden, which can clip long content
-   and prevent the window scroll container from ever becoming scrollable. */
+/* Universal fix: allow app roots to grow beyond viewport when needed. */
 .win-body > * {
-  min-height: 100% !important;
-  height: auto !important;
+  min-height: 100%;
 }
 
 /* Universal cinematic scrollbar for all app/window scroll areas */

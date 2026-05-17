@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="440" viewBox="0 0 360 440">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1326"/>
+      <stop offset="1" stop-color="#040711"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="20%" r="70%">
+      <stop offset="0" stop-color="#4cafef" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#4cafef" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" />
+      <feColorMatrix type="matrix" values="
+        0 0 0 0 0
+        0 0 0 0 0
+        0 0 0 0 0
+        0 0 0 .22 0" />
+    </filter>
+    <linearGradient id="scan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="360" height="440" rx="10" fill="url(#bg)"/>
+  <rect width="360" height="440" rx="10" fill="url(#glow)"/>
+
+  <!-- Neutral noir silhouette -->
+  <g transform="translate(0,6)">
+    <path fill="#0a0f1f" d="M180 86c-40 0-74 34-74 76 0 24 10 45 26 60-12 10-20 24-24 42l-10 42h164l-10-42c-4-18-12-32-24-42 16-15 26-36 26-60 0-42-34-76-74-76z"/>
+    <path fill="#070a14" d="M100 300l-14 78h188l-14-78c-3-16-12-29-25-38l-35 42-20-12-20 12-35-42c-13 9-22 22-25 38z"/>
+    <path fill="none" stroke="#4cafef" stroke-opacity="0.20" stroke-width="2" d="M106 298l30-36 44 52 44-52 30 36"/>
+  </g>
+
+  <!-- Scanlines -->
+  <g opacity="0.25">
+    <rect x="0" y="0" width="360" height="440" fill="url(#scan)"/>
+    <g fill="#ffffff" opacity="0.04">
+      <rect x="0" y="18" width="360" height="2"/>
+      <rect x="0" y="44" width="360" height="2"/>
+      <rect x="0" y="70" width="360" height="2"/>
+      <rect x="0" y="96" width="360" height="2"/>
+      <rect x="0" y="122" width="360" height="2"/>
+      <rect x="0" y="148" width="360" height="2"/>
+      <rect x="0" y="174" width="360" height="2"/>
+      <rect x="0" y="200" width="360" height="2"/>
+      <rect x="0" y="226" width="360" height="2"/>
+      <rect x="0" y="252" width="360" height="2"/>
+      <rect x="0" y="278" width="360" height="2"/>
+      <rect x="0" y="304" width="360" height="2"/>
+      <rect x="0" y="330" width="360" height="2"/>
+      <rect x="0" y="356" width="360" height="2"/>
+      <rect x="0" y="382" width="360" height="2"/>
+      <rect x="0" y="408" width="360" height="2"/>
+    </g>
+  </g>
+
+  <!-- Film grain -->
+  <rect width="360" height="440" filter="url(#grain)" opacity="0.9"/>
+  <rect x="10" y="10" width="340" height="420" rx="8" fill="none" stroke="#4cafef" stroke-opacity="0.20"/>
+</svg>

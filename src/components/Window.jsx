@@ -4,6 +4,44 @@ import { useWM } from './WindowManager'
 const MIN_W    = 280
 const MIN_H    = 180
 const TASKBAR  = 44
+const MARGIN   = 12
+
+function getViewport() {
+  return {
+    w: window.innerWidth,
+    h: Math.max(0, window.innerHeight - TASKBAR),
+  }
+}
+
+function clamp(n, min, max) {
+  return Math.min(max, Math.max(min, n))
+}
+
+function clampSize(width, height) {
+  const vp = getViewport()
+  const maxW = Math.max(MIN_W, Math.floor(vp.w - MARGIN * 2))
+  const maxH = Math.max(MIN_H, Math.floor(vp.h - MARGIN * 2))
+  return {
+    w: clamp(Math.floor(width), MIN_W, maxW),
+    h: clamp(Math.floor(height), MIN_H, maxH),
+  }
+}
+
+function centerPos(w, h) {
+  const vp = getViewport()
+  return {
+    x: Math.floor((vp.w - w) / 2),
+    y: Math.floor((vp.h - h) / 2),
+  }
+}
+
+function clampPos(x, y, w, h) {
+  const vp = getViewport()
+  return {
+    x: clamp(Math.floor(x), 0, Math.max(0, vp.w - w)),
+    y: clamp(Math.floor(y), 0, Math.max(0, vp.h - h)),
+  }
+}
 
 export default function Window({
   id, title, icon, children,
@@ -16,27 +54,45 @@ export default function Window({
   const isActive = activeId === id
 
  /* Position + size */
-const [size, setSize] = useState({
-  w: defaultWidth,
-  h: defaultHeight,
-})
+const [size, setSize] = useState(() => clampSize(defaultWidth, defaultHeight))
 
-const [pos, setPos] = useState({
-  x: (window.innerWidth - defaultWidth) / 2,
-  y: (window.innerHeight - defaultHeight) / 2,
+const [pos, setPos] = useState(() => {
+  const s = clampSize(defaultWidth, defaultHeight)
+  const desired = (defaultX != null && defaultY != null)
+    ? { x: defaultX, y: defaultY }
+    : centerPos(s.w, s.h)
+  return clampPos(desired.x, desired.y, s.w, s.h)
 })
 
 const [maximized, setMaximized] = useState(false)
 const [prevSnap, setPrevSnap] = useState(null)
 const [minimizing, setMinimizing] = useState(false)
 
-/* Center on mount */
+/* Initialize / re-center on open */
 useEffect(() => {
-  setPos({
-    x: (window.innerWidth - defaultWidth) / 2,
-    y: (window.innerHeight - defaultHeight) / 2,
-  })
-}, [defaultWidth, defaultHeight])
+  const s = clampSize(defaultWidth, defaultHeight)
+  setSize(s)
+
+  const desired = (defaultX != null && defaultY != null)
+    ? { x: defaultX, y: defaultY }
+    : centerPos(s.w, s.h)
+  setPos(clampPos(desired.x, desired.y, s.w, s.h))
+}, [defaultWidth, defaultHeight, defaultX, defaultY])
+
+/* Keep window inside viewport on resize */
+useEffect(() => {
+  function onResize() {
+    if (maximized) return
+    setSize(prev => {
+      const next = clampSize(prev.w, prev.h)
+      setPos(p => clampPos(p.x, p.y, next.w, next.h))
+      return next
+    })
+  }
+
+  window.addEventListener('resize', onResize)
+  return () => window.removeEventListener('resize', onResize)
+}, [maximized])
 
   /* Interaction refs */
   const dragging   = useRef(false)
@@ -96,13 +152,10 @@ useEffect(() => {
       if (dir.includes('w')) { nw = Math.max(MIN_W, ow - dx); nx = ox + ow - nw }
       if (dir.includes('n')) { nh = Math.max(MIN_H, oh - dy); ny = oy + oh - nh }
 
-      nw = Math.min(nw, window.innerWidth)
-      nh = Math.min(nh, window.innerHeight - TASKBAR)
-      nx = Math.max(0, nx)
-      ny = Math.max(0, ny)
-
-      setPos({ x: nx, y: ny })
-      setSize({ w: nw, h: nh })
+      const cs = clampSize(nw, nh)
+      const cp = clampPos(nx, ny, cs.w, cs.h)
+      setPos(cp)
+      setSize(cs)
     }
 
     function onUp() {
@@ -121,8 +174,10 @@ useEffect(() => {
   /* Maximize / restore */
   function toggleMax() {
     if (maximized) {
-      setPos({ x: prevSnap.x, y: prevSnap.y })
-      setSize({ w: prevSnap.w, h: prevSnap.h })
+      const s = clampSize(prevSnap.w, prevSnap.h)
+      const p = clampPos(prevSnap.x, prevSnap.y, s.w, s.h)
+      setPos(p)
+      setSize(s)
       setMaximized(false)
     } else {
       setPrevSnap({ ...pos, ...size })
@@ -134,7 +189,9 @@ useEffect(() => {
     ? { left: 0, top: 0, width: '100vw', height: `calc(100vh - ${TASKBAR}px)`, zIndex, borderRadius: 0 }
     : { left: pos.x, top: pos.y, width: size.w, height: size.h, zIndex }
 
+
   const handles = ['n','ne','e','se','s','sw','w','nw']
+
 
   return (
   <div
