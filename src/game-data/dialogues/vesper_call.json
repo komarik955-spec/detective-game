@@ -1,0 +1,8 @@
+[
+  { "speaker": "vesper", "text": "Здравствуйте. Вы на связи?", "audio": "vesper_01.mp3" },
+  { "speaker": "player", "text": "Да. Говорите." },
+  { "speaker": "vesper", "text": "У нас есть новое дело. Журналистка. Следов почти нет.", "audio": "vesper_02.mp3" },
+  { "speaker": "player", "text": "Имя?" },
+  { "speaker": "vesper", "text": "Селена Блэк. Последний звонок — 22:13.", "audio": "vesper_03.mp3" }
+]
+

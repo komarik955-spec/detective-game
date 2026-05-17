@@ -1,0 +1,29 @@
+{
+  "id": 1,
+  "folder": "inbox",
+  "tab": "primary",
+  "starred": false,
+  "read": false,
+  "from": {
+    "name": "Дэвид Слейт",
+    "email": "d.slate@ashford-pd.gov",
+    "avatar": "👮"
+  },
+  "subject": "Инструктаж по делу",
+  "preview": "{{player.firstName}}, все материалы по делу №DT-2025-06-21-SB загружены в систему. Ознакомьтесь...",
+  "date": "09:03",
+  "body": "Добро пожаловать, детектив {{player.fullName}}.\n\nВы вошли в систему Dark Trace.\n\nПервое дело уже ожидает вас.\nОзнакомьтесь с письмом.\n\nИ помните: правда редко лежит на поверхности.\n\n\nДанные для доступа к системе:\nUsername: {{player.firstNameLower}}\nPassword: archive22\n\n\n— Дэвид Слейт\n",
+  "attachments": [
+    {
+      "id": "mail-att-001",
+      "name": "Приветственное письмо.jpg",
+      "type": "image",
+      "size": "2.4 МБ",
+      "icon": "🖼️",
+      "url": "/assets/images/case-file.jpg",
+      "downloadable": true,
+      "saveToDesktop": true
+    }
+  ]
+}
+

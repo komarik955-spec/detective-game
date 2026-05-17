@@ -726,20 +726,28 @@ function DossiersDatabase({ userLevel, onNavigate }) {
     {
       id: 'DS-001',
       name: 'СЕЛЕНА БЛЭК',
-      status: 'ПРОПАЛА',
+      status: 'ЖЕРТВА',
       age: 28,
       lastSeen: 'Закусочная Ривертон - 21.06.2025',
       priority: 'ВЫСОКИЙ',
-      caseId: 'SB-2025-06-21'
+      caseId: 'SB-2025-06-21',
+      gender: 'Женский',
+      birthDate: '22.01.1998',
+      birthPlace: 'г. Ривертон',
+      portrait: '/assets/characters/selena_black.jpg'
     },
     {
-      id: 'DS-002', 
+      id: 'DS-002',
       name: 'ЭВАН АНДЕРВУД',
       status: 'СВИДЕТЕЛЬ',
       age: 32,
       lastSeen: 'Закусочная Ривертон - 21.06.2025',
       priority: 'СРЕДНИЙ',
-      caseId: 'SB-2025-06-21'
+      caseId: 'SB-2025-06-21',
+      gender: 'Мужской',
+      birthDate: '15.08.1993',
+      birthPlace: 'г. Ривертон',
+      portrait: '/assets/evan_underwood.jpg'
     },
     {
       id: 'DS-003',
@@ -748,7 +756,11 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       age: 35,
       lastSeen: 'Центр города - 20.06.2025',
       priority: 'СРЕДНИЙ',
-      caseId: 'SB-2025-06-21'
+      caseId: 'SB-2025-06-21',
+      gender: 'Мужской',
+      birthDate: '03.12.1990',
+      birthPlace: 'г. Ривертон',
+      portrait: '/assets/маркус_флинн.jpg'
     },
     {
       id: 'DS-004',
@@ -757,7 +769,11 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       age: 29,
       lastSeen: 'Закусочная Ривертон - 21.06.2025',
       priority: 'НИЗКИЙ',
-      caseId: 'SB-2025-06-21'
+      caseId: 'SB-2025-06-21',
+      gender: 'Женский',
+      birthDate: '27.04.1996',
+      birthPlace: 'г. Ривертон',
+      portrait: '/assets/vesper_wainright.jpg'
     }
   ]
 
@@ -793,18 +809,51 @@ function DossiersDatabase({ userLevel, onNavigate }) {
               <div className="dt-dossier-header">
                 <span className="dt-dossier-id">{dossier.id}</span>
                 <span className={`dt-status ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
-                <span className={`dt-priority ${dossier.priority.toLowerCase()}`}>{dossier.priority}</span>
               </div>
               <div className="dt-dossier-body">
-                <h3>{dossier.name}</h3>
-                <div className="dt-dossier-info">
-                  <span>Возраст: {dossier.age}</span>
-                  <span>Дело: {dossier.caseId}</span>
+                <div className="dt-dossier-left">
+                  <h3>{dossier.name}</h3>
+                  <div className="dt-dossier-fields">
+                    <div className="dt-dossier-field">
+                      <span className="dt-field-label">Пол</span>
+                      <span className="dt-field-value">{dossier.gender}</span>
+                    </div>
+                    <div className="dt-dossier-field">
+                      <span className="dt-field-label">Возраст</span>
+                      <span className="dt-field-value">{dossier.age} лет</span>
+                    </div>
+                    <div className="dt-dossier-field">
+                      <span className="dt-field-label">Дата рождения</span>
+                      <span className="dt-field-value">{dossier.birthDate}</span>
+                    </div>
+                    <div className="dt-dossier-field">
+                      <span className="dt-field-label">Место рождения</span>
+                      <span className="dt-field-value">{dossier.birthPlace}</span>
+                    </div>
+                    <div className="dt-dossier-field">
+                      <span className="dt-field-label">Последний раз замечена</span>
+                      <span className="dt-field-value">{dossier.lastSeen}</span>
+                    </div>
+                    <div className="dt-dossier-field">
+                      <span className="dt-field-label">Дело</span>
+                      <span className="dt-field-value">{dossier.caseId}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="dt-dossier-location">Последний раз видели: {dossier.lastSeen}</p>
-              </div>
-              <div className="dt-dossier-actions">
-                <button className="dt-btn-small">ПОЛНОЕ ДОСЬЕ</button>
+                <div className="dt-dossier-right">
+                  <div className="dt-dossier-portrait">
+                    <img 
+                      src={dossier.portrait}
+                      alt={dossier.name}
+                      className="dt-portrait-image"
+                    />
+                  </div>
+                  <div className="dt-dossier-status-panel">
+                    <span className={`dt-status dt-status-stack ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
+                    <span className={`dt-priority ${dossier.priority.toLowerCase()}`}>{dossier.priority}</span>
+                  </div>
+                  <button className="dt-btn-premium">ПОЛНОЕ ДОСЬЕ</button>
+                </div>
               </div>
             </div>
           ))}

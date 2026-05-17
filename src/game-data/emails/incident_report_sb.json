@@ -1,0 +1,40 @@
+{
+  "id": 5,
+  "folder": "inbox",
+  "tab": "primary",
+  "starred": false,
+  "read": false,
+  "hidden": true,
+  "from": {
+    "name": "Детектив Джон Миллер",
+    "email": "jmiller@rivertonpd.gov",
+    "avatar": "👮"
+  },
+  "subject": "ПРЕДВАРИТЕЛЬНЫЙ РАПОРТ О ПРОИСШЕСТВИИ (Дело №DT-2025-06-21-SB)",
+  "preview": "Детектив, направляю вам скан предварительного рапорта о происшествии по делу №DT-2025...",
+  "date": "09:13",
+  "body": "Детектив,\n\nНаправляю вам скан предварительного рапорта о происшествии по делу №DT-2025-06-21-SB для ознакомления.\n\nВсе материалы, полученные на данный момент, приложены к письму.\n\n— Детектив Джон Миллер\nДепартамент полиции города Ривертон\n",
+  "attachments": [
+    {
+      "id": "mail-att-002",
+      "name": "Riverton_PD_Incident_Report_0078.pdf",
+      "type": "pdf",
+      "size": "2.4 МБ",
+      "icon": "📄",
+      "url": "/assets/images/Riverton_PD_Incident_Report_0078.jpg",
+      "downloadable": true,
+      "saveToDesktop": true
+    },
+    {
+      "id": "mail-att-003",
+      "name": "Заметка с телефона.jpg",
+      "type": "image",
+      "size": "1.8 МБ",
+      "icon": "🖼️",
+      "url": "/assets/images/phone_note_final.jpg",
+      "downloadable": true,
+      "saveToDesktop": true
+    }
+  ]
+}
+

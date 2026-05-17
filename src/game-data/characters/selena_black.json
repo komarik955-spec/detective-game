@@ -1,0 +1,14 @@
+{
+  "id": "selena_black",
+  "name": "Селена Блэк",
+  "age": 27,
+  "status": "Мертва",
+  "occupation": "Журналистка",
+  "description": "Расследовала коррупцию и исчезла при попытке опубликовать материалы.",
+  "notes": [
+    "Последний звонок — 22:13",
+    "Связана с ORPHEUS"
+  ],
+  "image": "/assets/characters/selena.jpg"
+}
+
