@@ -1260,6 +1260,10 @@ body {
   gap: 12px;
 }
 
+.dt-dossiers-single {
+  gap: 0;
+}
+
 .dt-dossier-item {
   position: relative;
   background: linear-gradient(180deg, rgba(28, 28, 50, 0.92), rgba(18, 18, 34, 0.92));
@@ -1299,6 +1303,27 @@ body {
 .dt-dossier-item > * {
   position: relative;
   z-index: 1;
+}
+
+.dt-dossier-swap {
+  animation: dt-dossier-fade 180ms ease;
+}
+
+@keyframes dt-dossier-fade {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dt-dossier-swap {
+    animation: none;
+  }
 }
 
 .dt-dossier-header {
@@ -1652,12 +1677,27 @@ body {
   transition: all 0.2s ease;
 }
 
+.dt-sidebar-case {
+  opacity: 0.72;
+}
+
+.dt-sidebar-case.active {
+  opacity: 1;
+  background: rgba(76, 175, 239, 0.09);
+  border-color: rgba(76, 175, 239, 0.35);
+  box-shadow: 0 0 18px rgba(76, 175, 239, 0.12);
+}
+
 .dt-sidebar-case:hover,
 .dt-sidebar-witness:hover,
 .dt-sidebar-evidence-item:hover,
 .dt-sidebar-category:hover {
   background: rgba(76, 175, 239, 0.1);
   border-color: rgba(76, 175, 239, 0.3);
+}
+
+.dt-sidebar-case:hover {
+  opacity: 0.92;
 }
 
 .dt-case-id,

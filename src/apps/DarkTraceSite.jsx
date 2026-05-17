@@ -747,12 +747,12 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       gender: 'Мужской',
       birthDate: '15.08.1993',
       birthPlace: 'г. Ривертон',
-      portrait: '/assets/evan_underwood.jpg'
+      portrait: '/assets/characters/evan_underwood.jpg'
     },
     {
       id: 'DS-003',
       name: 'МАРКУС ФЛИНН',
-      status: 'ЗАИНТЕРЕСОВАННОЕ ЛИЦО',
+      status: 'СВИДЕТЕЛЬ',
       age: 35,
       lastSeen: 'Центр города - 20.06.2025',
       priority: 'СРЕДНИЙ',
@@ -760,7 +760,7 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       gender: 'Мужской',
       birthDate: '03.12.1990',
       birthPlace: 'г. Ривертон',
-      portrait: '/assets/маркус_флинн.jpg'
+      portrait: '/assets/characters/marcus_flynn.jpg'
     },
     {
       id: 'DS-004',
@@ -773,9 +773,12 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       gender: 'Женский',
       birthDate: '27.04.1996',
       birthPlace: 'г. Ривертон',
-      portrait: '/assets/vesper_wainright.jpg'
+      portrait: '/assets/characters/vesper_wainwright.jpg'
     }
   ]
+
+  const [selectedDossierId, setSelectedDossierId] = useState(dossiers[0]?.id)
+  const selectedDossier = dossiers.find(d => d.id === selectedDossierId) || dossiers[0]
 
   return (
     <div className="dt-investigative-database">
@@ -784,13 +787,25 @@ function DossiersDatabase({ userLevel, onNavigate }) {
           <h3>АКТИВНЫЕ ДЕЛА</h3>
         </div>
         <div className="dt-sidebar-cases">
-          {dossiers.map(dossier => (
-            <div key={dossier.id} className="dt-sidebar-case">
-              <span className="dt-case-id">{dossier.id}</span>
-              <span className="dt-case-name">{dossier.name}</span>
-              <span className={`dt-case-status ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
-            </div>
-          ))}
+          {dossiers.map(dossier => {
+            const isActive = dossier.id === selectedDossierId
+            return (
+              <div
+                key={dossier.id}
+                className={`dt-sidebar-case ${isActive ? 'active' : ''}`}
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedDossierId(dossier.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') setSelectedDossierId(dossier.id)
+                }}
+              >
+                <span className="dt-case-id">{dossier.id}</span>
+                <span className="dt-case-name">{dossier.name}</span>
+                <span className={`dt-case-status ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
+              </div>
+            )
+          })}
         </div>
       </div>
       
@@ -803,60 +818,60 @@ function DossiersDatabase({ userLevel, onNavigate }) {
           </div>
         </div>
         
-        <div className="dt-dossiers-list">
-          {dossiers.map(dossier => (
-            <div key={dossier.id} className="dt-dossier-item">
+        <div className="dt-dossiers-list dt-dossiers-single">
+          {selectedDossier && (
+            <div key={selectedDossier.id} className="dt-dossier-item dt-dossier-item-single dt-dossier-swap">
               <div className="dt-dossier-header">
-                <span className="dt-dossier-id">{dossier.id}</span>
-                <span className={`dt-status ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
+                <span className="dt-dossier-id">{selectedDossier.id}</span>
+                <span className={`dt-status ${selectedDossier.status.toLowerCase()}`}>{selectedDossier.status}</span>
               </div>
               <div className="dt-dossier-body">
                 <div className="dt-dossier-left">
-                  <h3>{dossier.name}</h3>
+                  <h3>{selectedDossier.name}</h3>
                   <div className="dt-dossier-fields">
                     <div className="dt-dossier-field">
                       <span className="dt-field-label">Пол</span>
-                      <span className="dt-field-value">{dossier.gender}</span>
+                      <span className="dt-field-value">{selectedDossier.gender}</span>
                     </div>
                     <div className="dt-dossier-field">
                       <span className="dt-field-label">Возраст</span>
-                      <span className="dt-field-value">{dossier.age} лет</span>
+                      <span className="dt-field-value">{selectedDossier.age} лет</span>
                     </div>
                     <div className="dt-dossier-field">
                       <span className="dt-field-label">Дата рождения</span>
-                      <span className="dt-field-value">{dossier.birthDate}</span>
+                      <span className="dt-field-value">{selectedDossier.birthDate}</span>
                     </div>
                     <div className="dt-dossier-field">
                       <span className="dt-field-label">Место рождения</span>
-                      <span className="dt-field-value">{dossier.birthPlace}</span>
+                      <span className="dt-field-value">{selectedDossier.birthPlace}</span>
                     </div>
                     <div className="dt-dossier-field">
                       <span className="dt-field-label">Последний раз замечена</span>
-                      <span className="dt-field-value">{dossier.lastSeen}</span>
+                      <span className="dt-field-value">{selectedDossier.lastSeen}</span>
                     </div>
                     <div className="dt-dossier-field">
                       <span className="dt-field-label">Дело</span>
-                      <span className="dt-field-value">{dossier.caseId}</span>
+                      <span className="dt-field-value">{selectedDossier.caseId}</span>
                     </div>
                   </div>
                 </div>
                 <div className="dt-dossier-right">
                   <div className="dt-dossier-portrait">
                     <img 
-                      src={dossier.portrait}
-                      alt={dossier.name}
+                      src={selectedDossier.portrait}
+                      alt={selectedDossier.name}
                       className="dt-portrait-image"
                     />
                   </div>
                   <div className="dt-dossier-status-panel">
-                    <span className={`dt-status dt-status-stack ${dossier.status.toLowerCase()}`}>{dossier.status}</span>
-                    <span className={`dt-priority ${dossier.priority.toLowerCase()}`}>{dossier.priority}</span>
+                    <span className={`dt-status dt-status-stack ${selectedDossier.status.toLowerCase()}`}>{selectedDossier.status}</span>
+                    <span className={`dt-priority ${selectedDossier.priority.toLowerCase()}`}>{selectedDossier.priority}</span>
                   </div>
                   <button className="dt-btn-premium">ПОЛНОЕ ДОСЬЕ</button>
                 </div>
               </div>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
