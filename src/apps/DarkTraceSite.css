@@ -1481,11 +1481,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .dt-status.dt-status-stack {
-  align-self: flex-start;
+  width: 100%;
+  text-align: center;
+  display: block;
 }
 
 .dt-status-stack {

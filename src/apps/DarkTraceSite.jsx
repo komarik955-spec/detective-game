@@ -841,19 +841,15 @@ function DossiersDatabase({ userLevel, onNavigate }) {
                       <span className="dt-field-label">Дата рождения</span>
                       <span className="dt-field-value">{selectedDossier.birthDate}</span>
                     </div>
-                    <div className="dt-dossier-field">
-                      <span className="dt-field-label">Место рождения</span>
-                      <span className="dt-field-value">{selectedDossier.birthPlace}</span>
-                    </div>
-                    <div className="dt-dossier-field">
-                      <span className="dt-field-label">Последний раз замечена</span>
-                      <span className="dt-field-value">{selectedDossier.lastSeen}</span>
-                    </div>
-                    <div className="dt-dossier-field">
-                      <span className="dt-field-label">Дело</span>
-                      <span className="dt-field-value">{selectedDossier.caseId}</span>
-                    </div>
+                  <div className="dt-dossier-field">
+                    <span className="dt-field-label">Место рождения</span>
+                    <span className="dt-field-value">{selectedDossier.birthPlace}</span>
                   </div>
+                  <div className="dt-dossier-field">
+                    <span className="dt-field-label">Дело</span>
+                    <span className="dt-field-value">{selectedDossier.caseId}</span>
+                  </div>
+                </div>
                 </div>
                 <div className="dt-dossier-right">
                   <div className="dt-dossier-portrait">
@@ -862,14 +858,13 @@ function DossiersDatabase({ userLevel, onNavigate }) {
                       alt={selectedDossier.name}
                       className="dt-portrait-image"
                     />
-                  </div>
-                  <div className="dt-dossier-status-panel">
-                    <span className={`dt-status dt-status-stack ${selectedDossier.status.toLowerCase()}`}>{selectedDossier.status}</span>
-                    <span className={`dt-priority ${selectedDossier.priority.toLowerCase()}`}>{selectedDossier.priority}</span>
-                  </div>
-                  <button className="dt-btn-premium">ПОЛНОЕ ДОСЬЕ</button>
                 </div>
+                <div className="dt-dossier-status-panel">
+                  <span className={`dt-status dt-status-stack ${selectedDossier.status.toLowerCase()}`}>{selectedDossier.status}</span>
+                </div>
+                <button className="dt-btn-premium">ПОЛНОЕ ДОСЬЕ</button>
               </div>
+            </div>
             </div>
           )}
         </div>
