@@ -1458,7 +1458,7 @@ body {
 }
 
 .dt-dossier-portrait {
-  width: 96px;
+  width: 120px;
   height: 122px;
   border-radius: 4px;
   background: linear-gradient(180deg, rgba(10, 14, 22, 0.9), rgba(6, 8, 14, 0.9));
