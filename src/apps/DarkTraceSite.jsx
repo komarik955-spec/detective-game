@@ -778,6 +778,70 @@ function DossiersDatabase({ userLevel, onNavigate }) {
       birthPlace: 'г. Ривертон',
       portrait: '/assets/characters/vesper_wainwright.jpg',
       fullDossier: '/assets/dossiers/vesper_wainwright_dossier.jpg'
+    },
+    {
+      id: 'DS-005',
+      name: 'АЛАРИК ВИНСЕНТ РАВЕНСВУД',
+      status: 'СВИДЕТЕЛЬ',
+      age: 28,
+      lastSeen: 'г. Ривертон - 21.06.2025',
+      priority: 'СРЕДНИЙ',
+      caseId: 'SB-2025-06-21',
+      gender: 'Мужской',
+      birthDate: '11.03.1997',
+      birthPlace: 'г. Ривертон',
+      portrait: '/assets/characters/alaric_ravenwood.jpg',
+      fullDossier: '/assets/dossiers/alaric_ravenswood_dossier.jpg',
+      summary:
+        'Давний знакомый Селены Блэк со времен университета, позиционировал себя как ее близкий друг и ценитель таланта. Испытывал к ней неразделенные чувства, был категорически против ее помолвки с Эваном Андервудом. Известен своим эксцентричным поведением и саркастическим отношением к окружающим.'
+    },
+    {
+      id: 'DS-006',
+      name: 'РОЗАЛИЯ МАРИ АНДЕРВУД',
+      status: 'СВИДЕТЕЛЬ',
+      age: 49,
+      lastSeen: 'г. Оук-Харбор - 21.06.2025',
+      priority: 'СРЕДНИЙ',
+      caseId: 'SB-2025-06-21',
+      gender: 'Женский',
+      birthDate: '15.09.1975',
+      birthPlace: 'г. Оук-Харбор',
+      portrait: '/assets/characters/rosalia_underwood.jpg',
+      fullDossier: '/assets/dossiers/rosalia_underwood_dossier.jpg',
+      summary:
+        'Уважаемая фигура в культурной жизни Ривертона, известная своей благотворительной деятельностью и поддержкой молодых талантов. После смерти мужа успешно управляет галереей "Арт-Модерн". В обществе известна как элегантная женщина с безупречным вкусом и преданная мать.'
+    },
+    {
+      id: 'DS-007',
+      name: 'МАЙКЛ ДЖОНАТАН ЭЛИОТ',
+      status: 'СВИДЕТЕЛЬ',
+      age: 45,
+      lastSeen: 'г. Оклэнд - 21.06.2025',
+      priority: 'ВЫСОКИЙ',
+      caseId: 'SB-2025-06-21',
+      gender: 'Мужской',
+      birthDate: '12.03.1980',
+      birthPlace: 'г. Оклэнд',
+      portrait: '/assets/characters/michael_elliot.jpg',
+      fullDossier: '/assets/dossiers/michael_elliot_dossier.jpg',
+      summary:
+        'Доктор Майкл Элиот — высококвалифицированный психотерапевт с более чем 15-летним стажем. Переехал в Ривертон около 10 лет назад, где открыл успешную частную практику. Селена Блэк являлась его пациенткой с весны 2024 года.'
+    },
+    {
+      id: 'DS-008',
+      name: 'АРТУР ЛЭНГСТОН ПЕЙН',
+      status: 'СВИДЕТЕЛЬ',
+      age: 54,
+      lastSeen: 'г. Ривертон - 21.06.2025',
+      priority: 'ВЫСОКИЙ',
+      caseId: 'SB-2025-06-21',
+      gender: 'Мужской',
+      birthDate: '18.08.1970',
+      birthPlace: 'г. Ривертон',
+      portrait: '/assets/characters/arthur_payne.jpg',
+      fullDossier: '/assets/dossiers/arthur_payne_dossier.jpg',
+      summary:
+        'Уважаемый ривертонский предприниматель, меценат и коллекционер произведений молодых художников. Именно он обнаружил тело Селены Блэк вечером 21 июня при попытке забрать заказанную картину.'
     }
   ]
 
@@ -828,7 +892,7 @@ function DossiersDatabase({ userLevel, onNavigate }) {
         <div className="dt-content-header">
           <h2>ДОСЬЕ</h2>
           <div className="dt-content-meta">
-            <span>4 АКТИВНЫХ ЗАПИСИ</span>
+            <span>{dossiers.length} АКТИВНЫХ ЗАПИСЕЙ</span>
             <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
           </div>
         </div>

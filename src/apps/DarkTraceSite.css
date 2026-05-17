@@ -1168,7 +1168,10 @@ body {
   background: rgba(26, 26, 46, 0.95);
   border-right: 1px solid rgba(181, 139, 99, 0.2);
   padding: 16px;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
 .dt-sidebar-header h3 {
@@ -1667,6 +1670,41 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Scroll only the growing cases list (keep header fixed) */
+.dt-sidebar-cases {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(76, 175, 239, 0.45) rgba(0, 0, 0, 0.25);
+}
+
+.dt-sidebar-cases::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dt-sidebar-cases::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 999px;
+}
+
+.dt-sidebar-cases::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(76, 175, 239, 0.12), rgba(76, 175, 239, 0.30));
+  border: 1px solid rgba(76, 175, 239, 0.22);
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(76, 175, 239, 0.20);
+}
+
+.dt-sidebar-cases::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(76, 175, 239, 0.18), rgba(76, 175, 239, 0.40));
+  border-color: rgba(76, 175, 239, 0.34);
+  box-shadow: 0 0 14px rgba(76, 175, 239, 0.28);
 }
 
 .dt-sidebar-case,

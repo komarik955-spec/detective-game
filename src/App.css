@@ -542,13 +542,53 @@ html, body, #root {
 /* Window body */
 .win-body {
   flex: 1;
+  min-height: 0;
   overflow: auto;
   background: #0f0f20;
   position: relative;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
-.win-body::-webkit-scrollbar       { width: 5px; height: 5px; }
-.win-body::-webkit-scrollbar-track { background: transparent; }
-.win-body::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 3px; }
+
+/* Universal fix: allow app roots to grow beyond viewport when needed.
+   Many app roots use height:100% + overflow:hidden, which can clip long content
+   and prevent the window scroll container from ever becoming scrollable. */
+.win-body > * {
+  min-height: 100% !important;
+  height: auto !important;
+}
+
+/* Universal cinematic scrollbar for all app/window scroll areas */
+.window,
+.window * {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(76, 175, 239, 0.45) rgba(0, 0, 0, 0.28);
+  scroll-behavior: smooth;
+}
+
+.window *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.window *::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 999px;
+}
+
+.window *::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(76, 175, 239, 0.12), rgba(76, 175, 239, 0.32));
+  border: 1px solid rgba(76, 175, 239, 0.22);
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(76, 175, 239, 0.18);
+}
+
+.window *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(76, 175, 239, 0.18), rgba(76, 175, 239, 0.42));
+  border-color: rgba(76, 175, 239, 0.34);
+  box-shadow: 0 0 14px rgba(76, 175, 239, 0.26);
+}
 
 /* ═══════════════════════════════════════════
    RESIZE HANDLES
