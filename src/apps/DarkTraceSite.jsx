@@ -287,22 +287,14 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
             </button>
 
             <button 
-
               className={`dt-nav-btn ${currentPage === 'knowledge' ? 'active' : ''}`}
-
               onClick={() => {
-
-                setCurrentPage('knowledge')
-
                 if (onNavigate) onNavigate('knowledge')
-
               }}
-
             >
-
               [06] База Знаний
-
             </button>
+
 
             {userLevel === 'admin' && (
 
@@ -2280,51 +2272,7 @@ function StatementsDatabase({ userLevel, onNavigate }) {
 
 
 function KnowledgeBase({ userLevel, onNavigate }) {
-
   const articles = [
-
-    {
-
-      id: 'KB-001',
-
-      title: 'Протокол по пропавшим лицам',
-
-      category: 'ПРОЦЕДУРЫ',
-
-      lastUpdated: '15.06.2025',
-
-      summary: 'Стандартные операционные процедуры для расследований пропавших лиц в юрисдикции Ривертон.'
-
-    },
-
-    {
-
-      id: 'KB-002',
-
-      title: 'Руководство по сбору улик',
-
-      category: 'ПРОЦЕДУРЫ', 
-
-      lastUpdated: '10.06.2025',
-
-      summary: 'Правильный сбор, сохранение и документация физических улик.'
-
-    },
-
-    {
-
-      id: 'KB-003',
-
-      title: 'Техники допроса свидетелей',
-
-      category: 'ОБУЧЕНИЕ',
-
-      lastUpdated: '01.06.2025',
-
-      summary: 'Лучшие практики проведения эффективных допросов свидетелей.'
-
-    },
-
     {
       id: 'KB-004',
       title: 'ДОСЬЕ: г. Ривертон (Общая Сводка)',
@@ -2346,85 +2294,44 @@ function KnowledgeBase({ userLevel, onNavigate }) {
       ],
       recommendation: 'В Ривертоне фасад — это все. Доверяйте только проверенным фактам, ищите противоречия и всегда помните: чем идеальнее картинка, тем страшнее то, что она скрывает.'
     }
-
   ]
 
-
-
-
   return (
-
     <div className="dt-investigative-database">
-
       <div className="dt-database-sidebar">
-
         <div className="dt-sidebar-header">
-
           <h3>КАТЕГОРИИ</h3>
-
         </div>
-
         <div className="dt-sidebar-categories">
-
           {articles.map(article => (
-
             <div key={article.id} className="dt-sidebar-category">
-
               <span className="dt-category-id">{article.id}</span>
-
               <span className="dt-category-name">{article.category}</span>
-
               <span className="dt-category-updated">{article.lastUpdated}</span>
-
             </div>
-
           ))}
-
         </div>
-
       </div>
 
-      
-
       <div className="dt-database-content">
-
         <div className="dt-content-header">
-
           <h2>БАЗА ЗНАНИЙ</h2>
-
           <div className="dt-content-meta">
-
-            <span>{articles.length} СТАТЬИ</span>
-
+            <span>{articles.length} СТАТЬЯ</span>
             <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
-
           </div>
-
-
         </div>
 
-        
-
         <div className="dt-knowledge-list">
-
           {articles.map(article => (
-
             <div key={article.id} className="dt-knowledge-item">
-
               <div className="dt-knowledge-header">
-
                 <span className="dt-knowledge-id">{article.id}</span>
-
                 <span className="dt-category">{article.category}</span>
-
                 <span className="dt-updated">{article.lastUpdated}</span>
-
               </div>
-
               <div className="dt-knowledge-body">
-
                 <h3>{article.title}</h3>
-
                 <p>{article.summary}</p>
 
                 {article.isCityInfo && (
@@ -2456,37 +2363,19 @@ function KnowledgeBase({ userLevel, onNavigate }) {
                     </div>
                   </div>
                 )}
-
               </div>
-
-
-              <div className="dt-knowledge-actions">
-
-                <button className="dt-btn-small">ЧИТАТЬ СТАТЬЮ</button>
-
-              </div>
-
             </div>
-
           ))}
-
         </div>
-
       </div>
-
     </div>
-
   )
-
 }
 
-
-
 /* ═══════════════════════════════════════
-
    DOSSIERS PAGE
-
 ═══════════════════════════════════════ */
+
 
 function DossiersPage({ userLevel, onNavigate }) {
 
