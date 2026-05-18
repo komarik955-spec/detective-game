@@ -138,21 +138,58 @@ function CrimeSceneSVG() {
   )
 }
 
-export default function ImageViewer({ file, initialZoom = 1 }) {
-  // initialZoom задает стартовый масштаб. Для досье Селены сейчас используется 80%.
+export default function ImageViewer({ file, initialZoom = 0.8 }) {
   const [zoom, setZoom] = useState(initialZoom)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+
   const hasSource = Boolean(file?.src)
 
+  const handleWheel = (e) => {
+    e.preventDefault()
+    const zoomSpeed = 0.15
+    const delta = e.deltaY > 0 ? -zoomSpeed : zoomSpeed
+    const nextZoom = Math.min(5, Math.max(0.2, zoom + delta))
+    setZoom(nextZoom)
+  }
+
+  const handlePointerDown = (e) => {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    setIsDragging(true)
+    setDragStart({
+      x: e.clientX - offset.x,
+      y: e.clientY - offset.y
+    })
+  }
+
+  const handlePointerMove = (e) => {
+    if (!isDragging) return
+    setOffset({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    })
+  }
+
+  const handlePointerUp = (e) => {
+    setIsDragging(false)
+  }
+
+  const resetView = () => {
+    setZoom(initialZoom)
+    setOffset({ x: 0, y: 0 })
+  }
+
   return (
-    <div className="img-viewer">
+    <div className="img-viewer" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Toolbar */}
       <div className="viewer-toolbar">
         <span className="viewer-filename">{file.icon ?? '🖼️'} {file.name}</span>
         <div className="viewer-tools">
-          <button className="viewer-btn" onClick={() => setZoom(z => Math.max(0.4, z - 0.2))}>-</button>
+          <button className="viewer-btn" onClick={() => setZoom(z => Math.max(0.2, z - 0.2))}>-</button>
           <span className="viewer-meta">{Math.round(zoom * 100)}%</span>
-          <button className="viewer-btn" onClick={() => setZoom(z => Math.min(3, z + 0.2))}>+</button>
-          <button className="viewer-btn" onClick={() => setZoom(1)}>Reset</button>
+          <button className="viewer-btn" onClick={() => setZoom(z => Math.min(5, z + 0.2))}>+</button>
+          <button className="viewer-btn" onClick={resetView}>Reset</button>
         </div>
       </div>
 
@@ -161,16 +198,74 @@ export default function ImageViewer({ file, initialZoom = 1 }) {
           {file.caption}
         </div>
       )}
-      {/* Image */}
-      <div className="img-canvas">
-        <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top center', transition: 'transform 0.15s' }}>
+
+      {/* Forensic Viewport Area */}
+      <div 
+        className="img-viewport"
+        onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        style={{ 
+          flex: 1,
+          position: 'relative',
+          overflow: 'hidden', // Clipping is handled here
+          background: '#050508',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          touchAction: 'none'
+        }}
+      >
+        {/* Independent Transform Layer */}
+        <div 
+          className="img-transform-layer"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+            transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none' // Events are handled by viewport
+          }}
+        >
           {hasSource ? (
-            <img className="img-viewer-image" src={file.src} alt={file.name} />
+            <img 
+              src={file.src} 
+              alt={file.name} 
+              draggable={false}
+              style={{
+                display: 'block',
+                maxWidth: 'none',
+                maxHeight: 'none',
+                // We don't use object-fit here to allow true independent scaling
+                boxShadow: '0 0 40px rgba(0,0,0,0.8)',
+                border: '1px solid rgba(181, 139, 99, 0.2)'
+              }}
+            />
           ) : (
-            <CrimeSceneSVG />
+            <div style={{ width: '640px', height: '420px' }}>
+              <CrimeSceneSVG />
+            </div>
           )}
+        </div>
+        
+        {/* Viewport UI Overlay */}
+        <div style={{
+          position: 'absolute',
+          bottom: '10px',
+          left: '10px',
+          pointerEvents: 'none',
+          color: 'rgba(181, 139, 99, 0.4)',
+          fontSize: '10px',
+          fontFamily: 'monospace'
+        }}>
+          FORENSIC_VIEWPORT_ACTIVE [OFFSET_X: {Math.round(offset.x)} OFFSET_Y: {Math.round(offset.y)}]
         </div>
       </div>
     </div>
   )
 }
+

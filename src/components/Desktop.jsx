@@ -18,6 +18,9 @@ import { getSavedFiles, removeSavedFile } from '../utils/fileActions'
 
 import VesperCallSystem from './VesperCallSystem'
 
+import DetectiveMap from '../apps/DetectiveMap'
+
+
 
 
 export const SecondMailContext = createContext(null)
@@ -272,7 +275,18 @@ export const WINDOW_REGISTRY = {
 
   },
 
+  map: {
+    title: 'Geographic Analysis System',
+    icon: '🗺️',
+    content: <DetectiveMap />,
+    defaultWidth: 2028,
+    defaultHeight: 1457,
+  },
+
+
+
 }
+
 
 
 
@@ -294,9 +308,12 @@ const DESKTOP_ICONS = [
 
   { id: 'browser', icon: '🌐', label: 'Bhrome' },
 
+  { id: 'map', icon: '🗺️', label: 'Карта' },
+
   { id: 'password_note', icon: '📝', label: 'Заметка' },
 
 ]
+
 
 
 

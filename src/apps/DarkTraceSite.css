@@ -331,6 +331,10 @@ body {
   flex-direction: column;
 }
 
+/* Расширение контейнера для карты */
+.dt-main:has(.det-map-container) {
+  padding: 0;
+}
 
 .dt-main.login {
   overflow-y: hidden;
@@ -341,6 +345,13 @@ body {
   margin: 0 auto;
   width: 100%;
 }
+
+/* Специальное правило для карты: игнорируем ограничение max-width */
+.dt-main:has(.det-map-container) .dt-content {
+  max-width: 100%;
+  height: 100%;
+}
+
 
 .dt-main::-webkit-scrollbar {
   width: 8px;
@@ -1040,6 +1051,123 @@ body {
 .dt-priority.low {
   background: rgba(118, 118, 118, 0.2);
   color: #767676;
+}
+
+/* ===== EVIDENCE STYLING ===== */
+.dt-sidebar-evidence-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(181, 139, 99, 0.1);
+  transition: all 0.2s ease;
+}
+
+.dt-sidebar-evidence-item.active {
+  background: rgba(181, 139, 99, 0.15);
+  border-left: 3px solid var(--accent-color);
+}
+
+.dt-evidence-viewer-content {
+  background: #0a0a0f !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.dt-evidence-viewer-content .dt-content-header {
+  padding: 20px;
+  margin-bottom: 0;
+  background: rgba(10, 10, 15, 0.9);
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.dt-evidence-display-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+  background:
+    radial-gradient(circle at center, #1a1a2e 0%, #0a0a0f 100%),
+    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMC41IiBmaWxsPSJyZ2JhKDE4MSwgMTM5LCA5OSwgMC4xNSkiLz48L3N2Zz4=');
+}
+
+.dt-evidence-file-wrapper {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  animation: dt-dossier-fade 0.4s ease;
+}
+
+.dt-evidence-file-info {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(181, 139, 99, 0.3);
+  padding-bottom: 8px;
+}
+
+.dt-file-index {
+  color: var(--accent-color);
+  font-family: 'SF Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dt-file-name {
+  color: #9aa0a6;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dt-evidence-image-container {
+  position: relative;
+  background: #111;
+  border: 1px solid rgba(181, 139, 99, 0.2);
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+  padding: 10px;
+}
+
+.dt-evidence-real-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: contrast(1.05) brightness(0.9);
+}
+
+.dt-evidence-file-description {
+  background: rgba(181, 139, 99, 0.05);
+  border-left: 2px solid var(--accent-color);
+  padding: 15px;
+}
+
+.dt-evidence-file-description p {
+  color: #e8eaed;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.dt-evidence-display-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dt-evidence-display-area::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dt-evidence-display-area::-webkit-scrollbar-thumb {
+  background: rgba(181, 139, 99, 0.3);
+  border-radius: 4px;
+}
+
+.dt-evidence-display-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(181, 139, 99, 0.5);
 }
 
 .dt-action-small {

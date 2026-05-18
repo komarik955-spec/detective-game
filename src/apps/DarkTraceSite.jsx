@@ -4,6 +4,8 @@ import { saveFileToDesktop } from '../utils/fileActions'
 import { getAgentAvatarPath } from '../utils/agentProfile'
 import { useInvestigation } from '../utils/investigationSystem'
 
+
+
 /* ═══════════════════════════════════════
    DARK TRACE INVESTIGATION AGENCY
    INTERNAL PORTAL SYSTEM
@@ -139,12 +141,12 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
         return <StatementsDatabase userLevel={userLevel} onNavigate={onNavigate} />
 
       case 'evidence':
-
         return <EvidenceArchive userLevel={userLevel} onNavigate={onNavigate} />
-
       case 'knowledge':
 
+
         return <KnowledgeBase userLevel={userLevel} onNavigate={onNavigate} />
+
 
       case 'internal':
 
@@ -271,29 +273,17 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
             </button>
 
             <button
-
               className={`dt-nav-btn ${currentPage === 'evidence' ? 'active' : ''}`}
-
               onClick={() => {
-
                 if (onNavigate) onNavigate('evidence')
-
               }}
-
             >
-
               [05] Улики
-
             </button>
 
-            <button 
-              className={`dt-nav-btn ${currentPage === 'knowledge' ? 'active' : ''}`}
-              onClick={() => {
-                if (onNavigate) onNavigate('knowledge')
-              }}
-            >
-              [06] База Знаний
-            </button>
+
+
+
 
 
             {userLevel === 'admin' && (
@@ -862,258 +852,162 @@ function CasesDatabase({ userLevel, onNavigate }) {
 
 function EvidenceArchive({ userLevel, onNavigate }) {
   const { markFileAsReviewed } = useInvestigation()
-  const evidence = [
+  const [selectedCategory, setSelectedCategory] = useState('Фото')
+  const [previewImage, setPreviewImage] = useState(null)
 
-
+  const categories = [
     {
-
-      id: 'EVI-001',
-
-      caseId: 'SB-2025-06-21',
-
-      type: 'Фото',
-
-      name: 'Фото пропавшего лица',
-
-      description: 'Недавнее фото Селены Блэк',
-
-      date: '21.06.2025',
-
-      status: 'обработано',
-
-      file: {
-
-        id: 'evi-001',
-
-        name: 'Фото_Селены_Блэк.jpg',
-
-        type: 'image',
-
-        size: '1.8 МБ',
-
-        url: '/assets/images/phone_note_final.jpg',
-
-        downloadable: true,
-
-        saveToDesktop: true
-
-      }
-
+      id: 'photo',
+      name: 'Фото',
+      files: [
+        {
+          id: 'crime_scene_photo',
+          name: 'Место происшествия',
+          description: 'Общий вид места обнаружения тела.',
+          url: '/assets/evidence/crime_scene_photo.jpg',
+          type: 'image'
+        }
+      ]
     },
-
     {
-
-      id: 'EVI-002',
-
-      caseId: 'SB-2025-06-21',
-
-      type: 'Документ',
-
-      name: 'Полицейский отчет',
-
-      description: 'Первоначальный отчет о пропаже лица',
-
-      date: '21.06.2025',
-
-      status: 'обработано',
-
-      file: {
-
-        id: 'evi-002',
-
-        name: 'Полицейский_отчет.pdf',
-
-        type: 'pdf',
-
-        size: '2.4 МБ',
-
-        url: '/assets/images/case-file.jpg',
-
-        downloadable: true,
-
-        saveToDesktop: true
-
-      }
-
+      id: 'document',
+      name: 'Документ',
+      files: [
+        {
+          id: 'gallery_archive_page',
+          name: 'Архивная страница галереи',
+          description: 'Каталог выставки из архива галереи "Арт-Модерн".',
+          url: '/assets/evidence/gallery_archive_page.jpg',
+          type: 'image'
+        }
+      ]
     },
-
     {
-
-      id: 'EVI-003',
-
-      caseId: 'SB-2025-06-21',
-
-      type: 'Аудио',
-
-      name: 'Запись звонка 911',
-
-      description: 'Экстренный звонок от семьи',
-
-      date: '21.06.2025',
-
-      status: 'обработано',
-
-      file: {
-
-        id: 'evi-003',
-
-        name: 'Звонок_911.mp3',
-
-        type: 'audio',
-
-        size: '3.2 МБ',
-
-        url: '#',
-
-        downloadable: false,
-
-        saveToDesktop: false
-
-      }
-
+      id: 'diary',
+      name: 'Дневник',
+      files: [
+        {
+          id: 'diary_page_07',
+          name: 'Страница дневника №7',
+          url: '/assets/evidence/diary_page_07.jpg',
+          type: 'image'
+        },
+        {
+          id: 'diary_page_08',
+          name: 'Страница дневника №8',
+          url: '/assets/evidence/diary_page_08.jpg',
+          type: 'image'
+        }
+      ]
     }
-
   ]
 
+  const currentCategory = categories.find(c => c.name === selectedCategory)
 
+  useEffect(() => {
+    if (currentCategory) {
+      currentCategory.files.forEach(file => markFileAsReviewed(file.id))
+    }
+  }, [selectedCategory])
+
+  const handleDownload = (e, file) => {
+    e.stopPropagation()
+    const fileData = {
+      id: file.id,
+      name: file.name.endsWith('.jpg') ? file.name : `${file.name}.jpg`,
+      type: 'image',
+      url: file.url,
+      downloadable: true,
+      saveToDesktop: true
+    }
+    saveFileToDesktop(fileData, () => {
+      window.dispatchEvent(new Event('savedFilesChanged'))
+    })
+  }
 
   return (
-
     <div className="dt-investigative-database">
-
       <div className="dt-database-sidebar">
-
         <div className="dt-sidebar-header">
-
-          <h3>УЛИКИ</h3>
-
+          <h3>КАТЕГОРИИ УЛИК</h3>
         </div>
-
         <div className="dt-sidebar-evidence">
-
-          {evidence.map(item => (
-
-            <div key={item.id} className="dt-sidebar-evidence-item">
-
-              <span className="dt-evidence-id">{item.id}</span>
-
-              <span className="dt-evidence-type">{item.type}</span>
-
-              <span className={`dt-evidence-status ${item.status === 'обработано' ? 'processed' : 'processing'}`}>{item.status}</span>
-
+          {categories.map(cat => (
+            <div 
+              key={cat.id} 
+              className={`dt-sidebar-evidence-item ${selectedCategory === cat.name ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat.name)}
+              style={{ cursor: 'pointer' }}
+            >
+              <span className="dt-evidence-type">{cat.name.toUpperCase()}</span>
+              <span className="dt-evidence-id">{cat.files.length} ОБЪЕКТ(А)</span>
             </div>
-
           ))}
-
         </div>
-
       </div>
 
-      
-
-      <div className="dt-database-content">
-
+      <div className="dt-database-content dt-evidence-viewer-content">
         <div className="dt-content-header">
-
-          <h2>УЛИКИ</h2>
-
+          <h2>{selectedCategory.toUpperCase()} — МАТЕРИАЛЫ СЛЕДСТВИЯ</h2>
           <div className="dt-content-meta">
-
-            <span>3 ОБЪЕКТА УЛИК</span>
-
-            <span>ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ: 21.06.2025</span>
-
+            <span>CASE: SB-2025-06-21</span>
+            <span>RESTRICTED ACCESS</span>
           </div>
-
         </div>
 
-        
-
-        <div className="dt-evidence-list">
-
-          {evidence.map(item => (
-
-            <div key={item.id} className="dt-evidence-item">
-
-              <div className="dt-evidence-header">
-
-                <span className="dt-evidence-id">{item.id}</span>
-
-                <span className="dt-evidence-type">{item.type}</span>
-
-                <span className={`dt-evidence-status ${item.status === 'обработано' ? 'processed' : 'processing'}`}>{item.status}</span>
-
-              </div>
-
-              <div className="dt-evidence-body">
-
-                <h3>{item.name}</h3>
-
-                <p>{item.description}</p>
-
-                <div className="dt-evidence-meta">
-
-                  <span>Дело: {item.caseId}</span>
-
-                  <span>Дата: {item.date}</span>
-
-                </div>
-
-              </div>
-
-              <div className="dt-evidence-actions">
-                <button
-                  className="dt-btn-small"
-                  onClick={() => {
-                    markFileAsReviewed(item.id);
-                    // Add logic to "view" if needed
-                  }}
-                >
-                  ПРОСМОТР
-                </button>
-                {item.file?.downloadable && (
-
-
+        <div className="dt-evidence-display-area">
+          {currentCategory?.files.map((file, index) => (
+            <div key={file.id} className="dt-evidence-file-wrapper">
+              <div className="dt-evidence-file-info">
+                <span className="dt-file-index">FILE_{String(index + 1).padStart(2, '0')}</span>
+                <div className="dt-file-actions-header">
                   <button 
-
-                    className="dt-btn-small dt-download-icon"
-
-                    onClick={() => {
-
-                      saveFileToDesktop(item.file, () => {
-
-                        window.dispatchEvent(new Event('savedFilesChanged'))
-
-                      })
-
-                    }}
-
-                    title="Скачать"
-
+                    className="dt-btn-mini" 
+                    onClick={(e) => handleDownload(e, file)}
+                    title="Скачать на рабочий стол"
                   >
-
-                    ⬇️
-
+                    ⬇️ СКАЧАТЬ
                   </button>
-
-                )}
-
+                  <span className="dt-file-name">{file.name}</span>
+                </div>
               </div>
-
+              <div 
+                className="dt-evidence-image-container clickable"
+                onClick={() => setPreviewImage({
+                  src: file.url,
+                  title: file.name,
+                  meta: `EVIDENCE • ${selectedCategory.toUpperCase()} • ${file.id}`
+                })}
+                title="Нажмите для увеличения"
+              >
+                <div className="dt-viewer-frame"></div>
+                <img 
+                  src={file.url} 
+                  alt={file.name} 
+                  className="dt-evidence-real-image"
+                />
+                <div className="dt-image-overlay-hint">
+                  <span>🔍 НАЖМИТЕ ДЛЯ ОСМОТРА</span>
+                </div>
+              </div>
+              {file.description && (
+                <div className="dt-evidence-file-description">
+                  <p>{file.description}</p>
+                </div>
+              )}
             </div>
-
           ))}
-
         </div>
-
       </div>
 
+      <FullDossierModal
+        open={Boolean(previewImage)}
+        dossier={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </div>
-
   )
-
 }
-
 
 
 /* ═══════════════════════════════════════
