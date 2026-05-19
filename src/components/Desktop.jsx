@@ -337,7 +337,6 @@ function DesktopInner({ playerData }) {
 
   const [showNotif, setShowNotif] = useState(false)
 
-  const [showSecondNotif, setShowSecondNotif] = useState(false)
 
   const [savedFiles, setSavedFiles] = useState([])
 
@@ -367,11 +366,7 @@ function DesktopInner({ playerData }) {
 
 
 
-  const handleSecondMailArrived = () => {
-
-    setShowSecondNotif(true)
-
-  }
+  const handleSecondMailArrived = () => {}
 
 
 
@@ -633,31 +628,7 @@ function DesktopInner({ playerData }) {
 
 
 
-      {/* Р’РўРћР РћР• РЈР’Р•Р”РћРњР›Р•РќРР• */}
-
-      {showSecondNotif && (
-
-        <SystemNotification
-
-          title="OneMail"
-
-          text="Новое сообщение: Срочная информация"
-
-          onClick={() => {
-
-            const audio = new Audio('/assets/sounds/notification.mp3')
-
-            audio.play().catch(() => {})
-
-            setShowSecondNotif(false)
-
-            open('browser', WINDOW_REGISTRY['browser'])
-
-          }}
-
-        />
-
-      )}
+      {/* Второе уведомление отключено по дизайну */}
 
 
 

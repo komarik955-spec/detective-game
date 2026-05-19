@@ -43,8 +43,8 @@ const getInitialMails = (playerData) => [
 
 
 Данные для доступа к системе:
-Username: ${playerData?.firstName?.toLowerCase() || 'detective'}
-Password: archive22
+Username: agent
+Password: 12345
 
 
 — Дэвид Слейт
