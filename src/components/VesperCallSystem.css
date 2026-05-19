@@ -6,12 +6,14 @@
   height: 100vh;
   z-index: 1000;
   pointer-events: none;
+  --call-window-top: 42%;
+  --call-subtitles-offset: 230px;
 }
 
 /* Call Window */
 .call-window {
   position: fixed;
-  top: 50%;
+  top: var(--call-window-top);
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
@@ -234,7 +236,7 @@
   width: min(640px, calc(100vw - 48px));
   z-index: 1001;
   pointer-events: auto;
-  top: min(calc(50% + 230px), calc(100vh - 190px));
+  top: min(calc(var(--call-window-top) + var(--call-subtitles-offset)), calc(100vh - 190px));
 }
 
 .subtitle-content {

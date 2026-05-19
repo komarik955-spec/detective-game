@@ -6,12 +6,13 @@
   height: 100vh;
   z-index: 1000;
   pointer-events: none;
+  --call-window-top: 42%;
 }
 
 /* Call Window */
 .vesper-call-window {
   position: fixed;
-  top: 50%;
+  top: var(--call-window-top);
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;

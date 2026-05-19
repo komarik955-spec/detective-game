@@ -7,6 +7,7 @@
   background: #0a0a0f;
   overflow: hidden;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --call-window-top: 42%;
 }
 
 /* Background */
@@ -45,7 +46,7 @@
 /* Call Window */
 .call-window {
   position: fixed;
-  top: 50%;
+  top: var(--call-window-top);
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
@@ -258,7 +259,7 @@
 /* Subtitle Overlay */
 .subtitle-overlay {
   position: fixed;
-  bottom: 80px;
+  bottom: 140px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 150;
@@ -306,7 +307,7 @@
 /* Player Response Overlay */
 .player-response-overlay {
   position: fixed;
-  bottom: 80px;
+  bottom: 140px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 160;
