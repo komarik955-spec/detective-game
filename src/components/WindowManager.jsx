@@ -21,18 +21,11 @@ export function WindowManagerProvider({ children }) {
       const target = prev.find(w => w.id === id)
       if (!target) return prev
       
-      const isMobile = window.innerWidth <= 768
-      
       return prev.map(w => {
         if (w.id === id) {
-          return { ...w, zIndex: 1000, minimized: false }
+          return { ...w, zIndex: zTop, minimized: false }
         }
-        // На мобильных устройствах скрываем остальные окна при фокусе на одном
-        return { 
-          ...w, 
-          zIndex: w.zIndex > 1 ? w.zIndex - 1 : 1,
-          minimized: isMobile ? true : w.minimized 
-        }
+        return w
       })
     })
   }, [])
