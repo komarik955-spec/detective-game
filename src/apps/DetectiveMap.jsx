@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import './DetectiveMap.css';
 
 // Координаты маркеров, точно выверенные пользователем по макету карты
@@ -150,7 +150,10 @@ export default function DetectiveMap() {
 
         {/* Interactive Map Area */}
         <div className="det-map-viewport">
-          <div className="det-map-canvas" onClick={handleMapClick}>
+          <div
+            className="det-map-stage"
+            onClick={handleMapClick}
+          >
             {/* SVG Layer for routes */}
             <svg className="det-map-svg">
               {pointA && pointB && (
@@ -188,11 +191,10 @@ export default function DetectiveMap() {
                 )}
               </div>
             ))}
+            {/* Map Overlay Effects */}
+            <div className="det-map-grid-overlay"></div>
+            <div className="det-map-scanline"></div>
           </div>
-          
-          {/* Map Overlay Effects */}
-          <div className="det-map-grid-overlay"></div>
-          <div className="det-map-scanline"></div>
         </div>
       </div>
     </div>
