@@ -1,0 +1,59 @@
+{
+  "id": 6,
+  "folder": "inbox",
+  "tab": "primary",
+  "starred": false,
+  "read": false,
+  "hidden": true,
+  "from": {
+    "name": "Веспер Уэйнрайт",
+    "email": "v.wainright@ashford-witness.onion",
+    "avatar": "👥"
+  },
+  "subject": "ВАЖНО: Дополнительные улики. Скриншоты переписки.",
+  "preview": "Высылаю все материалы, которые есть у меня на данный момент",
+  "date": "09:17",
+  "body": "\n\nПосле нашего первого контакта я начала вспоминать детали, которые показались мне странными в то время.\n\nЯ обнаружила скриншоты старой переписки на своём телефоне — переписка с человеком, который теперь кажется мне очень подозрительным.\n\nЯ не знаю, насколько это важно, но эта переписка происходила за день до происшествия. В ней есть несколько упоминаний о том, где буду находиться в момент инцидента.\n\nОтправляю вам все четыре скриншота. Используйте их, как считаете нужным.\n\nМне кажется, это может быть ключевым. Пожалуйста, помните обо мне, если это дело затянется.\n\n— Веспер Уэйнрайт",
+  "attachments": [
+    {
+      "id": "vesper-att-001",
+      "name": "Переписка_2025-06-20_01.jpg",
+      "type": "image",
+      "size": "1.2 МБ",
+      "icon": "🖼️",
+      "url": "/assets/mail/vesper/vesper_chat_01.jpg",
+      "downloadable": true,
+      "saveToDesktop": true
+    },
+    {
+      "id": "vesper-att-002",
+      "name": "Переписка_2025-06-20_02.jpg",
+      "type": "image",
+      "size": "1.1 МБ",
+      "icon": "🖼️",
+      "url": "/assets/mail/vesper/vesper_chat_02.jpg",
+      "downloadable": true,
+      "saveToDesktop": true
+    },
+    {
+      "id": "vesper-att-003",
+      "name": "Переписка_2025-06-20_03.jpg",
+      "type": "image",
+      "size": "1.3 МБ",
+      "icon": "🖼️",
+      "url": "/assets/mail/vesper/vesper_chat_03.jpg",
+      "downloadable": true,
+      "saveToDesktop": true
+    },
+    {
+      "id": "vesper-att-004",
+      "name": "Переписка_2025-06-20_04.jpg",
+      "type": "image",
+      "size": "1.0 МБ",
+      "icon": "🖼️",
+      "url": "/assets/mail/vesper/vesper_chat_04.jpg",
+      "downloadable": true,
+      "saveToDesktop": true
+    }
+  ]
+}

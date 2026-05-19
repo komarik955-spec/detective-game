@@ -366,7 +366,9 @@ function DesktopInner({ playerData }) {
 
 
 
-  const handleSecondMailArrived = () => {}
+  const handleSecondMailArrived = () => {
+    setShowNotif(true)
+  }
 
 
 

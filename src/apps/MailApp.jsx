@@ -205,6 +205,134 @@ Password: 12345
 
   },
 
+  {
+
+    id: 6,
+
+    folder: 'inbox',
+
+    tab: 'primary',
+
+    starred: false,
+
+    read: false,
+
+    hidden: true,
+
+    from: {
+
+      name: 'Веспер Уэйнрайт',
+
+      email: 'v.wainright@ashford-witness.onion',
+
+      avatar: '👥'
+
+    },
+
+    subject: 'ВАЖНО: Дополнительные улики. Скриншоты переписки.',
+
+    preview: 'Высылаю все материалы, которые есть у меня на данный момент',
+
+    date: '09:17',
+
+    body: `Детектив,
+
+высылаю все материалы, которые есть у меня на данный момент.
+
+Вложения содержат скриншоты переписки Селены и Эвана. После ее смерти я перечитала сообщения снова… некоторые из них теперь выглядят совсем иначе.
+
+Спасибо, что согласились расследовать это дело.
+Надеюсь, вы найдете того, кто сделал это.
+
+— Веспер Уэйнрайт
+`,
+
+    attachments: [
+
+      {
+
+        id: 'vesper-att-001',
+
+        name: 'Переписка_2025-06-20_01.jpg',
+
+        type: 'image',
+
+        size: '1.2 МБ',
+
+        icon: '🖼️',
+
+        url: '/assets/mail/vesper/vesper_chat_01.jpg',
+
+        downloadable: true,
+
+        saveToDesktop: true
+
+      },
+
+      {
+
+        id: 'vesper-att-002',
+
+        name: 'Переписка_2025-06-20_02.jpg',
+
+        type: 'image',
+
+        size: '1.1 МБ',
+
+        icon: '🖼️',
+
+        url: '/assets/mail/vesper/vesper_chat_02.jpg',
+
+        downloadable: true,
+
+        saveToDesktop: true
+
+      },
+
+      {
+
+        id: 'vesper-att-003',
+
+        name: 'Переписка_2025-06-20_03.jpg',
+
+        type: 'image',
+
+        size: '1.3 МБ',
+
+        icon: '🖼️',
+
+        url: '/assets/mail/vesper/vesper_chat_03.jpg',
+
+        downloadable: true,
+
+        saveToDesktop: true
+
+      },
+
+      {
+
+        id: 'vesper-att-004',
+
+        name: 'Переписка_2025-06-20_04.jpg',
+
+        type: 'image',
+
+        size: '1.0 МБ',
+
+        icon: '🖼️',
+
+        url: '/assets/mail/vesper/vesper_chat_04.jpg',
+
+        downloadable: true,
+
+        saveToDesktop: true
+
+      }
+
+    ]
+
+  },
+
 ]
 
 
@@ -1299,6 +1427,8 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
   })
 
   const timerRef = useRef(null)
+  const vesperEmailSent = useRef(false)
+  const secondMailOpenedRef = useRef(false)
 
 
 
@@ -1501,8 +1631,25 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
     }
 
-    
+    // Если кликнули на письмо #5 (второе письмо), запустить таймер для показа письма от Vesper
+    if (mail.id === 5 && !secondMailOpenedRef.current && !vesperEmailSent.current) {
+      secondMailOpenedRef.current = true
 
+      // Запуск таймера на 4 секунды для появления письма от Vesper
+      setTimeout(() => {
+        setMails(prev => prev.map(m => 
+          m.id === 6 ? { ...m, hidden: false } : m
+        ))
+        // Воспроизводим звук уведомления
+        const audio = new Audio('/assets/sounds/notification.mp3');
+        audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));
+        // Вызываем callback для показа уведомления
+        if (onSecondMailArrived) onSecondMailArrived()
+        vesperEmailSent.current = true
+      }, 4000)
+    }
+
+    
     if (!mail.read) {
 
       setMails(prev => prev.map(m => m.id === mail.id ? { ...m, read: true } : m))
