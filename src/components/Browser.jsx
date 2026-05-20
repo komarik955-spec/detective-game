@@ -6,6 +6,7 @@ import MailApp from '../apps/MailApp'
 import DarkTraceSite from '../apps/DarkTraceSite'
 import DarkTracePublic from '../apps/DarkTracePublic'
 import PharmaNet from '../apps/PharmaNet'
+import NewsPortal from '../apps/NewsPortal'
 import { SecondMailContext } from '../components/Desktop'
 
 
@@ -982,6 +983,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
         {activeTab && activeTab.page === 'darktrace-public' && <DarkTracePublic onLogin={openDarkTraceLogin} />}
         {activeTab && activeTab.page === 'pharma' && <PharmaNet />}
+        {activeTab && activeTab.page === 'news' && (
+          <NewsPortal
+            onNavigateToDarkTrace={() => {
+              updateTab(activeId, {
+                page: 'darktrace',
+                url: 'https://darktrace.agency/login',
+                title: 'DARK TRACE',
+                loading: false,
+                darkTraceState: {
+                  currentPage: 'login',
+                  isLoggedIn: false,
+                  userLevel: 'guest'
+                }
+              })
+            }}
+          />
+        )}
       </div>
 
 

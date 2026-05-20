@@ -23,7 +23,8 @@ html, body, #root {
   font-family: var(--font-ui);
   background: var(--bg-dark);
   color: var(--text);
-  user-select: none;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* ── Boot Screen ── */
