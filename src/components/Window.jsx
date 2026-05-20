@@ -63,9 +63,10 @@ export default function Window({
   defaultX, defaultY,
 }) {
   const { close, minimize, focus, activeId, windows } = useWM()
-  const winData  = windows.find(w => w.id === id)
-  const zIndex   = winData?.zIndex ?? 100
-  const isActive = activeId === id
+  const winData    = windows.find(w => w.id === id)
+  const zIndex     = winData?.zIndex ?? 100
+  const isMinimized = Boolean(winData?.minimized)
+  const isActive   = activeId === id && !isMinimized
 
  /* Position + size */
 const [size, setSize] = useState(() => clampSize(defaultWidth, defaultHeight))
@@ -209,9 +210,12 @@ useEffect(() => {
 
   return (
   <div
-  className={`window ${isActive ? 'window-active' : 'window-inactive'} ${minimizing ? 'win-minimizing' : ''}`}
+  className={`window ${isActive ? 'window-active' : 'window-inactive'} ${minimizing ? 'win-minimizing' : ''} ${isMinimized ? 'window-minimized' : ''}`}
   style={style}
-  onMouseDown={() => focus(id)}
+  aria-hidden={isMinimized}
+  onMouseDown={() => {
+    if (!isMinimized) focus(id)
+  }}
 >
       {/* Resize handles */}
       {(!maximized && window.innerWidth > 768) && handles.map(dir => (

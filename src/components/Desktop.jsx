@@ -562,11 +562,7 @@ function DesktopInner({ playerData }) {
 
       {/* Открытые окна */}
 
-      {windows
-
-        .filter(w => !w.minimized)
-
-        .map(w => {
+      {windows.map(w => {
 
           const meta = WINDOW_REGISTRY[w.id] ?? w
 

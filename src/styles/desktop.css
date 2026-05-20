@@ -122,6 +122,13 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
+/* Свернуто — остаётся в DOM, чтобы не терять состояние приложений */
+.window-minimized {
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
 .window-inactive .win-titlebar {
   background: #1e2026;
 }
