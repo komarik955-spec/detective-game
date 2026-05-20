@@ -4,6 +4,7 @@ import TextViewer from './viewers/TextViewer'
 import ImageViewer from './viewers/ImageViewer'
 import VideoViewer from './viewers/VideoViewer'
 import { useWM } from './WindowManager'
+import { useInvestigation, ENVELOPE_FILE_IDS } from '../utils/investigationSystem'
 
 const ICON_MAP = { folder: '📁', txt: '📄', image: '🖼️', img: '🖼️', video: '🎬' }
 
@@ -12,12 +13,10 @@ function getIcon(file) {
 }
 
 export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] }) {
-  // Current folder path, for example: ['case001', 'profiles'].
   const [path, setPath] = useState([rootId])
-
-  // Text files open inside Explorer. Images open in a separate Photos window.
   const [openFile, setOpenFile] = useState(null)
   const { open } = useWM()
+  const { markFileAsReviewed, isEnvelopeUnlocked, isFileNew } = useInvestigation()
 
   const currentId = path[path.length - 1]
   const current = FILE_SYSTEM[currentId]
@@ -28,6 +27,10 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
     if (!node) return
 
     if (node.type === 'folder') {
+      if (node.locked && id === 'envelope1' && !isEnvelopeUnlocked) {
+        setOpenFile({ id, file: null, locked: true })
+        return
+      }
       setPath(p => [...p, id])
       setOpenFile(null)
       return
@@ -37,13 +40,21 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
   }
 
   function openFileNode(id, node) {
+    if (node.locked && id === 'envelope1' && !isEnvelopeUnlocked) {
+      setOpenFile({ id, file: null, locked: true })
+      return
+    }
     if (node.locked && !unlockedFiles.includes(id)) {
       setOpenFile({ id, file: null, locked: true })
       return
     }
 
-    // Images open in a separate window, like on a normal PC.
+    if (node.type === 'txt' && ENVELOPE_FILE_IDS.includes(id)) {
+      markFileAsReviewed(id)
+    }
+
     if (node.type === 'image' || node.type === 'img') {
+      markFileAsReviewed(id)
       open(`photos-${id}`, {
         title: node.name,
         icon: getIcon(node),
@@ -73,6 +84,16 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
     isLast: i === path.length - 1,
   }))
 
+  function renderNewBadge(fileId) {
+    if (!isFileNew(fileId)) return null
+    return <span className="file-new-badge">НОВЫЙ МАТЕРИАЛ</span>
+  }
+
+  function isItemLocked(f) {
+    if (f.id === 'envelope1') return f.locked && !isEnvelopeUnlocked
+    return f.locked && !unlockedFiles.includes(f.id)
+  }
+
   function renderViewer() {
     if (!openFile) return null
 
@@ -80,9 +101,13 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
       return (
         <div className="file-locked">
           <div className="file-locked-icon">🔒</div>
-          <h3>Access Denied</h3>
-          <p>This file is encrypted or restricted.</p>
-          <p className="dimtext">Investigate more to unlock it.</p>
+          <h3>Доступ закрыт</h3>
+          <p>
+            {openFile.id === 'envelope1'
+              ? 'Конверт №1 будет доступен после промежуточного отчёта и звонка куратора.'
+              : 'Файл зашифрован или ограничен.'}
+          </p>
+          <p className="dimtext">Продолжайте расследование на портале Dark Trace.</p>
         </div>
       )
     }
@@ -92,15 +117,22 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
     if (f.type === 'image' || f.type === 'img') return <ImageViewer file={f} />
     if (f.type === 'video') return <VideoViewer file={f} />
 
-    return <div className="placeholder-content"><p>Unsupported file type.</p></div>
+    return (
+      <div className="placeholder-content">
+        <p>Unsupported file type.</p>
+      </div>
+    )
   }
 
   return (
     <div className="explorer">
-      {/* Address bar */}
       <div className="explorer-bar">
-        <button className="ex-nav-btn" onClick={goBack} disabled={path.length <= 1}>Back</button>
-        <button className="ex-nav-btn" onClick={goUp} disabled={path.length <= 1}>Up</button>
+        <button className="ex-nav-btn" onClick={goBack} disabled={path.length <= 1}>
+          Back
+        </button>
+        <button className="ex-nav-btn" onClick={goUp} disabled={path.length <= 1}>
+          Up
+        </button>
 
         <div className="ex-breadcrumb">
           {breadcrumb.map((b, i) => (
@@ -119,27 +151,35 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
           ))}
         </div>
 
-        <span className="ex-count">{children.length} item{children.length !== 1 ? 's' : ''}</span>
+        <span className="ex-count">
+          {children.length} item{children.length !== 1 ? 's' : ''}
+        </span>
       </div>
 
       <div className="explorer-body">
-        {/* Sidebar */}
         <div className="explorer-sidebar">
           <div className="sidebar-section">CASE FILES</div>
           {getChildren('case001').map(f => (
             <div
               key={f.id}
-              className={`sidebar-item ${openFile?.id === f.id ? 'sidebar-active' : ''} ${f.locked && !unlockedFiles.includes(f.id) ? 'sidebar-locked' : ''}`}
-              onClick={() => openFileNode(f.id, f)}
+              className={`sidebar-item ${openFile?.id === f.id ? 'sidebar-active' : ''} ${isItemLocked(f) ? 'sidebar-locked' : ''}`}
+              onClick={() => {
+                if (f.type === 'folder') {
+                  setPath(['case001', f.id])
+                  setOpenFile(null)
+                } else {
+                  openFileNode(f.id, f)
+                }
+              }}
             >
               <span>{getIcon(f)}</span>
               <span className="sidebar-name">{f.name}</span>
-              {f.locked && !unlockedFiles.includes(f.id) && <span className="sidebar-lock">🔒</span>}
+              {renderNewBadge(f.id)}
+              {isItemLocked(f) && <span className="sidebar-lock">🔒</span>}
             </div>
           ))}
         </div>
 
-        {/* Main pane */}
         <div className="explorer-main">
           {openFile ? (
             <div className="explorer-viewer">
@@ -150,13 +190,14 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
               {children.map(f => (
                 <div
                   key={f.id}
-                  className={`file-tile ${f.locked && !unlockedFiles.includes(f.id) ? 'file-locked-tile' : ''}`}
+                  className={`file-tile ${isItemLocked(f) ? 'file-locked-tile' : ''}`}
                   onDoubleClick={() => navigate(f.id)}
                 >
                   <div className="file-tile-icon">
-                    {f.locked && !unlockedFiles.includes(f.id) ? '🔒' : getIcon(f)}
+                    {isItemLocked(f) ? '🔒' : getIcon(f)}
                   </div>
                   <span className="file-tile-name">{f.name}</span>
+                  {renderNewBadge(f.id)}
                   <span className="file-tile-type">{f.type?.toUpperCase()}</span>
                 </div>
               ))}

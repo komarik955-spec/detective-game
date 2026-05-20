@@ -3,6 +3,7 @@ import './DarkTraceSite.css'
 import { saveFileToDesktop } from '../utils/fileActions'
 import { getAgentAvatarPath } from '../utils/agentProfile'
 import { useInvestigation } from '../utils/investigationSystem'
+import SlateCallFlow from '../components/SlateCallFlow'
 
 
 
@@ -545,7 +546,16 @@ function LoginPage({ onLogin, loading }) {
 ═══════════════════════════════════════ */
 
 function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
-  const { currentStage, stagePercentage, reviewedCount, totalRequired } = useInvestigation();
+  const {
+    currentStage,
+    stagePercentage,
+    reviewedCount,
+    totalRequired,
+    canSendInterimReport,
+    beginInterimReport,
+    unlockEnvelope1,
+  } = useInvestigation()
+  const [slateCallActive, setSlateCallActive] = useState(false)
 
   const fullName = playerData?.fullName?.trim() || ''
   const detectiveName = fullName ? fullName.toUpperCase() : 'DETECTIVE'
@@ -555,8 +565,20 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   const assignedCase = 'SB-2025-06-21'
   const avatarSrc = playerData?.avatarPath || getAgentAvatarPath(fullName)
 
+  const handleSendReport = () => {
+    if (!canSendInterimReport || slateCallActive) return
+    beginInterimReport()
+    setSlateCallActive(true)
+  }
+
+  const handleSlateCallComplete = suspectId => {
+    unlockEnvelope1(suspectId)
+    setSlateCallActive(false)
+  }
+
   return (
-    <div className="dt-dashboard">
+    <div className={`dt-dashboard ${slateCallActive ? 'dt-dashboard--locked' : ''}`}>
+      {slateCallActive && <SlateCallFlow onComplete={handleSlateCallComplete} />}
       <div className="dt-dashboard-header">
         <h1>DASHBOARD</h1>
         <div className="dt-user-info">
@@ -622,9 +644,9 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
               <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
               <p className="dt-objective-text">{currentStage.objective}</p>
               <div className="dt-objective-hint">
-                {currentStage.id === 'initial_analysis' ? 
-                  "Откройте раздел «Досье» и «Видеопротоколы» и изучите материалы всех фигурантов дела." : 
-                  "Изучите новые материалы в архиве улик и показаний."}
+                {currentStage.id === 'starter_folder'
+                  ? 'Откройте на портале разделы «Досье», «Улики» и «Видеопротоколы» и изучите каждый файл.'
+                  : 'Изучите все файлы в «Конверт №1» в Case 001.'}
               </div>
 
             </div>
@@ -636,10 +658,42 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
                 <span className="dt-stat-value">{reviewedCount} / {totalRequired}</span>
               </div>
             </div>
+
+            <button
+              type="button"
+              className={`dt-report-btn ${canSendInterimReport ? 'dt-report-btn--active' : ''}`}
+              disabled={!canSendInterimReport || slateCallActive}
+              onClick={handleSendReport}
+              title={
+                canSendInterimReport
+                  ? 'Отправить промежуточный отчёт куратору'
+                  : 'Изучите все материалы текущего этапа'
+              }
+            >
+              ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ
+            </button>
+            {progressHint(currentStage, canSendInterimReport, slateCallActive)}
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+function progressHint(stage, canSend, callActive) {
+  if (callActive) {
+    return <p className="dt-report-hint">Связь с куратором…</p>
+  }
+  if (canSend) {
+    return <p className="dt-report-hint dt-report-hint--ready">Отчёт готов к отправке.</p>
+  }
+  if (stage?.id === 'envelope_1') {
+    return <p className="dt-report-hint">Изучите файлы в «Конверт №1» в Case 001.</p>
+  }
+  return (
+    <p className="dt-report-hint">
+      Изучите все материалы в «Досье», «Улики» и «Видеопротоколы» на портале Dark Trace.
+    </p>
   )
 }
 
@@ -903,11 +957,6 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
   const currentCategory = categories.find(c => c.name === selectedCategory)
 
-  useEffect(() => {
-    if (currentCategory) {
-      currentCategory.files.forEach(file => markFileAsReviewed(file.id))
-    }
-  }, [selectedCategory])
 
   const handleDownload = (e, file) => {
     e.stopPropagation()
@@ -972,11 +1021,14 @@ function EvidenceArchive({ userLevel, onNavigate }) {
               </div>
               <div 
                 className="dt-evidence-image-container clickable"
-                onClick={() => setPreviewImage({
-                  src: file.url,
-                  title: file.name,
-                  meta: `EVIDENCE • ${selectedCategory.toUpperCase()} • ${file.id}`
-                })}
+                onClick={() => {
+                  markFileAsReviewed(file.id)
+                  setPreviewImage({
+                    src: file.url,
+                    title: file.name,
+                    meta: `EVIDENCE • ${selectedCategory.toUpperCase()} • ${file.id}`,
+                  })
+                }}
                 title="Нажмите для увеличения"
               >
                 <div className="dt-viewer-frame"></div>

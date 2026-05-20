@@ -1,0 +1,314 @@
+.slate-call-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+}
+
+.slate-call-overlay--decrypt {
+  z-index: 20001;
+}
+
+.slate-call-window {
+  position: relative;
+  width: min(520px, 92vw);
+  max-height: 92vh;
+  padding: 28px 32px 32px;
+  background: linear-gradient(145deg, #1a1a2e 0%, #0d0d1a 100%);
+  border: 1px solid rgba(100, 255, 218, 0.25);
+  border-radius: 16px;
+  box-shadow:
+    0 0 60px rgba(100, 255, 218, 0.12),
+    0 0 100px rgba(100, 100, 255, 0.08);
+  text-align: center;
+  overflow-y: auto;
+}
+
+.slate-call-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.slate-call-glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: linear-gradient(
+    45deg,
+    rgba(100, 255, 218, 0.2),
+    rgba(150, 100, 255, 0.15),
+    rgba(100, 255, 218, 0.2)
+  );
+  z-index: -1;
+  filter: blur(12px);
+  animation: slateGlowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes slateGlowPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.slate-call-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: #4ade80;
+}
+
+.slate-call-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #e8eaed;
+  text-transform: uppercase;
+}
+
+.slate-call-caller {
+  margin: 0 0 28px;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #64ffda;
+  text-shadow: 0 0 24px rgba(100, 255, 218, 0.45);
+}
+
+.slate-accept-btn {
+  padding: 14px 36px;
+  border: 2px solid #64ffda;
+  border-radius: 8px;
+  background: rgba(100, 255, 218, 0.08);
+  color: #64ffda;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  animation: slateAcceptPulse 1.2s ease-in-out infinite;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.slate-accept-btn:hover {
+  background: rgba(100, 255, 218, 0.2);
+  box-shadow: 0 0 28px rgba(100, 255, 218, 0.45);
+}
+
+@keyframes slateAcceptPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(100, 255, 218, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(100, 255, 218, 0.55);
+  }
+}
+
+.slate-call-status-label {
+  margin: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #8892b0;
+  text-transform: uppercase;
+}
+
+.slate-waveform {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  height: 36px;
+  margin-bottom: 18px;
+}
+
+.slate-wave-bar {
+  display: block;
+  width: 4px;
+  height: 8px;
+  background: linear-gradient(180deg, #64ffda, #4a9eff);
+  border-radius: 2px;
+  animation: slateWave 0.9s ease-in-out infinite;
+}
+
+@keyframes slateWave {
+  0%,
+  100% {
+    height: 8px;
+    opacity: 0.5;
+  }
+  50% {
+    height: 28px;
+    opacity: 1;
+  }
+}
+
+.slate-transcript-wrap {
+  position: relative;
+  min-height: 140px;
+  margin-bottom: 16px;
+  padding: 16px;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(100, 255, 218, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.slate-static-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: slateNoise 0.15s steps(4) infinite;
+}
+
+@keyframes slateNoise {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2%, 1%);
+  }
+  50% {
+    transform: translate(1%, -2%);
+  }
+  75% {
+    transform: translate(2%, 2%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.slate-transcript {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #c8d6e5;
+  white-space: pre-wrap;
+}
+
+.slate-cursor {
+  color: #64ffda;
+  animation: slateBlink 0.8s step-end infinite;
+}
+
+@keyframes slateBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.slate-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.slate-choices--glitch-in {
+  animation: slateGlitchIn 0.55s ease-out;
+}
+
+@keyframes slateGlitchIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) skewX(-2deg);
+    filter: blur(2px);
+  }
+  40% {
+    opacity: 0.7;
+    transform: translateX(2px) skewX(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.slate-choice-btn {
+  padding: 10px 14px;
+  border: 1px solid rgba(100, 255, 218, 0.35);
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #ccd6f6;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.slate-choice-btn:hover {
+  border-color: #64ffda;
+  background: rgba(100, 255, 218, 0.1);
+  transform: translateX(3px);
+}
+
+.slate-decrypt-panel {
+  width: min(480px, 90vw);
+  padding: 32px 36px;
+  background: linear-gradient(160deg, #0f0f23 0%, #1a1a2e 100%);
+  border: 2px solid rgba(100, 255, 218, 0.4);
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(100, 255, 218, 0.15);
+}
+
+.slate-decrypt-title,
+.slate-decrypt-sub {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #64ffda;
+  text-transform: uppercase;
+}
+
+.slate-decrypt-sub {
+  margin-bottom: 20px;
+  color: #a8b2d1;
+}
+
+.slate-decrypt-bar-track {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.slate-decrypt-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #64ffda, #4a9eff);
+  border-radius: 4px;
+  transition: width 0.1s linear;
+}
+
+.slate-decrypt-percent {
+  font-size: 11px;
+  color: #8892b0;
+  font-variant-numeric: tabular-nums;
+}

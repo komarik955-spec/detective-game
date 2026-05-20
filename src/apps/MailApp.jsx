@@ -79,7 +79,7 @@ Password: 12345
     starred: false, 
     read: false,
     hidden: true,
-    triggerStage: 'initial_analysis',
+    triggerStage: 'starter_folder',
     from: { 
       name: 'Дэвид Слейт',
       email: 'd.slate@ashford-pd.gov',

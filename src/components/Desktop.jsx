@@ -13,6 +13,7 @@ import Window from './Window'
 import FileExplorer from './FileExplorer'
 
 import { useWM, WindowManagerProvider } from './WindowManager'
+import { InvestigationProvider } from '../utils/investigationSystem'
 
 import { getSavedFiles, removeSavedFile } from '../utils/fileActions'
 
@@ -683,9 +684,9 @@ export default function Desktop({ playerData }) {
   return (
 
     <WindowManagerProvider>
-
-      <DesktopInner playerData={playerData} />
-
+      <InvestigationProvider>
+        <DesktopInner playerData={playerData} />
+      </InvestigationProvider>
     </WindowManagerProvider>
 
   )

@@ -29,7 +29,7 @@ export const FILE_SYSTEM = {
   // =========================
   'start': {
     type: 'folder',
-    name: 'Начало',
+    name: 'Стартовая папка',
     icon: '📂',
     children: ['memo', 'police_report', 'autopsy', 'suicide_note'],
   },
@@ -636,9 +636,9 @@ export const FILE_SYSTEM = {
   // =========================
   'envelope1': {
     type: 'folder',
-    name: 'Конверт 1',
+    name: 'Конверт №1',
     icon: '📦',
-    unlockAfter: ['police_report', 'evan', 'marcus'],
+    locked: true,
     children: ['insurance', 'bank', 'chat'],
   },
 

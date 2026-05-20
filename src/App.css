@@ -810,6 +810,32 @@ html, body, #root {
 .file-tile-icon          { font-size: 2.4rem; line-height: 1; }
 .file-tile-name          { font-size: 0.68rem; color: var(--text); line-height: 1.3; word-break: break-word; }
 .file-tile-type          { font-size: 0.6rem; color: var(--text-dim); font-family: var(--font-mono); }
+
+.file-new-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 6px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0a0a0f;
+  background: linear-gradient(90deg, #64ffda, #fbbf24);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(100, 255, 218, 0.45);
+  animation: newBadgePulse 1.5s ease-in-out infinite;
+}
+
+.sidebar-item .file-new-badge {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.5rem;
+}
+
+@keyframes newBadgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
 .file-locked-tile        { opacity: 0.45; }
 .file-locked-tile:hover  { border-color: rgba(233,69,96,0.4); }
 
