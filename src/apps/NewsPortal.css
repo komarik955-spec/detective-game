@@ -453,6 +453,20 @@
   color: var(--news-muted);
 }
 
+.news-inline-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--news-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.news-inline-link:hover {
+  color: var(--news-accent-soft);
+}
+
 /* ─── Sidebar ─── */
 
 .news-sidebar {

@@ -1,4 +1,4 @@
-﻿import { useState, useContext } from 'react'
+﻿import { useState, useContext, useEffect } from 'react'
 
 
 
@@ -7,6 +7,7 @@ import DarkTraceSite from '../apps/DarkTraceSite'
 import DarkTracePublic from '../apps/DarkTracePublic'
 import PharmaNet from '../apps/PharmaNet'
 import NewsPortal from '../apps/NewsPortal'
+import RivertonInsurance from '../apps/RivertonInsurance'
 import { SecondMailContext } from '../components/Desktop'
 
 
@@ -29,10 +30,18 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
   const [loading, setLoading] = useState(false)
-
-
+  const [oneMailUnreadBadge, setOneMailUnreadBadge] = useState(0)
 
   const handleSecondMailArrived = useContext(SecondMailContext)
+
+  useEffect(() => {
+    const syncUnread = e => {
+      const count = e?.detail?.count
+      if (typeof count === 'number') setOneMailUnreadBadge(count)
+    }
+    window.addEventListener('mailApp_unread_count', syncUnread)
+    return () => window.removeEventListener('mailApp_unread_count', syncUnread)
+  }, [])
 
 
 
@@ -432,6 +441,13 @@ export default function Browser({ onSecondMailArrived, playerData }) {
           title: 'PharmaNet Online',
           loading: false
         })
+      } else if (value.includes('riverton-insurance') || value.includes('rivertoninsurance')) {
+        updateTab(activeId, {
+          page: 'riverton',
+          url: 'https://www.riverton-insurance.com',
+          title: 'Riverton Insurance',
+          loading: false
+        })
       } else {
 
 
@@ -642,37 +658,29 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
     } else if (value.includes('news')) {
-
-
-
       newTabConfig = {
-
-
-
         id,
-
-
-
         title: 'NEWS',
-
-
-
         url: 'https://news.darktrace.agency',
-
-
-
         page: 'news',
-
-
-
         loading: false
-
-
-
       }
-
-
-
+    } else if (value.includes('pharmanet.com') || value.includes('pharma')) {
+      newTabConfig = {
+        id,
+        title: 'PharmaNet Online',
+        url: 'https://pharmanet.com',
+        page: 'pharma',
+        loading: false
+      }
+    } else if (value.includes('riverton-insurance') || value.includes('rivertoninsurance')) {
+      newTabConfig = {
+        id,
+        title: 'Riverton Insurance',
+        url: 'https://www.riverton-insurance.com',
+        page: 'riverton',
+        loading: false
+      }
     }
 
 
@@ -941,7 +949,9 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
-        {activeTab && activeTab.page === 'home' && <Home navigateInNewTab={navigateInNewTab} />}
+        {activeTab && activeTab.page === 'home' && (
+          <Home navigateInNewTab={navigateInNewTab} oneMailUnreadBadge={oneMailUnreadBadge} />
+        )}
 
 
 
@@ -983,6 +993,7 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
         {activeTab && activeTab.page === 'darktrace-public' && <DarkTracePublic onLogin={openDarkTraceLogin} />}
         {activeTab && activeTab.page === 'pharma' && <PharmaNet />}
+        {activeTab && activeTab.page === 'riverton' && <RivertonInsurance />}
         {activeTab && activeTab.page === 'news' && (
           <NewsPortal
             onNavigateToDarkTrace={() => {
@@ -996,6 +1007,14 @@ export default function Browser({ onSecondMailArrived, playerData }) {
                   isLoggedIn: false,
                   userLevel: 'guest'
                 }
+              })
+            }}
+            onNavigateToRivertonInsurance={() => {
+              updateTab(activeId, {
+                page: 'riverton',
+                url: 'https://www.riverton-insurance.com',
+                title: 'Riverton Insurance',
+                loading: false
               })
             }}
           />
@@ -1025,7 +1044,7 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
-function Home({ navigateInNewTab }) {
+function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
@@ -1130,7 +1149,14 @@ function Home({ navigateInNewTab }) {
 
 
           <div className="site" onClick={openMailInNewTab} title="OneMail" aria-label="OneMail">
-            <div className="site-icon" aria-hidden="true">✉</div>
+            <div className="site-icon-wrap">
+              <div className="site-icon" aria-hidden="true">✉</div>
+              {oneMailUnreadBadge > 0 && (
+                <span className="site-mail-badge" aria-label={`Непрочитанных: ${oneMailUnreadBadge}`}>
+                  {oneMailUnreadBadge > 9 ? '9+' : oneMailUnreadBadge}
+                </span>
+              )}
+            </div>
             <div className="site-label">OneMail</div>
           </div>
 

@@ -5,6 +5,13 @@ import './MailApp.css'
 import { createPortal } from 'react-dom'
 
 import { saveFileToDesktop } from '../utils/fileActions'
+import { INSURANCE_POLICIES_DOCUMENT } from '../data/insurancePolicyContent'
+import { isRivertonInsuranceComplete } from '../utils/rivertonInsuranceQuest'
+import {
+  createVesperInsuranceHintMail,
+  isVesperInsuranceHintMailUnlocked,
+  VESPER_INSURANCE_HINT_MAIL_ID,
+} from '../utils/vesperInsuranceHintMail'
 
 
 
@@ -332,6 +339,47 @@ Password: 12345
     ]
 
   },
+
+  {
+    id: 7,
+    folder: 'inbox',
+    tab: 'primary',
+    starred: false,
+    read: false,
+    hidden: true,
+    from: {
+      name: 'Архив Riverton Insurance',
+      email: 'archive@riverton-insurance.com',
+      avatar: '🏛️',
+    },
+    subject: 'RE: Официальный запрос документов [ID-991026]',
+    preview:
+      'В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace направляем архивные материалы…',
+    date: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    body: `Уважаемый детектив,
+
+В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace (код авторизации DT-78823) направляем затребованные архивные материалы.
+
+Системой были обнаружены синхронизированные копии договоров по программе страхования жизни „Семейный Щит 1+1“ на имя Блэк С. и Андервуда Э., оформленные 15 июня 2025 года.
+
+Электронные копии документов прикреплены к данному письму во вложении.
+
+С уважением,
+Отдел комплаенса и архивного учета Riverton Insurance`,
+    attachments: [
+      {
+        id: 'riverton-att-policies',
+        name: 'Копии_полисов_Блэк_Андервуд.pdf',
+        type: 'document',
+        size: '248 КБ',
+        icon: '📄',
+        content: INSURANCE_POLICIES_DOCUMENT,
+        downloadable: false,
+      },
+    ],
+  },
+
+  createVesperInsuranceHintMail(),
 
 ]
 
@@ -1286,31 +1334,25 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
 
   function handleOpenFile(file) {
-
     setOpenedFile(file)
+    setZoom(1)
+    setPan({ x: 0, y: 0 })
 
-    setZoom(1) // Сбрасываем зум при открытии нового файла
-
-    setPan({ x: 0, y: 0 }) // Сбрасываем позицию при открытии нового файла
-
-    // Загружаем изображение для определения его реальных размеров
-
-    const img = new Image()
-
-    img.onload = () => {
-
-      // Добавляем небольшой отступ (40px) для хедера и отступов
-
-      const maxWidth = Math.min(img.width + 40, window.innerWidth - 100)
-
-      const maxHeight = Math.min(img.height + 80, window.innerHeight - 100)
-
-      setImageDimensions({ width: maxWidth, height: maxHeight })
-
+    if (file.content) {
+      setImageDimensions({
+        width: Math.min(720, window.innerWidth - 80),
+        height: Math.min(560, window.innerHeight - 80),
+      })
+      return
     }
 
+    const img = new Image()
+    img.onload = () => {
+      const maxWidth = Math.min(img.width + 40, window.innerWidth - 100)
+      const maxHeight = Math.min(img.height + 80, window.innerHeight - 100)
+      setImageDimensions({ width: maxWidth, height: maxHeight })
+    }
     img.src = file.url
-
   }
 
 
@@ -1375,14 +1417,28 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
       const parsed = JSON.parse(savedMails)
 
-      // Если второе письмо уже было показано ранее, оно должно быть видимым
+      initialMails = parsed.some(m => m.id === VESPER_INSURANCE_HINT_MAIL_ID)
+        ? parsed
+        : [...parsed, createVesperInsuranceHintMail()]
 
-      initialMails = parsed.map(mail => 
+      initialMails = initialMails.map(mail =>
 
         mail.id === 5 && secondMailShown ? { ...mail, hidden: false } : mail
 
       )
 
+    }
+
+    if (isRivertonInsuranceComplete()) {
+      initialMails = initialMails.map(mail =>
+        mail.id === 7 ? { ...mail, hidden: false } : mail
+      )
+    }
+
+    if (isVesperInsuranceHintMailUnlocked()) {
+      initialMails = initialMails.map(mail =>
+        mail.id === VESPER_INSURANCE_HINT_MAIL_ID ? { ...mail, hidden: false } : mail
+      )
     }
 
     // Check for pending investigation emails from progression system
@@ -1461,6 +1517,64 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
     window.addEventListener('dt_stage_completed', handleStageComplete);
     return () => window.removeEventListener('dt_stage_completed', handleStageComplete);
   }, [onSecondMailArrived]);
+
+  useEffect(() => {
+    const revealRivertonMail = () => {
+      setMails(prev => {
+        const hasMail = prev.some(m => m.id === 7)
+        if (!hasMail) return prev
+        const alreadyVisible = prev.some(m => m.id === 7 && !m.hidden)
+        if (alreadyVisible) return prev
+        return prev.map(m => (m.id === 7 ? { ...m, hidden: false, read: false } : m))
+      })
+      if (onSecondMailArrived) {
+        setTimeout(() => {
+          onSecondMailArrived()
+          const audio = new Audio('/assets/sounds/notification.mp3')
+          audio.play().catch(() => {})
+        }, 400)
+      }
+    }
+
+    window.addEventListener('dt_riverton_insurance_complete', revealRivertonMail)
+    return () => window.removeEventListener('dt_riverton_insurance_complete', revealRivertonMail)
+  }, [onSecondMailArrived])
+
+  useEffect(() => {
+    const revealVesperInsuranceHint = () => {
+      setMails(prev => {
+        const hasMail = prev.some(m => m.id === VESPER_INSURANCE_HINT_MAIL_ID)
+        if (!hasMail) return prev
+        const alreadyVisible = prev.some(
+          m => m.id === VESPER_INSURANCE_HINT_MAIL_ID && !m.hidden
+        )
+        if (alreadyVisible) return prev
+        return prev.map(m =>
+          m.id === VESPER_INSURANCE_HINT_MAIL_ID ? { ...m, hidden: false, read: false } : m
+        )
+      })
+      if (onSecondMailArrived) {
+        setTimeout(() => {
+          onSecondMailArrived({
+            title: 'OneMail',
+            text: 'Новое сообщение: Дополнение к моим показаниям / Важная деталь',
+          })
+          const audio = new Audio('/assets/sounds/notification.mp3')
+          audio.play().catch(() => {})
+        }, 500)
+      }
+    }
+
+    window.addEventListener('dt_envelope1_unlocked', revealVesperInsuranceHint)
+    return () => window.removeEventListener('dt_envelope1_unlocked', revealVesperInsuranceHint)
+  }, [onSecondMailArrived])
+
+  useEffect(() => {
+    const unread = mails.filter(m => m.folder === 'inbox' && !m.read && !m.hidden).length
+    window.dispatchEvent(
+      new CustomEvent('mailApp_unread_count', { detail: { count: unread } })
+    )
+  }, [mails])
 
   // Сохраняем письма в sessionStorage при каждом изменении
 
@@ -1980,26 +2094,32 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
 
 
-    <div className="file-window-body" onWheel={handleWheel} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-
-      <img src={openedFile.url} alt="file" style={{
-
-        maxWidth: '100%',
-
-        maxHeight: '100%',
-
-        objectFit: 'contain',
-
-        transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-
-        transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-
-        cursor: isDragging ? 'grabbing' : 'grab'
-
-      }} onMouseDown={handleMouseDown} />
-
-      <div className="zoom-indicator">{Math.round(zoom * 100)}%</div>
-
+    <div
+      className={`file-window-body ${openedFile.content ? 'file-window-body--document' : ''}`}
+      onWheel={openedFile.content ? undefined : handleWheel}
+      onMouseMove={openedFile.content ? undefined : handleMouseMove}
+      onMouseUp={openedFile.content ? undefined : handleMouseUp}
+    >
+      {openedFile.content ? (
+        <pre className="file-window-document">{openedFile.content}</pre>
+      ) : (
+        <>
+          <img
+            src={openedFile.url}
+            alt="file"
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+              transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+              cursor: isDragging ? 'grabbing' : 'grab',
+            }}
+            onMouseDown={handleMouseDown}
+          />
+          <div className="zoom-indicator">{Math.round(zoom * 100)}%</div>
+        </>
+      )}
     </div>
 
   </div>,

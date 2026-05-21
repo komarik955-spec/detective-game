@@ -4,7 +4,11 @@ import TextViewer from './viewers/TextViewer'
 import ImageViewer from './viewers/ImageViewer'
 import VideoViewer from './viewers/VideoViewer'
 import { useWM } from './WindowManager'
-import { useInvestigation, ENVELOPE_FILE_IDS } from '../utils/investigationSystem'
+import {
+  useInvestigation,
+  ENVELOPE_FILE_IDS,
+  INSURANCE_POLICIES_FILE_ID,
+} from '../utils/investigationSystem'
 
 const ICON_MAP = { folder: '📁', txt: '📄', image: '🖼️', img: '🖼️', video: '🎬' }
 
@@ -16,11 +20,16 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
   const [path, setPath] = useState([rootId])
   const [openFile, setOpenFile] = useState(null)
   const { open } = useWM()
-  const { markFileAsReviewed, isEnvelopeUnlocked, isFileNew } = useInvestigation()
+  const { markFileAsReviewed, isEnvelopeUnlocked, isFileNew, isRivertonInsuranceCompleted } =
+    useInvestigation()
 
   const currentId = path[path.length - 1]
   const current = FILE_SYSTEM[currentId]
-  const children = current?.type === 'folder' ? getChildren(currentId) : []
+  const children = (current?.type === 'folder' ? getChildren(currentId) : []).filter(f => {
+    const node = FILE_SYSTEM[f.id]
+    if (node?.questGated === 'riverton_insurance') return isRivertonInsuranceCompleted
+    return true
+  })
 
   function navigate(id) {
     const node = FILE_SYSTEM[id]
@@ -49,7 +58,10 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
       return
     }
 
-    if (node.type === 'txt' && ENVELOPE_FILE_IDS.includes(id)) {
+    if (
+      node.type === 'txt' &&
+      (ENVELOPE_FILE_IDS.includes(id) || id === INSURANCE_POLICIES_FILE_ID)
+    ) {
       markFileAsReviewed(id)
     }
 

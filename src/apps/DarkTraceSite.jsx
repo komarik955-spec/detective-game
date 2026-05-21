@@ -618,6 +618,10 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
                 <span className="dt-agent-label">ТЕКУЩЕЕ ДЕЛО</span>
                 <span className="dt-agent-value dt-agent-mono">{assignedCase}</span>
               </div>
+              <div className="dt-agent-row">
+                <span className="dt-agent-label">КОД АВТОРИЗАЦИИ АГЕНТСТВА</span>
+                <span className="dt-agent-value dt-agent-mono">DT-78823</span>
+              </div>
             </div>
           </div>
         </div>

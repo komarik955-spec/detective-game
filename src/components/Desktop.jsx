@@ -337,6 +337,10 @@ function DesktopInner({ playerData }) {
   const safePlayerData = playerData || { firstName: '', lastName: '', fullName: '', employeeId: '' }
 
   const [showNotif, setShowNotif] = useState(false)
+  const [mailNotif, setMailNotif] = useState({
+    title: 'OneMail',
+    text: 'Новое сообщение: Инструктаж по делу',
+  })
 
 
   const [savedFiles, setSavedFiles] = useState([])
@@ -367,7 +371,13 @@ function DesktopInner({ playerData }) {
 
 
 
-  const handleSecondMailArrived = () => {
+  const handleSecondMailArrived = payload => {
+    if (payload?.title || payload?.text) {
+      setMailNotif({
+        title: payload.title || 'OneMail',
+        text: payload.text || 'Новое сообщение',
+      })
+    }
     setShowNotif(true)
   }
 
@@ -605,9 +615,9 @@ function DesktopInner({ playerData }) {
 
         <SystemNotification
 
-          title="OneMail"
+          title={mailNotif.title}
 
-          text="Новое сообщение: Инструктаж по делу"
+          text={mailNotif.text}
 
           onClick={() => {
 

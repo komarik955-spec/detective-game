@@ -30,7 +30,7 @@ const IN_THIS_ISSUE = [
   { title: 'Туман на дорогах: предупреждение полиции', section: 'Безопасность' },
 ]
 
-export default function NewsPortal({ onNavigateToDarkTrace }) {
+export default function NewsPortal({ onNavigateToDarkTrace, onNavigateToRivertonInsurance }) {
   const [activeSign, setActiveSign] = useState('РАК')
 
   const activeHoro = horoscopeData.find(h => h.sign === activeSign)
@@ -203,8 +203,16 @@ export default function NewsPortal({ onNavigateToDarkTrace }) {
                     лет.
                   </p>
                   <p className="news-card-excerpt news-card-excerpt--secondary">
-                    <strong>В продолжение темы:</strong> «Ривертон Иншуранс» представила программу
-                    «Семейный Щит 1+1» для пар, готовящихся к браку. Комментирует Артур Хендерсон.
+                    <strong>В продолжение темы:</strong>{' '}
+                    <button
+                      type="button"
+                      className="news-inline-link"
+                      onClick={onNavigateToRivertonInsurance}
+                    >
+                      «Ривертон Иншуранс»
+                    </button>{' '}
+                    представила программу «Семейный Щит 1+1» для пар, готовящихся к браку.
+                    Комментирует Артур Хендерсон.
                   </p>
                 </article>
               </div>

@@ -1,4 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { isRivertonInsuranceComplete } from './rivertonInsuranceQuest'
+import {
+  isVesperInsuranceHintMailUnlocked,
+  unlockVesperInsuranceHintMail,
+} from './vesperInsuranceHintMail'
 
 const STORAGE_KEY = 'dt_investigation_progress'
 const SUSPECT_KEY = 'chosen_suspect'
@@ -31,6 +36,7 @@ export const STARTER_FILE_IDS = [
 ]
 
 export const ENVELOPE_FILE_IDS = ['insurance', 'bank', 'chat']
+export const INSURANCE_POLICIES_FILE_ID = 'insurance_policies'
 
 const STAGES = {
   starter_folder: {
@@ -56,6 +62,7 @@ const DEFAULT_PROGRESS = {
   interimReportSent: false,
   slateCallCompleted: false,
   envelope1Unlocked: false,
+  rivertonInsuranceCompleted: false,
   newMaterialIds: [],
 }
 
@@ -71,6 +78,12 @@ function normalizeProgress(raw) {
   }
   if (p.envelope1Unlocked && p.currentStageId === 'starter_folder') {
     p.currentStageId = 'envelope_1'
+  }
+  if (isRivertonInsuranceComplete()) {
+    p.rivertonInsuranceCompleted = true
+  }
+  if (p.envelope1Unlocked && !isVesperInsuranceHintMailUnlocked()) {
+    unlockVesperInsuranceHintMail()
   }
   return p
 }
@@ -133,6 +146,24 @@ export function InvestigationProvider({ children }) {
     })
   }, [])
 
+  const completeRivertonInsurance = useCallback(() => {
+    setProgress(prev => {
+      if (prev.rivertonInsuranceCompleted) return prev
+      return {
+        ...prev,
+        rivertonInsuranceCompleted: true,
+        newMaterialIds: [...new Set([...prev.newMaterialIds, INSURANCE_POLICIES_FILE_ID])],
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    const onInsuranceComplete = () => completeRivertonInsurance()
+    window.addEventListener('dt_riverton_insurance_complete', onInsuranceComplete)
+    if (isRivertonInsuranceComplete()) completeRivertonInsurance()
+    return () => window.removeEventListener('dt_riverton_insurance_complete', onInsuranceComplete)
+  }, [completeRivertonInsurance])
+
   const unlockEnvelope1 = useCallback((chosenSuspect) => {
     if (chosenSuspect) {
       localStorage.setItem(SUSPECT_KEY, chosenSuspect)
@@ -149,6 +180,7 @@ export function InvestigationProvider({ children }) {
         : [...prev.completedStages, 'starter_folder'],
       newMaterialIds: [...new Set([...prev.newMaterialIds, ...newMaterialIds])],
     }))
+    unlockVesperInsuranceHintMail()
     window.dispatchEvent(new CustomEvent('dt_envelope1_unlocked'))
   }, [])
 
@@ -181,6 +213,7 @@ export function InvestigationProvider({ children }) {
     canSendInterimReport,
     isFileNew: (fileId) => progress.newMaterialIds.includes(fileId),
     isEnvelopeUnlocked: progress.envelope1Unlocked,
+    isRivertonInsuranceCompleted: progress.rivertonInsuranceCompleted,
     chosenSuspect: localStorage.getItem(SUSPECT_KEY),
     ...stageStats,
   }

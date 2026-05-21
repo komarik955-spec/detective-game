@@ -1,3 +1,5 @@
+import { INSURANCE_POLICIES_DOCUMENT } from './insurancePolicyContent'
+
 // Главная "виртуальная файловая система" игры.
 // Каждый объект ниже - это файл или папка, которую видит игрок в проводнике.
 //
@@ -639,7 +641,7 @@ export const FILE_SYSTEM = {
     name: 'Конверт №1',
     icon: '📦',
     locked: true,
-    children: ['insurance', 'bank', 'chat'],
+    children: ['insurance', 'bank', 'chat', 'insurance_policies'],
   },
 
   'insurance': {
@@ -647,6 +649,14 @@ export const FILE_SYSTEM = {
     name: 'страховка.txt',
     icon: '📄',
     content: `$500,000 выплата Эвану.`,
+  },
+
+  'insurance_policies': {
+    type: 'txt',
+    name: 'Копии_полисов_Блэк_Андервуд.pdf',
+    icon: '📄',
+    questGated: 'riverton_insurance',
+    content: INSURANCE_POLICIES_DOCUMENT,
   },
 
   'bank': {

@@ -912,6 +912,26 @@
   position: relative;
 }
 
+.file-window-body--document {
+  overflow: auto;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.file-window-document {
+  margin: 0;
+  padding: 16px 20px 24px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #d4d4d4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .zoom-indicator {
   position: absolute;
   bottom: 20px;
