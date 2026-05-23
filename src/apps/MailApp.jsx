@@ -12,6 +12,7 @@ import {
   isVesperInsuranceHintMailUnlocked,
   VESPER_INSURANCE_HINT_MAIL_ID,
 } from '../utils/vesperInsuranceHintMail'
+import { createSlateCourtOrderMail } from '../utils/insuranceSuccessMail'
 
 
 
@@ -1705,50 +1706,60 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
     setSelectedId(mail.id)
 
-    
-
-    // Если кликнули на письмо #1, запустить таймер для показа рапорта (только один раз за игру)
-
-    if (mail.id === 1 && !secondMailShown) {
-
+    // Если кликнули на письмо от Архива страховой (id: 7) — запускаем таймер для письма от Слейта
+    if (mail.id === 7) {
       if (timerRef.current) {
-
         clearTimeout(timerRef.current)
-
       }
 
-      
-
+      // Запуск таймера на 5 секунд для появления письма от Слейта
       timerRef.current = setTimeout(() => {
+        // Проверяем, не было ли письмо уже добавлено
+        setMails(prev => {
+          const hasSlateMail = prev.some(m => m.id === 'slate_court_order')
+          if (hasSlateMail) return prev
 
+          // Добавляем новое письмо от Слейта сверху
+          const newMail = { ...createSlateCourtOrderMail(), hidden: false }
+          console.log('[MailApp] Добавлено письмо от Слейта после клика на письмо #7')
+          
+          // Воспроизводим звук уведомления
+          const audio = new Audio('/assets/sounds/notification.mp3');
+          audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));
+          
+          // Вызываем callback для показа уведомления
+          if (onSecondMailArrived) {
+            setTimeout(() => onSecondMailArrived(), 200)
+          }
+          
+          return [newMail, ...prev]
+        })
+      }, 5000)
+    }
+
+    // Если кликнули на письмо #1, запустить таймер для показа рапорта (только один раз за игру)
+    if (mail.id === 1 && !secondMailShown) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+      
+      timerRef.current = setTimeout(() => {
         setMails(prev => prev.map(m => 
-
           m.id === 5 ? { ...m, hidden: false } : m
-
         ))
-
         setSecondMailShown(true)
-
         sessionStorage.setItem('secondMailShown', 'true')
-
         // Воспроизводим звук уведомления
-
         const audio = new Audio('/assets/sounds/notification.mp3');
-
         audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));
-
         // Вызываем callback для показа уведомления
-
         if (onSecondMailArrived) onSecondMailArrived()
-
       }, 10000)
-
     }
 
     // Если кликнули на письмо #5 (второе письмо), запустить таймер для показа письма от Vesper
     if (mail.id === 5 && !secondMailOpenedRef.current && !vesperEmailSent.current) {
       secondMailOpenedRef.current = true
-
       // Запуск таймера на 4 секунды для появления письма от Vesper
       setTimeout(() => {
         setMails(prev => prev.map(m => 
@@ -1763,15 +1774,10 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
       }, 4000)
     }
 
-    
     if (!mail.read) {
-
       setMails(prev => prev.map(m => m.id === mail.id ? { ...m, read: true } : m))
-
       if (onNotificationRead) onNotificationRead()
-
     }
-
   }
 
 

@@ -5,6 +5,7 @@ import {
   completeRivertonInsuranceRequest,
   isRivertonInsuranceComplete,
 } from '../utils/rivertonInsuranceQuest'
+import { triggerInsuranceSuccess } from '../utils/insuranceSuccessMail'
 
 const AUTH_ERROR =
   'Ошибка авторизации заявителя. Доступ к архиву отклонен. Проверьте правильность введенных данных и код лицензии'
@@ -97,7 +98,11 @@ export default function RivertonInsurance() {
       setSubmitted(true)
       setSuccess(true)
       if (!isRivertonInsuranceComplete()) {
+        console.log('[RivertonInsurance] Форма успешно отправлена, вызываю completeRivertonInsuranceRequest и triggerInsuranceSuccess')
         completeRivertonInsuranceRequest()
+        triggerInsuranceSuccess()
+      } else {
+        console.log('[RivertonInsurance] Запрос уже был выполнен ранее')
       }
     }, 2200)
   }
