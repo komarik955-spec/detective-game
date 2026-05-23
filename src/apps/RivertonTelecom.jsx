@@ -26,10 +26,10 @@ function getTelecomRecords(order, phone, date) {
     return {
       success: true,
       records: [
-        { time: '09:12', duration: '2:15', code: '104882', note: 'Исходящий (Автосервис Ривертона)' },
-        { time: '14:30', duration: '4:05', code: '508911', note: 'Входящий (Мать)' },
-        { time: '22:14', duration: '3:40', code: '041187', note: 'Входящий (Селена Блэк) [!] ПРИОРИТЕТ' },
-        { time: '23:45', duration: '1:10', code: '774102', note: 'Исходящий (Доставка пиццы)' }
+        { time: '09:12', duration: '2:15', code: '104882', note: 'Исходящий' },
+        { time: '14:30', duration: '4:05', code: '508911', note: 'Входящий' },
+        { time: '22:14', duration: '3:40', code: '041187', note: 'Входящий' },
+        { time: '23:45', duration: '1:10', code: '774102', note: 'Исходящий' }
       ]
     }
   }
@@ -42,10 +42,10 @@ function getTelecomRecords(order, phone, date) {
     return {
       success: true,
       records: [
-        { time: '08:05', duration: '1:50', code: '330194', note: 'Исходящий (Заказ красок)' },
-        { time: '11:20', duration: '5:12', code: '069201', note: 'Исходящий (Аларик / Галерея) [!] ПРИОРИТЕТ' },
-        { time: '15:40', duration: '0:30', code: '881204', note: 'Входящий (Запись в салон)' },
-        { time: '19:10', duration: '2:22', code: '441095', note: 'Исходящий (Такси)' }
+        { time: '08:05', duration: '1:50', code: '330194', note: 'Исходящий' },
+        { time: '11:20', duration: '5:12', code: '069201', note: 'Исходящий' },
+        { time: '15:40', duration: '0:30', code: '881204', note: 'Входящий' },
+        { time: '19:10', duration: '2:22', code: '441095', note: 'Исходящий' }
       ]
     }
   }
@@ -58,10 +58,10 @@ function getTelecomRecords(order, phone, date) {
     return {
       success: true,
       records: [
-        { time: '07:30', duration: '10:15', code: '021998', note: 'Исходящий (Эван Андервуд) [!] ПРИОРИТЕТ' },
-        { time: '12:00', duration: '1:05', code: '115623', note: 'Входящий (Частная клиника)' },
-        { time: '14:15', duration: '3:50', code: '654128', note: 'Исходящий (Адвокат)' },
-        { time: '17:45', duration: '0:50', code: '902114', note: 'Входящий (Цветы)' }
+        { time: '07:30', duration: '10:15', code: '021998', note: 'Исходящий' },
+        { time: '12:00', duration: '1:05', code: '115623', note: 'Входящий' },
+        { time: '14:15', duration: '3:50', code: '654128', note: 'Исходящий' },
+        { time: '17:45', duration: '0:50', code: '902114', note: 'Входящий' }
       ]
     }
   }
@@ -216,17 +216,14 @@ export default function RivertonTelecom({ initialState = {}, onStateChange }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {results.map((record, index) => {
-                    const isPriority = record.note.includes('[!] ПРИОРИТЕТ')
-                    return (
-                      <tr key={index}>
-                        <td>{record.time}</td>
-                        <td>{record.duration}</td>
-                        <td><span className="rt-code">{record.code}</span></td>
-                        <td className={isPriority ? 'rt-priority' : 'rt-note'}>{record.note}</td>
-                      </tr>
-                    )
-                  })}
+                  {results.map((record, index) => (
+                    <tr key={index}>
+                      <td>{record.time}</td>
+                      <td>{record.duration}</td>
+                      <td><span className="rt-code">{record.code}</span></td>
+                      <td className="rt-note">{record.note}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             )}
