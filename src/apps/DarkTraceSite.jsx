@@ -4,6 +4,7 @@ import { saveFileToDesktop } from '../utils/fileActions'
 import { getAgentAvatarPath } from '../utils/agentProfile'
 import { useInvestigation } from '../utils/investigationSystem'
 import SlateCallFlow from '../components/SlateCallFlow'
+import AudioArchive from './AudioArchive'
 
 
 
@@ -143,6 +144,8 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
 
       case 'evidence':
         return <EvidenceArchive userLevel={userLevel} onNavigate={onNavigate} />
+      case 'audio-archive':
+        return <AudioArchive userLevel={userLevel} onNavigate={onNavigate} />
       case 'knowledge':
 
 
@@ -280,6 +283,15 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
               }}
             >
               [05] Улики
+            </button>
+
+            <button
+              className={`dt-nav-btn ${currentPage === 'audio-archive' ? 'active' : ''}`}
+              onClick={() => {
+                if (onNavigate) onNavigate('audio-archive')
+              }}
+            >
+              [06] Аудиоархив
             </button>
 
 

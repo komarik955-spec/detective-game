@@ -8,6 +8,7 @@ import DarkTracePublic from '../apps/DarkTracePublic'
 import PharmaNet from '../apps/PharmaNet'
 import NewsPortal from '../apps/NewsPortal'
 import RivertonInsurance from '../apps/RivertonInsurance'
+import RivertonTelecom from '../apps/RivertonTelecom'
 import { SecondMailContext } from '../components/Desktop'
 
 
@@ -31,6 +32,7 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
   const [loading, setLoading] = useState(false)
   const [oneMailUnreadBadge, setOneMailUnreadBadge] = useState(0)
+  const [telecomState, setTelecomState] = useState({})
 
   const handleSecondMailArrived = useContext(SecondMailContext)
 
@@ -448,6 +450,13 @@ export default function Browser({ onSecondMailArrived, playerData }) {
           title: 'Riverton Insurance',
           loading: false
         })
+      } else if (value.includes('riverton-telecom') || value.includes('telecom.riverton') || value.includes('rivertontelecom')) {
+        updateTab(activeId, {
+          page: 'riverton-telecom',
+          url: 'https://www.riverton-telecom.com',
+          title: 'Riverton Telecom',
+          loading: false
+        })
       } else {
 
 
@@ -679,6 +688,14 @@ export default function Browser({ onSecondMailArrived, playerData }) {
         title: 'Riverton Insurance',
         url: 'https://www.riverton-insurance.com',
         page: 'riverton',
+        loading: false
+      }
+    } else if (value.includes('riverton-telecom') || value.includes('telecom.riverton') || value.includes('rivertontelecom')) {
+      newTabConfig = {
+        id,
+        title: 'Riverton Telecom',
+        url: 'https://www.riverton-telecom.com',
+        page: 'riverton-telecom',
         loading: false
       }
     }
@@ -994,6 +1011,12 @@ export default function Browser({ onSecondMailArrived, playerData }) {
         {activeTab && activeTab.page === 'darktrace-public' && <DarkTracePublic onLogin={openDarkTraceLogin} />}
         {activeTab && activeTab.page === 'pharma' && <PharmaNet />}
         {activeTab && activeTab.page === 'riverton' && <RivertonInsurance />}
+        {activeTab && activeTab.page === 'riverton-telecom' && (
+          <RivertonTelecom
+            initialState={telecomState}
+            onStateChange={setTelecomState}
+          />
+        )}
         {activeTab && activeTab.page === 'news' && (
           <NewsPortal
             onNavigateToDarkTrace={() => {
@@ -1090,6 +1113,16 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
   }
 
+  function openRivertonTelecomInNewTab() {
+
+
+
+    navigateInNewTab('riverton-telecom')
+
+
+
+  }
+
 
 
 
@@ -1180,6 +1213,11 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
           <div className="site" onClick={openNewsInNewTab} title="News" aria-label="News">
             <div className="site-icon" aria-hidden="true">📰</div>
             <div className="site-label">News</div>
+          </div>
+
+          <div className="site" onClick={openRivertonTelecomInNewTab} title="Riverton Telecom" aria-label="Riverton Telecom">
+            <div className="site-icon" aria-hidden="true">📡</div>
+            <div className="site-label">Riverton Telecom</div>
           </div>
 
 
