@@ -5,6 +5,7 @@ import { getAgentAvatarPath } from '../utils/agentProfile'
 import { useInvestigation } from '../utils/investigationSystem'
 import { isSlateEvidenceMailUnlocked } from '../utils/insuranceSuccessMail'
 import SlateCallFlow from '../components/SlateCallFlow'
+import EncryptedCall from '../components/EncryptedCall'
 import AudioArchive from './AudioArchive'
 
 
@@ -569,6 +570,8 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
     unlockEnvelope1,
   } = useInvestigation()
   const [slateCallActive, setSlateCallActive] = useState(false)
+  const [encryptedCallActive, setEncryptedCallActive] = useState(false)
+  const [currentEnvelope, setCurrentEnvelope] = useState(1)
   const [hasVisitedTelecom, setHasVisitedTelecom] = useState(() => {
     try {
       return localStorage.getItem('dt_visited_telecom') === 'true'
@@ -601,6 +604,8 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
   const canSendFinalReport = secondStageProgress() === 100
 
+  const isEnvelope2 = currentEnvelope === 2
+
   const fullName = playerData?.fullName?.trim() || ''
   const detectiveName = fullName ? fullName.toUpperCase() : 'DETECTIVE'
   const employeeId = playerData?.employeeId || 'DT-0000'
@@ -610,6 +615,10 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   const avatarSrc = playerData?.avatarPath || getAgentAvatarPath(fullName)
 
   const handleSendReport = () => {
+    if (isSlateEvidenceMailUnlocked() && canSendFinalReport) {
+      setEncryptedCallActive(true)
+      return
+    }
     if (!canSendInterimReport || slateCallActive) return
     beginInterimReport()
     setSlateCallActive(true)
@@ -620,9 +629,16 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
     setSlateCallActive(false)
   }
 
+  const handleEncryptedCallComplete = () => {
+    setEncryptedCallActive(false)
+    setCurrentEnvelope(2)
+    localStorage.setItem('dt_current_envelope', '2')
+  }
+
   return (
-    <div className={`dt-dashboard ${slateCallActive ? 'dt-dashboard--locked' : ''}`}>
+    <div className={`dt-dashboard ${slateCallActive || encryptedCallActive ? 'dt-dashboard--locked' : ''}`}>
       {slateCallActive && <SlateCallFlow onComplete={handleSlateCallComplete} />}
+      {encryptedCallActive && <EncryptedCall onComplete={handleEncryptedCallComplete} />}
       <div className="dt-dashboard-header">
         <h1>DASHBOARD</h1>
         <div className="dt-user-info">
@@ -675,20 +691,29 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
           <h3>INVESTIGATION PROGRESS</h3>
           <div className="dt-progression-content">
             <div className="dt-progress-header">
-              <span className="dt-progress-percent">{isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage}%</span>
-              <span className="dt-stage-name">STAGE: {isSlateEvidenceMailUnlocked() ? 'КОНВЕРТ №2' : currentStage.title}</span>
+              <span className="dt-progress-percent">{isEnvelope2 ? '0%' : (isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage)}%</span>
+              <span className="dt-stage-name">STAGE: {isEnvelope2 ? 'КОНВЕРТ №2' : (isSlateEvidenceMailUnlocked() ? 'КОНВЕРТ №1' : currentStage.title)}</span>
             </div>
 
             <div className="dt-progress-bar-container">
               <div
                 className="dt-progress-bar-fill"
-                style={{ width: `${isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage}%` }}
+                style={{ width: `${isEnvelope2 ? '0%' : (isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage)}%` }}
               >
                 <div className="dt-progress-bar-glow"></div>
               </div>
             </div>
 
-            {isSlateEvidenceMailUnlocked() ? (
+            {isEnvelope2 ? (
+              <div className="dt-objective-box">
+                <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
+                <p className="dt-objective-text">Изучите архивные файлы из Конверта №2.</p>
+                <div className="dt-objective-hint">
+                  <p className="dt-objective-text">○ Изучить новые архивные документы</p>
+                  <p className="dt-objective-text">○ Проанализировать логи связи</p>
+                </div>
+              </div>
+            ) : isSlateEvidenceMailUnlocked() ? (
               <div className="dt-objective-box">
                 <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
                 <p className="dt-objective-text">Проанализируйте полученные улики и данные связи.</p>
@@ -713,7 +738,7 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
               </div>
             )}
 
-            {isSlateEvidenceMailUnlocked() ? null : (
+            {isEnvelope2 || isSlateEvidenceMailUnlocked() ? null : (
               <div className="dt-stats-row">
                 <div className="dt-stat-item">
                   <span className="dt-stat-label">FILES REVIEWED</span>
@@ -724,18 +749,20 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
             <button
               type="button"
-              className={`dt-report-btn ${isSlateEvidenceMailUnlocked() ? (canSendFinalReport ? 'dt-report-btn--active' : '') : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
-              disabled={isSlateEvidenceMailUnlocked() ? (!canSendFinalReport || slateCallActive) : (!canSendInterimReport || slateCallActive)}
-              onClick={isSlateEvidenceMailUnlocked() ? () => alert('Отправка отчёта для Конверта №2...') : handleSendReport}
+              className={`dt-report-btn ${isEnvelope2 ? '' : (isSlateEvidenceMailUnlocked() ? (canSendFinalReport ? 'dt-report-btn--active' : '') : (canSendInterimReport ? 'dt-report-btn--active' : ''))}`}
+              disabled={isEnvelope2 ? true : (isSlateEvidenceMailUnlocked() ? (!canSendFinalReport || slateCallActive) : (!canSendInterimReport || slateCallActive))}
+              onClick={isEnvelope2 ? undefined : handleSendReport}
               title={
-                isSlateEvidenceMailUnlocked()
-                  ? (canSendFinalReport ? 'Отправить отчёт куратору' : 'Выполните все требования этапа')
-                  : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа')
+                isEnvelope2
+                  ? 'Изучите новые файлы Конверта №2'
+                  : (isSlateEvidenceMailUnlocked()
+                    ? (canSendFinalReport ? 'Отправить отчёт куратору' : 'Выполните все требования этапа')
+                    : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа'))
               }
             >
-              {isSlateEvidenceMailUnlocked() ? 'ОТПРАВИТЬ ОТЧЁТ' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ'}
+              {isEnvelope2 ? 'ИЗУЧИТЬ ФАЙЛЫ' : (isSlateEvidenceMailUnlocked() ? 'ОТПРАВИТЬ ОТЧЁТ' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ')}
             </button>
-            {isSlateEvidenceMailUnlocked() ? null : progressHint(currentStage, canSendInterimReport, slateCallActive)}
+            {isEnvelope2 || isSlateEvidenceMailUnlocked() ? null : progressHint(currentStage, canSendInterimReport, slateCallActive)}
           </div>
         </div>
       </div>
@@ -971,6 +998,13 @@ function EvidenceArchive({ userLevel, onNavigate }) {
   const [selectedCategory, setSelectedCategory] = useState('Фото')
   const [previewImage, setPreviewImage] = useState(null)
   const [isSlateEvidenceUnlocked, setIsSlateEvidenceUnlocked] = useState(isSlateEvidenceMailUnlocked())
+  const [isEnvelope2Unlocked, setIsEnvelope2Unlocked] = useState(() => {
+    try {
+      return localStorage.getItem('dt_current_envelope') === '2'
+    } catch {
+      return false
+    }
+  })
   const [viewedEvidence, setViewedEvidence] = useState(() => {
     try {
       const saved = localStorage.getItem('dt_viewed_evidence')
@@ -982,6 +1016,16 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
   useEffect(() => {
     setIsSlateEvidenceUnlocked(isSlateEvidenceMailUnlocked())
+  }, [])
+
+  useEffect(() => {
+    const checkEnvelope2 = () => {
+      const unlocked = localStorage.getItem('dt_current_envelope') === '2'
+      setIsEnvelope2Unlocked(unlocked)
+    }
+    checkEnvelope2()
+    const interval = setInterval(checkEnvelope2, 1000)
+    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
@@ -1102,17 +1146,49 @@ function EvidenceArchive({ userLevel, onNavigate }) {
     ]
   }
 
+  const envelope2EvidenceItems = {
+    document: [
+      {
+        id: 'police_report_redacted',
+        name: 'Полицейский отчёт (с грифом "Секретно")',
+        description: 'Изначальный полицейский отчёт о ДТП Андервуда с вычеркнутыми фрагментами. Указаны подозрительные детали о месте происшествия.',
+        url: '/assets/evidence/police_report_redacted.jpg',
+        type: 'image',
+        isNew: true
+      },
+      {
+        id: 'autopsy_report',
+        name: 'Заключение патологоанатома',
+        description: 'Медицинское заключение о причине смерти Дэвида Андервуда. Содержит противоречия с официальной версией.',
+        url: '/assets/evidence/autopsy_report.jpg',
+        type: 'image',
+        isNew: true
+      }
+    ],
+    photo: [
+      {
+        id: 'accident_scene_photos',
+        name: 'Фотографии места ДТП (оригиналы)',
+        description: 'Полный комплект фотографий с места аварии. Видны детали, отсутствующие в официальном отчёте.',
+        url: '/assets/evidence/accident_scene_photos.jpg',
+        type: 'image',
+        isNew: true
+      }
+    ]
+  }
+
   const handleEvidenceClick = (file) => {
     if (!viewedEvidence.includes(file.id)) {
       setViewedEvidence(prev => [...prev, file.id])
     }
   }
 
-  const categories = isSlateEvidenceUnlocked
+  const categories = isEnvelope2Unlocked
     ? [
         ...baseCategories.map(cat => ({
           ...cat,
-          files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document] :
+          files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ...envelope2EvidenceItems.document] :
+                   cat.id === 'photo' ? [...cat.files, ...envelope2EvidenceItems.photo] :
                    cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary] :
                    cat.files
         })),
@@ -1127,7 +1203,26 @@ function EvidenceArchive({ userLevel, onNavigate }) {
           files: slateEvidenceItems.contacts
         }
       ]
-    : baseCategories
+    : isSlateEvidenceUnlocked
+      ? [
+          ...baseCategories.map(cat => ({
+            ...cat,
+            files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document] :
+                     cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary] :
+                     cat.files
+          })),
+          {
+            id: 'intercept',
+            name: 'Перехват',
+            files: slateEvidenceItems.intercept
+          },
+          {
+            id: 'contacts',
+            name: 'Контакты',
+            files: slateEvidenceItems.contacts
+          }
+        ]
+      : baseCategories
 
   const currentCategory = categories.find(c => c.name === selectedCategory)
 

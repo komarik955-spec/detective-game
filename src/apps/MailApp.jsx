@@ -228,7 +228,7 @@ Password: 12345
     subject: 'RE: Официальный запрос документов [ID-991026]',
     preview:
       'В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace направляем архивные материалы…',
-    date: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    date: '15:14',
     body: `Уважаемый детектив,
 
 В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace (код авторизации DT-78823) направляем затребованные архивные материалы.
@@ -291,7 +291,7 @@ Password: 12345
 
     preview: 'Высылаю все материалы, которые есть у меня на данный момент',
 
-    date: '09:17',
+    date: '15:15',
 
     body: `Детектив,
 
@@ -1705,9 +1705,17 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
         m.preview.toLowerCase().includes(search.toLowerCase())
 
-      ).sort((a, b) => b.id - a.id)
+      ).sort((a, b) => {
+        const timeA = a.date
+        const timeB = b.date
+        return timeB.localeCompare(timeA)
+      })
 
-    : folderMails.sort((a, b) => b.id - a.id)
+    : folderMails.sort((a, b) => {
+        const timeA = a.date
+        const timeB = b.date
+        return timeB.localeCompare(timeA)
+      })
 
 
 

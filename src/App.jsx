@@ -13,6 +13,20 @@ export default function App() {
   const [isPrototype, setIsPrototype] = useState(false)
 
   useEffect(() => {
+    const handleResize = () => {
+      const baseWidth = 1920
+      const currentWidth = window.innerWidth
+      const scale = Math.min(Math.max(currentWidth / baseWidth, 0.6), 1.5)
+      document.documentElement.style.setProperty('--app-scale', scale.toString())
+    }
+
+    window.addEventListener('resize', handleResize)
+    handleResize()
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
     // Check for prototype mode via URL parameter
     const urlParams = new URLSearchParams(window.location.search)
     if (urlParams.get('prototype') === 'call') {
