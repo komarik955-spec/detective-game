@@ -3,6 +3,7 @@ import './DarkTraceSite.css'
 import { saveFileToDesktop } from '../utils/fileActions'
 import { getAgentAvatarPath } from '../utils/agentProfile'
 import { useInvestigation } from '../utils/investigationSystem'
+import { isSlateEvidenceMailUnlocked } from '../utils/insuranceSuccessMail'
 import SlateCallFlow from '../components/SlateCallFlow'
 import AudioArchive from './AudioArchive'
 
@@ -568,6 +569,37 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
     unlockEnvelope1,
   } = useInvestigation()
   const [slateCallActive, setSlateCallActive] = useState(false)
+  const [hasVisitedTelecom, setHasVisitedTelecom] = useState(() => {
+    try {
+      return localStorage.getItem('dt_visited_telecom') === 'true'
+    } catch {
+      return false
+    }
+  })
+
+  useEffect(() => {
+    const checkTelecomVisit = () => {
+      const visited = localStorage.getItem('dt_visited_telecom') === 'true'
+      setHasVisitedTelecom(visited)
+    }
+
+    checkTelecomVisit()
+    const interval = setInterval(checkTelecomVisit, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const newEvidenceIds = ['pharmacy_receipt', 'newspaper_obituary', 'bank_statement', 'selena_diary', 'luxe_restaurant_chat', 'shadows_of_riverton_chat', 'curator_card']
+  const viewedEvidence = JSON.parse(localStorage.getItem('dt_viewed_evidence') || '[]')
+  const allNewEvidenceViewed = newEvidenceIds.every(id => viewedEvidence.includes(id))
+
+  const secondStageProgress = () => {
+    let progress = 0
+    if (allNewEvidenceViewed) progress += 50
+    if (hasVisitedTelecom) progress += 50
+    return progress
+  }
+
+  const canSendFinalReport = secondStageProgress() === 100
 
   const fullName = playerData?.fullName?.trim() || ''
   const detectiveName = fullName ? fullName.toUpperCase() : 'DETECTIVE'
@@ -643,52 +675,67 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
           <h3>INVESTIGATION PROGRESS</h3>
           <div className="dt-progression-content">
             <div className="dt-progress-header">
-              <span className="dt-progress-percent">{stagePercentage}%</span>
-              <span className="dt-stage-name">STAGE: {currentStage.title}</span>
+              <span className="dt-progress-percent">{isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage}%</span>
+              <span className="dt-stage-name">STAGE: {isSlateEvidenceMailUnlocked() ? 'КОНВЕРТ №2' : currentStage.title}</span>
             </div>
 
             <div className="dt-progress-bar-container">
               <div
-                className="dt-progress-bar-fill" 
-                style={{ width: `${stagePercentage}%` }}
+                className="dt-progress-bar-fill"
+                style={{ width: `${isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage}%` }}
               >
                 <div className="dt-progress-bar-glow"></div>
               </div>
             </div>
 
-            <div className="dt-objective-box">
-              <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
-              <p className="dt-objective-text">{currentStage.objective}</p>
-              <div className="dt-objective-hint">
-                {currentStage.id === 'starter_folder'
-                  ? 'Откройте на портале разделы «Досье», «Улики» и «Видеопротоколы» и изучите каждый файл.'
-                  : 'Изучите все файлы в «Конверт №1» в Case 001.'}
+            {isSlateEvidenceMailUnlocked() ? (
+              <div className="dt-objective-box">
+                <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
+                <p className="dt-objective-text">Проанализируйте полученные улики и данные связи.</p>
+                <div className="dt-objective-hint">
+                  <p className="dt-objective-text">
+                    {allNewEvidenceViewed ? '✓ Все улики просмотрены' : '○ Все улики просмотрены'}
+                  </p>
+                  <p className="dt-objective-text">
+                    {hasVisitedTelecom ? '✓ Посетить сайт Riverton Telecom' : '○ Посетить сайт Riverton Telecom'}
+                  </p>
+                </div>
               </div>
-
-            </div>
-
-
-            <div className="dt-stats-row">
-              <div className="dt-stat-item">
-                <span className="dt-stat-label">FILES REVIEWED</span>
-                <span className="dt-stat-value">{reviewedCount} / {totalRequired}</span>
+            ) : (
+              <div className="dt-objective-box">
+                <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
+                <p className="dt-objective-text">{currentStage.objective}</p>
+                <div className="dt-objective-hint">
+                  {currentStage.id === 'starter_folder'
+                    ? 'Откройте на портале разделы «Досье», «Улики» и «Видеопротоколы» и изучите каждый файл.'
+                    : 'Изучите все файлы в «Конверт №1» в Case 001.'}
+                </div>
               </div>
-            </div>
+            )}
+
+            {isSlateEvidenceMailUnlocked() ? null : (
+              <div className="dt-stats-row">
+                <div className="dt-stat-item">
+                  <span className="dt-stat-label">FILES REVIEWED</span>
+                  <span className="dt-stat-value">{reviewedCount} / {totalRequired}</span>
+                </div>
+              </div>
+            )}
 
             <button
               type="button"
-              className={`dt-report-btn ${canSendInterimReport ? 'dt-report-btn--active' : ''}`}
-              disabled={!canSendInterimReport || slateCallActive}
-              onClick={handleSendReport}
+              className={`dt-report-btn ${isSlateEvidenceMailUnlocked() ? (canSendFinalReport ? 'dt-report-btn--active' : '') : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
+              disabled={isSlateEvidenceMailUnlocked() ? (!canSendFinalReport || slateCallActive) : (!canSendInterimReport || slateCallActive)}
+              onClick={isSlateEvidenceMailUnlocked() ? () => alert('Отправка отчёта для Конверта №2...') : handleSendReport}
               title={
-                canSendInterimReport
-                  ? 'Отправить промежуточный отчёт куратору'
-                  : 'Изучите все материалы текущего этапа'
+                isSlateEvidenceMailUnlocked()
+                  ? (canSendFinalReport ? 'Отправить отчёт куратору' : 'Выполните все требования этапа')
+                  : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа')
               }
             >
-              ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ
+              {isSlateEvidenceMailUnlocked() ? 'ОТПРАВИТЬ ОТЧЁТ' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ'}
             </button>
-            {progressHint(currentStage, canSendInterimReport, slateCallActive)}
+            {isSlateEvidenceMailUnlocked() ? null : progressHint(currentStage, canSendInterimReport, slateCallActive)}
           </div>
         </div>
       </div>
@@ -923,8 +970,25 @@ function EvidenceArchive({ userLevel, onNavigate }) {
   const { markFileAsReviewed } = useInvestigation()
   const [selectedCategory, setSelectedCategory] = useState('Фото')
   const [previewImage, setPreviewImage] = useState(null)
+  const [isSlateEvidenceUnlocked, setIsSlateEvidenceUnlocked] = useState(isSlateEvidenceMailUnlocked())
+  const [viewedEvidence, setViewedEvidence] = useState(() => {
+    try {
+      const saved = localStorage.getItem('dt_viewed_evidence')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
 
-  const categories = [
+  useEffect(() => {
+    setIsSlateEvidenceUnlocked(isSlateEvidenceMailUnlocked())
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('dt_viewed_evidence', JSON.stringify(viewedEvidence))
+  }, [viewedEvidence])
+
+  const baseCategories = [
     {
       id: 'photo',
       name: 'Фото',
@@ -970,6 +1034,100 @@ function EvidenceArchive({ userLevel, onNavigate }) {
       ]
     }
   ]
+
+  const slateEvidenceItems = {
+    document: [
+      {
+        id: 'pharmacy_receipt',
+        name: 'Кассовый чек из аптеки "ФармМед" №3',
+        description: 'Чек на покупку Сертофина 25мг, бактерицидного пластыря и латексных перчаток в Ривертоне. Сумма: 94.28$.',
+        url: '/assets/evidence/pharmacy_receipt.png',
+        type: 'image',
+        isNew: true
+      },
+      {
+        id: 'newspaper_obituary',
+        name: 'Вырезка из газеты "Ривертонские Хроники" (Некролог Дэвида Андервуда)',
+        description: 'Статья об автокатастрофе и внезапной смерти филантропа Дэвида Андервуда от 14 октября 2017 года.',
+        url: '/assets/evidence/newspaper_obituary.jpg',
+        type: 'image',
+        isNew: true
+      },
+      {
+        id: 'bank_statement',
+        name: 'Архивная выписка по счету Riverton Commercial Bank (Дэвид Андервуд)',
+        description: 'Выписка по счету № 408...1776 за период с 01.10.2017 по 13.10.2017. Содержит подозрительное снятие наличных на сумму $250,000.00 за неделю до автокатастрофы.',
+        url: '/assets/evidence/bank_statement.png',
+        type: 'image',
+        isNew: true
+      }
+    ],
+    diary: [
+      {
+        id: 'selena_diary',
+        name: 'Личный дневник Селены Блэк (Запись о слежке)',
+        description: 'Фотография разворота бумажного блокнота с рукописным текстом о темно-синем седане и слежке.',
+        url: '/assets/evidence/selena_diary.png',
+        type: 'image',
+        isNew: true
+      }
+    ],
+    intercept: [
+      {
+        id: 'luxe_restaurant_chat',
+        name: 'Скриншот переписки: Selena_Black & The_Raven (Часть 1)',
+        description: 'Перехват зашифрованного чата. Сообщение от анонима с фотографией Маркуса и Селены у ресторана LUXE.',
+        url: '/assets/evidence/luxe_restaurant_chat.png',
+        type: 'image',
+        isNew: true
+      },
+      {
+        id: 'shadows_of_riverton_chat',
+        name: 'Скриншот переписки: Selena_Black & The_Raven (Часть 2)',
+        description: 'Перехват зашифрованного чата. Сообщение от анонима с фотографией картины "Тени Ривертона".',
+        url: '/assets/evidence/shadows_of_riverton_chat.png',
+        type: 'image',
+        isNew: true
+      }
+    ],
+    contacts: [
+      {
+        id: 'curator_card',
+        name: 'Визитная карточка куратора выставки "Тени Ривертона"',
+        description: 'Рекламная карточка с QR-кодом и ссылкой на Telegram-канал @CURATORSNOTES_AR. Найдена среди материалов дела Селены Блэк.',
+        url: '/assets/evidence/curator_card.png',
+        type: 'image',
+        isNew: true
+      }
+    ]
+  }
+
+  const handleEvidenceClick = (file) => {
+    if (!viewedEvidence.includes(file.id)) {
+      setViewedEvidence(prev => [...prev, file.id])
+    }
+  }
+
+  const categories = isSlateEvidenceUnlocked
+    ? [
+        ...baseCategories.map(cat => ({
+          ...cat,
+          files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document] :
+                   cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary] :
+                   cat.files
+        })),
+        {
+          id: 'intercept',
+          name: 'Перехват',
+          files: slateEvidenceItems.intercept
+        },
+        {
+          id: 'contacts',
+          name: 'Контакты',
+          files: slateEvidenceItems.contacts
+        }
+      ]
+    : baseCategories
 
   const currentCategory = categories.find(c => c.name === selectedCategory)
 
@@ -1020,24 +1178,32 @@ function EvidenceArchive({ userLevel, onNavigate }) {
         </div>
 
         <div className="dt-evidence-display-area">
-          {currentCategory?.files.map((file, index) => (
+          {currentCategory?.files
+            .sort((a, b) => {
+              if (a.isNew && !b.isNew) return -1
+              if (!a.isNew && b.isNew) return 1
+              return 0
+            })
+            .map((file, index) => (
             <div key={file.id} className="dt-evidence-file-wrapper">
               <div className="dt-evidence-file-info">
                 <span className="dt-file-index">FILE_{String(index + 1).padStart(2, '0')}</span>
                 <div className="dt-file-actions-header">
-                  <button 
-                    className="dt-btn-mini" 
+                  <button
+                    className="dt-btn-mini"
                     onClick={(e) => handleDownload(e, file)}
                     title="Скачать на рабочий стол"
                   >
                     ⬇️ СКАЧАТЬ
                   </button>
                   <span className="dt-file-name">{file.name}</span>
+                  {file.isNew && !viewedEvidence.includes(file.id) && <span className="dt-new-badge">НОВОЕ</span>}
                 </div>
               </div>
-              <div 
+              <div
                 className="dt-evidence-image-container clickable"
                 onClick={() => {
+                  handleEvidenceClick(file)
                   markFileAsReviewed(file.id)
                   setPreviewImage({
                     src: file.url,

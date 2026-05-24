@@ -57,6 +57,13 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
   ])
 
+  useEffect(() => {
+    const activeTab = tabs.find(t => t.active)
+    if (activeTab && activeTab.page === 'riverton-telecom') {
+      localStorage.setItem('dt_visited_telecom', 'true')
+    }
+  }, [tabs])
+
 
 
   const [activeId, setActiveId] = useState(1)

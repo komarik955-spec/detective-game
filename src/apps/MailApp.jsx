@@ -12,7 +12,7 @@ import {
   isVesperInsuranceHintMailUnlocked,
   VESPER_INSURANCE_HINT_MAIL_ID,
 } from '../utils/vesperInsuranceHintMail'
-import { createSlateCourtOrderMail } from '../utils/insuranceSuccessMail'
+import { createSlateCourtOrderMail, createSlateEvidenceMail, unlockSlateEvidenceMail, SLATE_EVIDENCE_MAIL_ID } from '../utils/insuranceSuccessMail'
 
 
 
@@ -214,6 +214,56 @@ Password: 12345
   },
 
   {
+    id: 7,
+    folder: 'inbox',
+    tab: 'primary',
+    starred: false,
+    read: false,
+    hidden: true,
+    from: {
+      name: 'Архив Riverton Insurance',
+      email: 'archive@riverton-insurance.com',
+      avatar: '🏛️',
+    },
+    subject: 'RE: Официальный запрос документов [ID-991026]',
+    preview:
+      'В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace направляем архивные материалы…',
+    date: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    body: `Уважаемый детектив,
+
+В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace (код авторизации DT-78823) направляем затребованные архивные материалы.
+
+Системой были обнаружены синхронизированные копии договоров по программе страхования жизни „Семейный Щит 1+1“ на имя Блэк С. и Андервуда Э., оформленные 15 июня 2025 года.
+
+Электронные копии документов прикреплены к данному письму во вложении.
+
+С уважением,
+Отдел комплаенса и архивного учета Riverton Insurance`,
+    attachments: [
+      {
+        id: 'riverton-att-policy-selena',
+        name: 'insurance_policy_selena.png',
+        type: 'image',
+        size: '1.2 МБ',
+        icon: '🖼️',
+        url: '/assets/images/documents/insurance_policy_selena.png',
+        downloadable: true,
+        saveToDesktop: true
+      },
+      {
+        id: 'riverton-att-policy-evan',
+        name: 'insurance_policy_evan.png',
+        type: 'image',
+        size: '1.2 МБ',
+        icon: '🖼️',
+        url: '/assets/images/documents/insurance_policy_evan.png',
+        downloadable: true,
+        saveToDesktop: true
+      },
+    ],
+  },
+
+  {
 
     id: 6,
 
@@ -339,45 +389,6 @@ Password: 12345
 
     ]
 
-  },
-
-  {
-    id: 7,
-    folder: 'inbox',
-    tab: 'primary',
-    starred: false,
-    read: false,
-    hidden: true,
-    from: {
-      name: 'Архив Riverton Insurance',
-      email: 'archive@riverton-insurance.com',
-      avatar: '🏛️',
-    },
-    subject: 'RE: Официальный запрос документов [ID-991026]',
-    preview:
-      'В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace направляем архивные материалы…',
-    date: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-    body: `Уважаемый детектив,
-
-В ответ на ваш официальный запрос от лица Детективного агентства Dark Trace (код авторизации DT-78823) направляем затребованные архивные материалы.
-
-Системой были обнаружены синхронизированные копии договоров по программе страхования жизни „Семейный Щит 1+1“ на имя Блэк С. и Андервуда Э., оформленные 15 июня 2025 года.
-
-Электронные копии документов прикреплены к данному письму во вложении.
-
-С уважением,
-Отдел комплаенса и архивного учета Riverton Insurance`,
-    attachments: [
-      {
-        id: 'riverton-att-policies',
-        name: 'Копии_полисов_Блэк_Андервуд.pdf',
-        type: 'document',
-        size: '248 КБ',
-        icon: '📄',
-        content: INSURANCE_POLICIES_DOCUMENT,
-        downloadable: false,
-      },
-    ],
   },
 
   createVesperInsuranceHintMail(),
@@ -1431,15 +1442,21 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
     }
 
     if (isRivertonInsuranceComplete()) {
-      initialMails = initialMails.map(mail =>
-        mail.id === 7 ? { ...mail, hidden: false } : mail
-      )
+      const rivertonMailIndex = initialMails.findIndex(mail => mail.id === 7)
+      if (rivertonMailIndex !== -1) {
+        const rivertonMail = { ...initialMails[rivertonMailIndex], hidden: false }
+        initialMails = initialMails.filter(mail => mail.id !== 7)
+        initialMails.unshift(rivertonMail)
+      }
     }
 
     if (isVesperInsuranceHintMailUnlocked()) {
-      initialMails = initialMails.map(mail =>
-        mail.id === VESPER_INSURANCE_HINT_MAIL_ID ? { ...mail, hidden: false } : mail
-      )
+      const vesperMailIndex = initialMails.findIndex(mail => mail.id === VESPER_INSURANCE_HINT_MAIL_ID)
+      if (vesperMailIndex !== -1) {
+        const vesperMail = { ...initialMails[vesperMailIndex], hidden: false }
+        initialMails = initialMails.filter(mail => mail.id !== VESPER_INSURANCE_HINT_MAIL_ID)
+        initialMails.unshift(vesperMail)
+      }
     }
 
     // Check for pending investigation emails from progression system
@@ -1722,19 +1739,56 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
           // Добавляем новое письмо от Слейта сверху
           const newMail = { ...createSlateCourtOrderMail(), hidden: false }
           console.log('[MailApp] Добавлено письмо от Слейта после клика на письмо #7')
-          
+
           // Воспроизводим звук уведомления
           const audio = new Audio('/assets/sounds/notification.mp3');
           audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));
-          
+
           // Вызываем callback для показа уведомления
           if (onSecondMailArrived) {
             setTimeout(() => onSecondMailArrived(), 200)
           }
-          
+
           return [newMail, ...prev]
         })
       }, 5000)
+    }
+
+    // Если кликнули на письмо от Слейта с ордером (slate_court_order) — запускаем таймер для письма с уликами
+    if (mail.id === 'slate_court_order') {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+
+      // Запуск таймера на 10 секунд для появления письма с уликами
+      timerRef.current = setTimeout(() => {
+        // Проверяем, не было ли письмо уже добавлено
+        setMails(prev => {
+          const hasEvidenceMail = prev.some(m => m.id === SLATE_EVIDENCE_MAIL_ID)
+          if (hasEvidenceMail) return prev
+
+          // Добавляем новое письмо от Слейта сверху
+          const newMail = { ...createSlateEvidenceMail(), hidden: false }
+          console.log('[MailApp] Добавлено письмо с уликами от Слейта после клика на ордер')
+
+          // Воспроизводим звук уведомления
+          const audio = new Audio('/assets/sounds/notification.mp3');
+          audio.play().catch(e => console.log('Не удалось воспроизвести звук:', e));
+
+          // Вызываем callback для показа уведомления
+          if (onSecondMailArrived) {
+            setTimeout(() => onSecondMailArrived(), 200)
+          }
+
+          return [newMail, ...prev]
+        })
+      }, 10000)
+    }
+
+    // Если кликнули на письмо с уликами от Слейта (slate_evidence) — разблокируем улики при прочтении
+    if (mail.id === SLATE_EVIDENCE_MAIL_ID && !mail.read) {
+      unlockSlateEvidenceMail()
+      console.log('[MailApp] Улики от Слейта разблокированы')
     }
 
     // Если кликнули на письмо #1, запустить таймер для показа рапорта (только один раз за игру)
@@ -1744,9 +1798,15 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
       }
       
       timerRef.current = setTimeout(() => {
-        setMails(prev => prev.map(m => 
-          m.id === 5 ? { ...m, hidden: false } : m
-        ))
+        setMails(prev => {
+          const mailIndex = prev.findIndex(m => m.id === 5)
+          if (mailIndex !== -1) {
+            const mail = { ...prev[mailIndex], hidden: false }
+            const filtered = prev.filter(m => m.id !== 5)
+            return [mail, ...filtered]
+          }
+          return prev
+        })
         setSecondMailShown(true)
         sessionStorage.setItem('secondMailShown', 'true')
         // Воспроизводим звук уведомления

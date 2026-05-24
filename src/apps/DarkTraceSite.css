@@ -1125,6 +1125,27 @@ body {
   letter-spacing: 1px;
 }
 
+.dt-new-badge {
+  background: #ff4757;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
 .dt-evidence-image-container {
   position: relative;
   background: #111;
@@ -2790,8 +2811,8 @@ body.dt-full-dossier-open {
 }
 
 .dt-full-dossier-image {
-  max-width: 92%;
-  max-height: 92%;
+  max-width: 280px;
+  max-height: 40vh;
   object-fit: contain;
   image-rendering: auto;
   user-select: none;

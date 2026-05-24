@@ -1,5 +1,6 @@
 export const INSURANCE_SUCCESS_MAIL_KEY = 'dt_insurance_success_mail'
 export const SLATE_COURT_ORDER_MAIL_KEY = 'dt_slate_court_order_mail'
+export const SLATE_EVIDENCE_MAIL_KEY = 'dt_slate_evidence_mail'
 
 export function isInsuranceSuccessMailUnlocked() {
   return localStorage.getItem(INSURANCE_SUCCESS_MAIL_KEY) === 'true'
@@ -21,7 +22,41 @@ export function unlockSlateCourtOrderMail() {
   return true
 }
 
+export function isSlateEvidenceMailUnlocked() {
+  return localStorage.getItem(SLATE_EVIDENCE_MAIL_KEY) === 'true'
+}
+
+export function unlockSlateEvidenceMail() {
+  if (isSlateEvidenceMailUnlocked()) return false
+  localStorage.setItem(SLATE_EVIDENCE_MAIL_KEY, 'true')
+  return true
+}
+
 export const SLATE_COURT_ORDER_MAIL_ID = 'slate_court_order'
+export const SLATE_EVIDENCE_MAIL_ID = 'slate_evidence'
+
+export function createSlateEvidenceMail() {
+  return {
+    id: SLATE_EVIDENCE_MAIL_ID,
+    folder: 'inbox',
+    tab: 'primary',
+    starred: false,
+    read: false,
+    hidden: true,
+    from: {
+      name: 'Слейт (Slate)',
+      email: 'slate@darktrace.agency',
+      avatar: '👮',
+    },
+    subject: 'Новые зацепки по делу Андервуда',
+    preview: 'Привет. Мне удалось раскопать кое-что горячее через свои каналы...',
+    date: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    body: `Привет. Мне удалось раскопать кое-что горячее через свои каналы. Нашел старый некролог Дэвида и странный чек из аптеки Ривертона, оформленный незадолго до инцидента. Еще перехватил пару скриншотов из Даркнета — Селена Блэк с кем-то переписывалась под псевдонимом "The Raven", там же был её личный дневник. Загрузил все файлы в нашу общую базу терминала, посмотри в разделе улик. Там есть за что зацепиться.
+
+— Слейт`,
+    attachments: []
+  }
+}
 
 export function createSlateCourtOrderMail() {
   return {
@@ -80,7 +115,7 @@ export function checkAndShowInsuranceMails(emailSystem) {
     console.log('[checkAndShowInsuranceMails] Почтовая система не доступна')
     return
   }
-  
+
   // Письмо от страховой (id:7) обрабатывается отдельно в MailApp
   // Если письмо от Слейта разблокировано, но еще не показано
   if (isSlateCourtOrderMailUnlocked()) {
@@ -88,6 +123,15 @@ export function checkAndShowInsuranceMails(emailSystem) {
     if (!hasMail) {
       console.log('[checkAndShowInsuranceMails] Добавляем письмо от Слейта при инициализации')
       emailSystem.addEmail({ ...createSlateCourtOrderMail(), hidden: false })
+    }
+  }
+
+  // Если письмо с уликами от Слейта разблокировано, но еще не показано
+  if (isSlateEvidenceMailUnlocked()) {
+    const hasMail = emailSystem.mails?.some(m => m.id === SLATE_EVIDENCE_MAIL_ID)
+    if (!hasMail) {
+      console.log('[checkAndShowInsuranceMails] Добавляем письмо с уликами от Слейта при инициализации')
+      emailSystem.addEmail({ ...createSlateEvidenceMail(), hidden: false })
     }
   }
 }

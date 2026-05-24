@@ -96,6 +96,11 @@ export default function RivertonTelecom({ initialState = {}, onStateChange }) {
   const [results, setResults] = useState(initialState.results || null)
   const [showResults, setShowResults] = useState(initialState.showResults || false)
 
+  // Отмечаем посещение сайта при монтировании компонента
+  useEffect(() => {
+    localStorage.setItem('dt_visited_telecom', 'true')
+  }, [])
+
   // Сохраняем состояние при изменении
   useEffect(() => {
     if (onStateChange) {
