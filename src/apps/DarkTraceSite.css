@@ -2811,8 +2811,10 @@ body.dt-full-dossier-open {
 }
 
 .dt-full-dossier-image {
-  max-width: 280px;
-  max-height: 40vh;
+  width: 100%;
+  height: 100%;
+  max-width: 85%;
+  max-height: 80vh;
   object-fit: contain;
   image-rendering: auto;
   user-select: none;
