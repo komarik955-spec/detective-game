@@ -12,7 +12,15 @@ import {
   isVesperInsuranceHintMailUnlocked,
   VESPER_INSURANCE_HINT_MAIL_ID,
 } from '../utils/vesperInsuranceHintMail'
-import { createSlateCourtOrderMail, createSlateEvidenceMail, unlockSlateEvidenceMail, SLATE_EVIDENCE_MAIL_ID } from '../utils/insuranceSuccessMail'
+import {
+  createMillerAlibiMemoMail,
+  createSlateCourtOrderMail,
+  createSlateEvidenceMail,
+  unlockMillerAlibiMemoMail,
+  unlockSlateEvidenceMail,
+  SLATE_EVIDENCE_MAIL_ID,
+} from '../utils/insuranceSuccessMail'
+import { useInvestigation } from '../utils/investigationSystem'
 
 
 
@@ -1378,11 +1386,11 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
   const [isDragging, setIsDragging] = useState(false);
 
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
+   const { markFileAsReviewed } = useInvestigation();
 
-
-  function handleOpenFile(file) {
+   function handleOpenFile(file) {
     setOpenedFile(file)
     setZoom(1)
     setPan({ x: 0, y: 0 })
@@ -1867,6 +1875,17 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
 
           return [newMail, ...prev]
         })
+
+        // Через 2 секунды после письма Слейта добавляем служебную записку Миллера
+        setTimeout(() => {
+          setMails(prev => {
+            const hasMemoMail = prev.some(m => m.id === 'miller_alibi_memo')
+            if (hasMemoMail) return prev
+            unlockMillerAlibiMemoMail()
+            const memoMail = { ...createMillerAlibiMemoMail(), hidden: false }
+            return [memoMail, ...prev]
+          })
+        }, 2000)
       }, 10000)
     }
 
@@ -1919,10 +1938,19 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
       }, 4000)
     }
 
-    if (!mail.read) {
-      setMails(prev => prev.map(m => m.id === mail.id ? { ...m, read: true } : m))
-      if (onNotificationRead) onNotificationRead()
-    }
+      if (!mail.read) {
+        setMails(prev => prev.map(m => m.id === mail.id ? { ...m, read: true } : m))
+        if (mail.id === 7) {
+          markFileAsReviewed('insurance_policies')
+        }
+        if (mail.id === 'miller_alibi_memo') {
+          markFileAsReviewed('miller_alibi_memo')
+        }
+        if (mail.id === 10) {
+          markFileAsReviewed('it_report')
+        }
+        if (onNotificationRead) onNotificationRead()
+      }
   }
 
 

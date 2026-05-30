@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './DarkTraceSite.css'
 import { saveFileToDesktop } from '../utils/fileActions'
 import { getAgentAvatarPath } from '../utils/agentProfile'
-import { useInvestigation } from '../utils/investigationSystem'
+import { DOSSIER_FILE_IDS, VIDEO_PROTOCOL_FILE_IDS, useInvestigation } from '../utils/investigationSystem'
 import { isSlateEvidenceMailUnlocked } from '../utils/insuranceSuccessMail'
 import SlateCallFlow from '../components/SlateCallFlow'
 import EncryptedCall from '../components/EncryptedCall'
@@ -561,6 +561,7 @@ function LoginPage({ onLogin, loading }) {
 
 function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   const {
+    progress,
     currentStage,
     stagePercentage,
     reviewedCount,
@@ -572,7 +573,14 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   } = useInvestigation()
   const [slateCallActive, setSlateCallActive] = useState(false)
   const [encryptedCallActive, setEncryptedCallActive] = useState(false)
-  const [currentEnvelope, setCurrentEnvelope] = useState(1)
+   const [currentEnvelope, setCurrentEnvelope] = useState(() => {
+     try {
+       const val = localStorage.getItem('dt_current_envelope')
+       return val === '2' ? 2 : 1
+     } catch {
+       return 1
+     }
+   })
   const [hasVisitedTelecom, setHasVisitedTelecom] = useState(() => {
     try {
       return localStorage.getItem('dt_visited_telecom') === 'true'
@@ -692,14 +700,14 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
           <h3>INVESTIGATION PROGRESS</h3>
           <div className="dt-progression-content">
             <div className="dt-progress-header">
-              <span className="dt-progress-percent">{isEnvelope2 ? '0%' : (isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage)}%</span>
-              <span className="dt-stage-name">STAGE: {isEnvelope2 ? 'КОНВЕРТ №2' : (isSlateEvidenceMailUnlocked() ? 'КОНВЕРТ №1' : currentStage.title)}</span>
+               <span className="dt-progress-percent">{isEnvelope2 ? stagePercentage : stagePercentage}%</span>
+              <span className="dt-stage-name">STAGE: {isEnvelope2 ? 'КОНВЕРТ №2' : currentStage.title}</span>
             </div>
 
             <div className="dt-progress-bar-container">
               <div
                 className="dt-progress-bar-fill"
-                style={{ width: `${isEnvelope2 ? '0%' : (isSlateEvidenceMailUnlocked() ? secondStageProgress() : stagePercentage)}%` }}
+                 style={{ width: `${isEnvelope2 ? stagePercentage : stagePercentage}%` }}
               >
                 <div className="dt-progress-bar-glow"></div>
               </div>
@@ -715,32 +723,88 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
                   <p className="dt-objective-text">[ ] Найти скрытую связь Пейна и Равенсвуда в досье</p>
                 </div>
               </div>
-            ) : isSlateEvidenceMailUnlocked() ? (
-              <div className="dt-objective-box">
-                <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
-                <p className="dt-objective-text">Проанализируйте полученные улики и данные связи.</p>
-                <div className="dt-objective-hint">
-                  <p className="dt-objective-text">
-                    {allNewEvidenceViewed ? '✓ Все улики просмотрены' : '○ Все улики просмотрены'}
-                  </p>
-                  <p className="dt-objective-text">
-                    {hasVisitedTelecom ? '✓ Посетить сайт Riverton Telecom' : '○ Посетить сайт Riverton Telecom'}
-                  </p>
-                </div>
-              </div>
             ) : (
               <div className="dt-objective-box">
                 <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
                 <p className="dt-objective-text">{currentStage.objective}</p>
                 <div className="dt-objective-hint">
-                  {currentStage.id === 'starter_folder'
-                    ? 'Откройте на портале разделы «Досье», «Улики» и «Видеопротоколы» и изучите каждый файл.'
-                    : 'Изучите все файлы в «Конверт №1» в Case 001.'}
+                  {currentStage.id === 'starter_folder' ? (
+                    <>
+                      {(() => {
+                        const reviewed = progress?.reviewedFiles || []
+                        const reviewedDossierCount = DOSSIER_FILE_IDS.filter(id => reviewed.includes(id)).length
+                        const dossierTotal = DOSSIER_FILE_IDS.length || 1
+                        const reviewedVideoCount = VIDEO_PROTOCOL_FILE_IDS.filter(id => reviewed.includes(id)).length
+                        const videoTotal = VIDEO_PROTOCOL_FILE_IDS.length || 1
+                        const allDossierReviewed = reviewedDossierCount >= dossierTotal
+                        const allVideoReviewed = reviewedVideoCount >= videoTotal
+                        return (
+                          <>
+                            <p className="dt-objective-text">
+                              {allDossierReviewed ? '✓' : '[ ]'} Изучите все материалы в разделах «Досье» ({reviewedDossierCount}/{dossierTotal})
+                            </p>
+                            <p className="dt-objective-text">
+                              {allVideoReviewed ? '✓' : '[ ]'} Ознакомьтесь с видеопротоколами ({reviewedVideoCount}/{videoTotal})
+                            </p>
+                          </>
+                        )
+                      })()}
+
+                    </>
+                  ) : currentStage.id === 'envelope_1' ? (
+                    <>
+                      {(() => {
+                        const reviewed = progress?.reviewedFiles || []
+                        const policiesReviewed = reviewed.includes('insurance_policies')
+                        const bankReviewed = reviewed.includes('bank_statement')
+                        const luxeChatReviewed = reviewed.includes('luxe_restaurant_chat')
+                        const shadowsChatReviewed = reviewed.includes('shadows_of_riverton_chat')
+                        const diaryReviewed = reviewed.includes('selena_diary')
+                        const obituaryReviewed = reviewed.includes('newspaper_obituary')
+                        const receiptReviewed = reviewed.includes('pharmacy_receipt')
+                        const curatorCardReviewed = reviewed.includes('curator_card')
+                        const millerMemoReviewed = reviewed.includes('miller_alibi_memo')
+                        return (
+                          <>
+                            <p className="dt-objective-text">
+                              {policiesReviewed ? '✓' : '[ ]'} Изучить копии страховых полисов из почты
+                            </p>
+                            <p className="dt-objective-text">
+                              {bankReviewed ? '✓' : '[ ]'} Изучить выписку по счету № 408...1776  за период с 01.10.2017 по 13.10.2017.
+                            </p>
+                            <p className="dt-objective-text">
+                              {luxeChatReviewed ? '✓' : '[ ]'} Изучить перехват чата (фото Маркуса и Селены у ресторана LUXE)
+                            </p>
+                            <p className="dt-objective-text">
+                              {shadowsChatReviewed ? '✓' : '[ ]'} Изучить перехват чата (фото картины «Тени Ривертона»)
+                            </p>
+                            <p className="dt-objective-text">
+                              {diaryReviewed ? '✓' : '[ ]'} Изучить фотографию из дневника (тёмно-синий седан и слежка)
+                            </p>
+                            <p className="dt-objective-text">
+                              {obituaryReviewed ? '✓' : '[ ]'} Изучить статью о внезапной смерти Дэвида Андервуда (14.10.2017)
+                            </p>
+                            <p className="dt-objective-text">
+                              {receiptReviewed ? '✓' : '[ ]'} Изучить чек из аптеки 
+                            </p>
+                            <p className="dt-objective-text">
+                              {curatorCardReviewed ? '✓' : '[ ]'} Изучить рекламную карточку куратора
+                            </p>
+                            <p className="dt-objective-text">
+                              {millerMemoReviewed ? '✓' : '[ ]'} Ознакомиться с письмом «Служебная записка: проверка алиби Маркуса Флинна»
+                            </p>
+                          </>
+                        )
+                      })()}
+                    </>
+                  ) : (
+                    'Изучите все файлы в «Конверт №1» в Case 001.'
+                  )}
                 </div>
               </div>
             )}
 
-            {isEnvelope2 || isSlateEvidenceMailUnlocked() ? null : (
+            {isEnvelope2 ? null : (
               <div className="dt-stats-row">
                 <div className="dt-stat-item">
                   <span className="dt-stat-label">FILES REVIEWED</span>
@@ -751,20 +815,18 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
             <button
               type="button"
-              className={`dt-report-btn ${isEnvelope2 ? '' : (isSlateEvidenceMailUnlocked() ? (canSendFinalReport ? 'dt-report-btn--active' : '') : (canSendInterimReport ? 'dt-report-btn--active' : ''))}`}
-              disabled={isEnvelope2 ? true : (isSlateEvidenceMailUnlocked() ? (!canSendFinalReport || slateCallActive) : (!canSendInterimReport || slateCallActive))}
+              className={`dt-report-btn ${isEnvelope2 ? '' : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
+              disabled={isEnvelope2 ? true : (!canSendInterimReport || slateCallActive)}
               onClick={isEnvelope2 ? undefined : handleSendReport}
               title={
                 isEnvelope2
                   ? 'Изучите новые файлы Конверта №2'
-                  : (isSlateEvidenceMailUnlocked()
-                    ? (canSendFinalReport ? 'Отправить отчёт куратору' : 'Выполните все требования этапа')
-                    : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа'))
+                  : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа')
               }
             >
-              {isEnvelope2 ? 'ИЗУЧИТЬ ФАЙЛЫ' : (isSlateEvidenceMailUnlocked() ? 'ОТПРАВИТЬ ОТЧЁТ' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ')}
+              {isEnvelope2 ? 'ИЗУЧИТЬ ФАЙЛЫ' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ'}
             </button>
-            {isEnvelope2 || isSlateEvidenceMailUnlocked() ? null : progressHint(currentStage, canSendInterimReport, slateCallActive)}
+            {isEnvelope2 ? null : progressHint(currentStage, canSendInterimReport, slateCallActive)}
           </div>
         </div>
       </div>
@@ -780,7 +842,7 @@ function progressHint(stage, canSend, callActive) {
     return <p className="dt-report-hint dt-report-hint--ready">Отчёт готов к отправке.</p>
   }
   if (stage?.id === 'envelope_1') {
-    return <p className="dt-report-hint">Изучите файлы в «Конверт №1» в Case 001.</p>
+    return <p className="dt-report-hint">Откройте письмо от Riverton Insurance и изучите вложения с копиями полисов.</p>
   }
   return (
     <p className="dt-report-hint">
@@ -1094,7 +1156,7 @@ function EvidenceArchive({ userLevel, onNavigate }) {
       {
         id: 'newspaper_obituary',
         name: 'Вырезка из газеты "Ривертонские Хроники" (Некролог Дэвида Андервуда)',
-        description: 'Статья об автокатастрофе и внезапной смерти филантропа Дэвида Андервуда от 14 октября 2017 года.',
+        description: 'Статья о внезапной смерти филантропа Дэвида Андервуда от 14 октября 2017 года.',
         url: '/assets/evidence/newspaper_obituary.jpg',
         type: 'image',
         isNew: true

@@ -31,12 +31,12 @@ export default function EktsPro() {
         if (newProgress >= 100) {
           clearInterval(interval)
           // After reaching 100%, evaluate result
-          setTimeout(() => {
-            if (suspectValue === 'rosalia_underwood') {
-              setSubmitResult('success')
-            } else {
-              setSubmitResult('error')
-            }
+            setTimeout(() => {
+             if (suspectValue === 'selena_black') {
+               setSubmitResult('success')
+             } else {
+               setSubmitResult('error')
+             }
             setIsSubmitting(false)
           }, 200) // small delay after reaching 100%
           return 100
@@ -198,19 +198,20 @@ export default function EktsPro() {
                 <label className="ekts-form-label">АГЕНТСТВО</label>
                 <input type="text" id="agency" className="ekts-form-input" placeholder="Dark Trace" />
               </div>
-              <div className="ekts-form-group">
-                <label className="ekts-form-label">ПОДОЗРЕВАЕМЫЙ</label>
-                <select className="ekts-form-input" id="suspect" value={suspectValue} onChange={(e) => setSuspectValue(e.target.value)}>
-                  <option value="" disabled selected>Выберите фигуранта...</option>
-                  <option value="rosalia_underwood">Розалия Андервуд</option>
-                  <option value="evan_underwood">Эван Андервуд</option>
-                  <option value="marcus_flynn">Маркус Флинн</option>
-                  <option value="alaric_ravenswood">Аларик Равенсвуд</option>
-                  <option value="vesper_wainwright">Веспер Уэйнрайт</option>
-                  <option value="arthur_payne">Артур Пейн</option>
-                  <option value="michael_eliot">Доктор Майкл Элиот</option>
-                </select>
-              </div>
+               <div className="ekts-form-group">
+                 <label className="ekts-form-label">ПОДОЗРЕВАЕМЫЙ</label>
+                 <select className="ekts-form-input" id="suspect" value={suspectValue} onChange={(e) => setSuspectValue(e.target.value)}>
+                   <option value="" disabled selected>Выберите фигуранта...</option>
+                   <option value="rosalia_underwood">Розалия Андервуд</option>
+                   <option value="evan_underwood">Эван Андервуд</option>
+                   <option value="marcus_flynn">Маркус Флинн</option>
+                   <option value="alaric_ravenswood">Аларик Равенсвуд</option>
+                   <option value="vesper_wainwright">Веспер Уэйнрайт</option>
+                   <option value="arthur_payne">Артур Пейн</option>
+                   <option value="selena_black">Селена Блэк</option>
+                   <option value="michael_eliot">Доктор Майкл Элиот</option>
+                 </select>
+               </div>
               <button type="submit" className="ekts-modal-submit" disabled={isSubmitting}>
                 {isSubmitting ? 'АНАЛИЗ...' : 'ОТПРАВИТЬ ЗАПРОС'}
               </button>

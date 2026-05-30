@@ -34,32 +34,45 @@ export const STARTER_FILE_IDS = [
   ...EVIDENCE_FILE_IDS,
   ...STATEMENT_FILE_IDS,
 ]
+export const STARTER_REQUIRED_FILE_IDS = [...DOSSIER_FILE_IDS]
+export const VIDEO_PROTOCOL_FILE_IDS = [...STATEMENT_FILE_IDS]
 
-export const ENVELOPE_FILE_IDS = ['insurance', 'bank', 'chat']
+export const ENVELOPE_FILE_IDS = ['insurance_policies', 'bank', 'chat']
+export const ENVELOPE_1_REQUIRED_FILE_IDS = [
+  'insurance_policies',
+  'bank_statement',
+  'luxe_restaurant_chat',
+  'shadows_of_riverton_chat',
+  'selena_diary',
+  'newspaper_obituary',
+  'pharmacy_receipt',
+  'curator_card',
+  'miller_alibi_memo',
+]
 export const INSURANCE_POLICIES_FILE_ID = 'insurance_policies'
 
 const STAGES = {
   starter_folder: {
     id: 'starter_folder',
     title: 'Стартовая папка',
-    objective: 'Изучите все материалы в разделах «Досье», «Улики» и «Видеопротоколы» на портале.',
-    requiredFiles: STARTER_FILE_IDS,
+    objective: 'Изучите все материалы в разделах «Досье».',
+    requiredFiles: [...STARTER_REQUIRED_FILE_IDS, ...VIDEO_PROTOCOL_FILE_IDS],
     nextStageId: 'envelope_1',
   },
   envelope_1: {
     id: 'envelope_1',
     title: 'Конверт №1',
-    objective: 'Изучите оперативные материалы из Конверта №1.',
-    requiredFiles: ENVELOPE_FILE_IDS,
+    objective: 'Изучите копии страховых полисов, полученные по почте.',
+    requiredFiles: ENVELOPE_1_REQUIRED_FILE_IDS,
     nextStageId: 'envelope_2',
   },
-  envelope_2: {
-    id: 'envelope_2',
-    title: 'Конверт №2',
-    objective: 'Соберите доказательства причастности Аларика Равенсвуда и изучите долги Эвана.',
-    requiredFiles: ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2', 'arthur_payne_addendum'],
-    nextStageId: null,
-  },
+   envelope_2: {
+     id: 'envelope_2',
+     title: 'Конверт №2',
+     objective: 'Соберите доказательства причастности Аларика Равенсвуда и изучите долги Эвана.',
+     requiredFiles: ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2'],
+     nextStageId: null,
+   },
 }
 
 const DEFAULT_PROGRESS = {
@@ -191,19 +204,19 @@ export function InvestigationProvider({ children }) {
     window.dispatchEvent(new CustomEvent('dt_envelope1_unlocked'))
   }, [])
 
-  const unlockEnvelope2 = useCallback(() => {
-    const envelope2FileIds = ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2', 'arthur_payne_addendum']
-    setProgress(prev => ({
-      ...prev,
-      currentStageId: 'envelope_2',
-      completedStages: prev.completedStages.includes('envelope_1')
-        ? prev.completedStages
-        : [...prev.completedStages, 'envelope_1'],
-      newMaterialIds: [...new Set([...prev.newMaterialIds, ...envelope2FileIds])],
-    }))
-    localStorage.setItem('dt_current_envelope', '2')
-    window.dispatchEvent(new CustomEvent('dt_envelope2_unlocked'))
-  }, [])
+   const unlockEnvelope2 = useCallback(() => {
+     const envelope2FileIds = ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2'];
+     setProgress(prev => ({
+       ...prev,
+       currentStageId: 'envelope_2',
+       completedStages: prev.completedStages.includes('envelope_1')
+         ? prev.completedStages
+         : [...prev.completedStages, 'envelope_1'],
+       newMaterialIds: [...new Set([...prev.newMaterialIds, ...envelope2FileIds])],
+     }))
+     localStorage.setItem('dt_current_envelope', '2')
+     window.dispatchEvent(new CustomEvent('dt_envelope2_unlocked'))
+   }, [])
 
   const beginInterimReport = useCallback(() => {
     setProgress(prev => ({ ...prev, interimReportSent: true }))

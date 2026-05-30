@@ -1,6 +1,7 @@
 export const INSURANCE_SUCCESS_MAIL_KEY = 'dt_insurance_success_mail'
 export const SLATE_COURT_ORDER_MAIL_KEY = 'dt_slate_court_order_mail'
 export const SLATE_EVIDENCE_MAIL_KEY = 'dt_slate_evidence_mail'
+export const MILLER_ALIBI_MEMO_MAIL_KEY = 'dt_miller_alibi_memo_mail'
 
 export function isInsuranceSuccessMailUnlocked() {
   return localStorage.getItem(INSURANCE_SUCCESS_MAIL_KEY) === 'true'
@@ -32,8 +33,63 @@ export function unlockSlateEvidenceMail() {
   return true
 }
 
+export function isMillerAlibiMemoMailUnlocked() {
+  return localStorage.getItem(MILLER_ALIBI_MEMO_MAIL_KEY) === 'true'
+}
+
+export function unlockMillerAlibiMemoMail() {
+  if (isMillerAlibiMemoMailUnlocked()) return false
+  localStorage.setItem(MILLER_ALIBI_MEMO_MAIL_KEY, 'true')
+  return true
+}
+
 export const SLATE_COURT_ORDER_MAIL_ID = 'slate_court_order'
 export const SLATE_EVIDENCE_MAIL_ID = 'slate_evidence'
+export const MILLER_ALIBI_MEMO_MAIL_ID = 'miller_alibi_memo'
+
+export function createMillerAlibiMemoMail() {
+  return {
+    id: MILLER_ALIBI_MEMO_MAIL_ID,
+    folder: 'inbox',
+    tab: 'primary',
+    starred: false,
+    read: false,
+    hidden: true,
+    from: {
+      name: 'Детектив Джон Миллер',
+      email: 'j.miller@darktrace.agency',
+      avatar: '🕵️',
+    },
+    subject: 'Служебная записка: проверка алиби Маркуса Флинна',
+    preview: 'Предварительная проверка алиби по делу №DT-2025-06-21-SB…',
+    date: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    body: `Коллеги,
+
+пересылаю служебную записку по делу №DT-2025-06-21-SB. Вложение содержит детали предварительной проверки алиби Маркуса Флинна.
+
+— Джон Миллер`,
+    attachments: [
+      {
+        id: 'miller-alibi-memo',
+        name: 'служебная_записка_алиби_флинн.txt',
+        type: 'document',
+        size: '2.1 КБ',
+        icon: '📄',
+        content: `СЛУЖЕБНАЯ ЗАПИСКА
+ОТ: Детектив Джон Миллер
+ТЕМА: Предварительная проверка алиби по делу №DT-2025-06-21-SB
+
+Проведена первичная проверка алиби Маркуса Флинна. Подозреваемый утверждает, что в вечер убийства (21.06.2025) ужинал с бизнес-партнерами.
+
+Установлено, что Флинн прибыл в ресторан 'Оникс' примерно в 19:30.
+
+Примечание: Учитывая, что предполагаемое время смерти, согласно заключению коронера, находится в промежутке 17:00-19:00, данное алиби не покрывает весь временной отрезок. Свидетели (его бизнес-партнеры) подтверждают его присутствие, но их показания могут быть предвзятыми. В связи с наличием более перспективной версии о самоубийстве, дальнейшая углубленная проверка не проводилась.`,
+        downloadable: true,
+        saveToDesktop: true,
+      },
+    ],
+  }
+}
 
 export function createSlateEvidenceMail() {
   return {
@@ -132,6 +188,14 @@ export function checkAndShowInsuranceMails(emailSystem) {
     if (!hasMail) {
       console.log('[checkAndShowInsuranceMails] Добавляем письмо с уликами от Слейта при инициализации')
       emailSystem.addEmail({ ...createSlateEvidenceMail(), hidden: false })
+    }
+  }
+
+  if (isMillerAlibiMemoMailUnlocked()) {
+    const hasMail = emailSystem.mails?.some(m => m.id === MILLER_ALIBI_MEMO_MAIL_ID)
+    if (!hasMail) {
+      console.log('[checkAndShowInsuranceMails] Добавляем служебную записку Миллера при инициализации')
+      emailSystem.addEmail({ ...createMillerAlibiMemoMail(), hidden: false })
     }
   }
 }
