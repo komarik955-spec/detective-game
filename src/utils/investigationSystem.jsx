@@ -56,7 +56,7 @@ const STAGES = {
     id: 'starter_folder',
     title: 'Стартовая папка',
     objective: 'Изучите все материалы в разделах «Досье».',
-    requiredFiles: [...STARTER_REQUIRED_FILE_IDS, ...VIDEO_PROTOCOL_FILE_IDS],
+    requiredFiles: [...STARTER_REQUIRED_FILE_IDS, ...VIDEO_PROTOCOL_FILE_IDS, 'crime_scene_photo', 'gallery_archive_page', 'diary_page_07', 'diary_page_08'],
     nextStageId: 'envelope_1',
   },
   envelope_1: {

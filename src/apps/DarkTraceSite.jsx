@@ -736,6 +736,10 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
                         const dossierTotal = DOSSIER_FILE_IDS.length || 1
                         const reviewedVideoCount = VIDEO_PROTOCOL_FILE_IDS.filter(id => reviewed.includes(id)).length
                         const videoTotal = VIDEO_PROTOCOL_FILE_IDS.length || 1
+                        const crimeScenePhotoReviewed = reviewed.includes('crime_scene_photo')
+                        const galleryArchiveReviewed = reviewed.includes('gallery_archive_page')
+                        const diaryPage07Reviewed = reviewed.includes('diary_page_07')
+                        const diaryPage08Reviewed = reviewed.includes('diary_page_08')
                         const allDossierReviewed = reviewedDossierCount >= dossierTotal
                         const allVideoReviewed = reviewedVideoCount >= videoTotal
                         return (
@@ -745,6 +749,18 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
                             </p>
                             <p className="dt-objective-text">
                               {allVideoReviewed ? '✓' : '[ ]'} Ознакомьтесь с видеопротоколами ({reviewedVideoCount}/{videoTotal})
+                            </p>
+                            <p className="dt-objective-text">
+                              {crimeScenePhotoReviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Общий вид места обнаружения тела»
+                            </p>
+                            <p className="dt-objective-text">
+                              {galleryArchiveReviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Каталог выставки из архива галереи "Арт-Модерн"»
+                            </p>
+                            <p className="dt-objective-text">
+                              {diaryPage07Reviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Страница дневника №7»
+                            </p>
+                            <p className="dt-objective-text">
+                              {diaryPage08Reviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Страница дневника №8»
                             </p>
                           </>
                         )
