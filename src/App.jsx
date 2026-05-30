@@ -6,11 +6,13 @@ import Desktop from './components/Desktop'
 import RegistrationScreen from './components/RegistrationScreen'
 import './styles/login.css'
 import CallPrototype from './prototype/CallPrototype'
+import ForensicCenterPage from './pages/ForensicCenterPage'
 
 export default function App() {
   const [stage, setStage] = useState('loading')
   const [playerData, setPlayerData] = useState(null)
   const [isPrototype, setIsPrototype] = useState(false)
+  const [pathname, setPathname] = useState(window.location.pathname)
 
   useEffect(() => {
     const handleResize = () => {
@@ -24,6 +26,12 @@ export default function App() {
     handleResize()
 
     return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    const handlePathChange = () => setPathname(window.location.pathname)
+    window.addEventListener('popstate', handlePathChange)
+    return () => window.removeEventListener('popstate', handlePathChange)
   }, [])
 
   useEffect(() => {
@@ -62,6 +70,10 @@ export default function App() {
   // Render prototype if activated
   if (isPrototype) {
     return <CallPrototype />
+  }
+
+  if (pathname === '/forensic-lab') {
+    return <ForensicCenterPage />
   }
 
   if (stage === 'loading') return <Loader />

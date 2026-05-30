@@ -51,6 +51,13 @@ const STAGES = {
     title: 'Конверт №1',
     objective: 'Изучите оперативные материалы из Конверта №1.',
     requiredFiles: ENVELOPE_FILE_IDS,
+    nextStageId: 'envelope_2',
+  },
+  envelope_2: {
+    id: 'envelope_2',
+    title: 'Конверт №2',
+    objective: 'Соберите доказательства причастности Аларика Равенсвуда и изучите долги Эвана.',
+    requiredFiles: ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2', 'arthur_payne_addendum'],
     nextStageId: null,
   },
 }
@@ -184,6 +191,20 @@ export function InvestigationProvider({ children }) {
     window.dispatchEvent(new CustomEvent('dt_envelope1_unlocked'))
   }, [])
 
+  const unlockEnvelope2 = useCallback(() => {
+    const envelope2FileIds = ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2', 'arthur_payne_addendum']
+    setProgress(prev => ({
+      ...prev,
+      currentStageId: 'envelope_2',
+      completedStages: prev.completedStages.includes('envelope_1')
+        ? prev.completedStages
+        : [...prev.completedStages, 'envelope_1'],
+      newMaterialIds: [...new Set([...prev.newMaterialIds, ...envelope2FileIds])],
+    }))
+    localStorage.setItem('dt_current_envelope', '2')
+    window.dispatchEvent(new CustomEvent('dt_envelope2_unlocked'))
+  }, [])
+
   const beginInterimReport = useCallback(() => {
     setProgress(prev => ({ ...prev, interimReportSent: true }))
   }, [])
@@ -209,6 +230,7 @@ export function InvestigationProvider({ children }) {
     currentStage,
     markFileAsReviewed,
     unlockEnvelope1,
+    unlockEnvelope2,
     beginInterimReport,
     canSendInterimReport,
     isFileNew: (fileId) => progress.newMaterialIds.includes(fileId),

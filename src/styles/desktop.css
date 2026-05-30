@@ -474,7 +474,8 @@
 .bhrome-page {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: #1a1a2e;
 }
 

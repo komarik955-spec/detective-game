@@ -568,6 +568,7 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
     canSendInterimReport,
     beginInterimReport,
     unlockEnvelope1,
+    unlockEnvelope2,
   } = useInvestigation()
   const [slateCallActive, setSlateCallActive] = useState(false)
   const [encryptedCallActive, setEncryptedCallActive] = useState(false)
@@ -632,7 +633,7 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   const handleEncryptedCallComplete = () => {
     setEncryptedCallActive(false)
     setCurrentEnvelope(2)
-    localStorage.setItem('dt_current_envelope', '2')
+    unlockEnvelope2()
   }
 
   return (
@@ -707,10 +708,11 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
             {isEnvelope2 ? (
               <div className="dt-objective-box">
                 <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
-                <p className="dt-objective-text">Изучите архивные файлы из Конверта №2.</p>
+                <p className="dt-objective-text">Соберите доказательства причастности Аларика Равенсвуда и изучите долги Эвана.</p>
                 <div className="dt-objective-hint">
-                  <p className="dt-objective-text">○ Изучить новые архивные документы</p>
-                  <p className="dt-objective-text">○ Проанализировать логи связи</p>
+                  <p className="dt-objective-text">[ ] Изучить отчет IT-отдела по лудомании Эвана</p>
+                  <p className="dt-objective-text">[ ] Просмотреть все новые улики и стенограммы Конверта №2 (0/7)</p>
+                  <p className="dt-objective-text">[ ] Найти скрытую связь Пейна и Равенсвуда в досье</p>
                 </div>
               </div>
             ) : isSlateEvidenceMailUnlocked() ? (
@@ -1148,29 +1150,70 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
   const envelope2EvidenceItems = {
     document: [
+      
+      
+    ],
+    photo: [
+      
       {
-        id: 'police_report_redacted',
-        name: 'Полицейский отчёт (с грифом "Секретно")',
-        description: 'Изначальный полицейский отчёт о ДТП Андервуда с вычеркнутыми фрагментами. Указаны подозрительные детали о месте происшествия.',
-        url: '/assets/evidence/police_report_redacted.jpg',
-        type: 'image',
-        isNew: true
-      },
-      {
-        id: 'autopsy_report',
-        name: 'Заключение патологоанатома',
-        description: 'Медицинское заключение о причине смерти Дэвида Андервуда. Содержит противоречия с официальной версией.',
-        url: '/assets/evidence/autopsy_report.jpg',
+        id: 'creditor_note',
+        name: 'Записка от кредитора (Вложение 1)',
+        description: 'Угрожающая записка от кредитора Эвана Андервуда о просроченной задолженности.',
+        url: '/assets/evidence/creditor_note.png',
         type: 'image',
         isNew: true
       }
     ],
-    photo: [
+    intercept: [
       {
-        id: 'accident_scene_photos',
-        name: 'Фотографии места ДТП (оригиналы)',
-        description: 'Полный комплект фотографий с места аварии. Видны детали, отсутствующие в официальном отчёте.',
-        url: '/assets/evidence/accident_scene_photos.jpg',
+        id: 'raven_chat_1',
+        name: 'Скриншот переписки с "Вороном" — Часть 1 (Вложение 2)',
+        description: 'Переписка с неизвестным контактом "Ворон", содержащая подозрительные договорённости.',
+        url: '/assets/evidence/raven_chat_1.png',
+        type: 'image',
+        isNew: true
+      },
+      {
+        id: 'raven_chat_2',
+        name: 'Скриншот переписки с "Вороном" — Часть 2 (Вложение 3)',
+        description: 'Продолжение переписки с "Вороном", раскрывающее детали операции.',
+        url: '/assets/evidence/raven_chat_2.png',
+        type: 'image',
+        isNew: true
+      },
+      {
+        id: 'alaric_selena_chat',
+        name: 'Скриншот переписки: Аларик и Селена (Вложение 7)',
+        description: 'Личная переписка между Алариком Равенсвудом и Селеной Блэк.',
+        url: '/assets/evidence/alaric_selena_chat.png',
+        type: 'image',
+        isNew: true
+      }
+    ],
+    diary: [
+      {
+        id: 'diary_page_envelope2',
+        name: 'Вырванный лист из дневника Селены (Вложение 4)',
+        description: 'Страница из дневника Селены Блэк с записями о её тревогах и подозрениях.',
+        url: '/assets/evidence/diary_page_envelope2.png',
+        type: 'image',
+        isNew: true
+      }
+    ],
+    transcript: [
+      {
+        id: 'alaric_interrogation_transcript',
+        name: 'Допрос АЛАРИКА ВИНСЕНТА РАВЕНСВУДА (Вложение 6)',
+        description: 'Стенограмма допроса Аларика Равенсвуда по делу о похищении Селены Блэк.',
+        url: '/assets/evidence/alaric_interrogation_transcript.png',
+        type: 'image',
+        isNew: true
+      },
+      {
+        id: 'phone_call_transcript_2',
+        name: 'Расшифровка аудиоразговора (Вложение 8)',
+        description: 'Расшифровка телефонного разговора с важной информацией по делу.',
+        url: '/assets/evidence/phone_call_transcript_2.png',
         type: 'image',
         isNew: true
       }
@@ -1187,20 +1230,26 @@ function EvidenceArchive({ userLevel, onNavigate }) {
     ? [
         ...baseCategories.map(cat => ({
           ...cat,
-          files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ...envelope2EvidenceItems.document] :
-                   cat.id === 'photo' ? [...cat.files, ...envelope2EvidenceItems.photo] :
-                   cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary] :
-                   cat.files
+files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ...envelope2EvidenceItems.document] :
+                    cat.id === 'photo' ? [...cat.files, ...envelope2EvidenceItems.photo] :
+                    cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary, ...envelope2EvidenceItems.diary] :
+                    cat.id === 'intercept' ? [...cat.files, ...envelope2EvidenceItems.intercept] :
+                    cat.files
         })),
         {
           id: 'intercept',
           name: 'Перехват',
-          files: slateEvidenceItems.intercept
+          files: [...slateEvidenceItems.intercept, ...envelope2EvidenceItems.intercept]
         },
         {
           id: 'contacts',
           name: 'Контакты',
           files: slateEvidenceItems.contacts
+        },
+        {
+          id: 'transcript',
+          name: 'Стенограмма Аудиозаписей',
+          files: envelope2EvidenceItems.transcript
         }
       ]
     : isSlateEvidenceUnlocked
@@ -2053,8 +2102,7 @@ function FullDossierModal({ open, dossier, onClose }) {
 
   const [offset, setOffset] = useState({ x: 0, y: 0 })
 
-  const [drag, setDrag] = useState(null) // { startX, startY, originX, originY, pointerId }
-
+const [drag, setDrag] = useState(null) // { startX, startY, originX, originY, pointerId }
 
 
   useEffect(() => {

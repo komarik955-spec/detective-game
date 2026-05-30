@@ -2,14 +2,34 @@
 
 
 
+
+
+
+
 import MailApp from '../apps/MailApp'
+
 import DarkTraceSite from '../apps/DarkTraceSite'
+
 import DarkTracePublic from '../apps/DarkTracePublic'
+
 import PharmaNet from '../apps/PharmaNet'
+
 import NewsPortal from '../apps/NewsPortal'
+
 import RivertonInsurance from '../apps/RivertonInsurance'
+
 import RivertonTelecom from '../apps/RivertonTelecom'
+
+import EktsPro from '../apps/EktsPro'
+
 import { SecondMailContext } from '../components/Desktop'
+
+import ForensicCenterPage from '../pages/ForensicCenterPage'
+
+
+
+
+
 
 
 
@@ -22,7 +42,19 @@ let nextId = 2
 
 
 
+
+
+
+
+
+
+
+
 export default function Browser({ onSecondMailArrived, playerData }) {
+
+
+
+
 
 
 
@@ -30,20 +62,41 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
   const [loading, setLoading] = useState(false)
+
   const [oneMailUnreadBadge, setOneMailUnreadBadge] = useState(0)
+
   const [telecomState, setTelecomState] = useState({})
+
+
 
   const handleSecondMailArrived = useContext(SecondMailContext)
 
+
+
   useEffect(() => {
+
     const syncUnread = e => {
+
       const count = e?.detail?.count
+
       if (typeof count === 'number') setOneMailUnreadBadge(count)
+
     }
+
     window.addEventListener('mailApp_unread_count', syncUnread)
+
     return () => window.removeEventListener('mailApp_unread_count', syncUnread)
+
   }, [])
+
+
+
+
 
 
 
@@ -51,22 +104,49 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     { id: 1, title: 'New tab', url: '', page: 'home', loading: false }
+
+
+
+
 
 
 
   ])
 
+
+
   useEffect(() => {
+
     const activeTab = tabs.find(t => t.active)
+
     if (activeTab && activeTab.page === 'riverton-telecom') {
+
       localStorage.setItem('dt_visited_telecom', 'true')
+
     }
+
   }, [tabs])
 
 
 
+
+
+
+
   const [activeId, setActiveId] = useState(1)
+
+
+
+
+
+
+
+
 
 
 
@@ -80,7 +160,21 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
   const activeTab = tabs.find(t => t.id === activeId)
+
+
+
+
+
+
+
+
 
 
 
@@ -92,7 +186,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     const id = nextId++
+
+
+
+
 
 
 
@@ -100,7 +202,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     setTabs(prevTabs => [...prevTabs, newTab])
+
+
+
+
 
 
 
@@ -108,7 +218,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
   }
+
+
+
+
+
+
+
+
 
 
 
@@ -120,7 +242,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     const filtered = tabs.filter(t => t.id !== id)
+
+
+
+
 
 
 
@@ -128,11 +258,27 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     if (id === activeId && filtered.length) setActiveId(filtered[0].id)
 
 
 
+
+
+
+
   }
+
+
+
+
+
+
+
+
 
 
 
@@ -144,11 +290,27 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     setTabs(tabs.map(t => t.id === id ? { ...t, ...data } : t))
 
 
 
+
+
+
+
   }
+
+
+
+
+
+
+
+
 
 
 
@@ -160,7 +322,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     updateTab(activeId, {
+
+
+
+
 
 
 
@@ -168,7 +338,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       url: 'https://darktrace.agency/login',
+
+
+
+
 
 
 
@@ -176,7 +354,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       darkTraceState: {
+
+
+
+
 
 
 
@@ -184,7 +370,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         isLoggedIn: false,
+
+
+
+
 
 
 
@@ -192,11 +386,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       }
 
 
 
+
+
+
+
     })
+
+
+
+
 
 
 
@@ -208,11 +414,31 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
   function navigateInCurrentTab(value) {
 
 
 
+
+
+
+
     updateTab(activeId, { loading: true })
+
+
+
+
+
+
+
+
 
 
 
@@ -228,19 +454,51 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
     // Фейковая загрузка страницы, чтобы браузер ощущался как настоящий.
 
 
 
+
+
+
+
     setTimeout(() => {
+      const v = String(value || '').toLowerCase()
 
 
 
-      if (value.includes('onemail')) {
+
+
+
+
+      if (v.includes('ekc-pro') || v.includes('экц') || v.includes('forensic-lab') || v.includes('forensic')) {
+        updateTab(activeId, {
+          page: 'forensic-lab',
+          url: 'https://ekc-pro.lab',
+          title: 'ЭКЦ-ПРО',
+          loading: false
+        })
+      } else if (value.includes('onemail')) {
+
+
+
+
 
 
 
         updateTab(activeId, {
+
+
+
+
 
 
 
@@ -248,7 +506,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           url: 'https://onemail.darktrace.agency/inbox',
+
+
+
+
 
 
 
@@ -256,11 +522,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           loading: false
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -268,7 +546,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         updateTab(activeId, {
+
+
+
+
 
 
 
@@ -276,7 +562,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           url: 'https://agency.darktrace',
+
+
+
+
 
 
 
@@ -284,11 +578,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           loading: false
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -296,11 +602,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         updateTab(activeId, {
 
 
 
+
+
+
+
           page: 'darktrace',
+
+
+
+
 
 
 
@@ -308,7 +626,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           title: 'DARK TRACE',
+
+
+
+
 
 
 
@@ -316,7 +642,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           darkTraceState: {
+
+
+
+
 
 
 
@@ -324,7 +658,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
             isLoggedIn: false,
+
+
+
+
 
 
 
@@ -332,11 +674,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           }
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -344,11 +698,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         updateTab(activeId, {
 
 
 
+
+
+
+
           page: 'darktrace',
+
+
+
+
 
 
 
@@ -356,7 +722,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           title: 'DARK TRACE',
+
+
+
+
 
 
 
@@ -364,7 +738,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           darkTraceState: {
+
+
+
+
 
 
 
@@ -372,7 +754,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
             isLoggedIn: false,
+
+
+
+
 
 
 
@@ -380,11 +770,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           }
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -392,7 +794,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         updateTab(activeId, {
+
+
+
+
 
 
 
@@ -400,7 +810,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           url: 'https://darktrace.agency',
+
+
+
+
 
 
 
@@ -408,7 +826,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           loading: false,
+
+
+
+
 
 
 
@@ -416,7 +842,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
             currentPage: 'login',
+
+
+
+
 
 
 
@@ -424,7 +858,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
             userLevel: 'guest'
+
+
+
+
 
 
 
@@ -432,44 +874,103 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
       } else if (value.includes('news')) {
+
         updateTab(activeId, {
+
           page: 'news',
+
           url: 'https://news.darktrace.agency',
+
           title: 'NEWS',
+
           loading: false
+
         })
+
       } else if (value.includes('pharmanet.com') || value.includes('pharma')) {
+
         updateTab(activeId, {
+
           page: 'pharma',
+
           url: 'https://pharmanet.com',
+
           title: 'PharmaNet Online',
+
           loading: false
+
         })
+
       } else if (value.includes('riverton-insurance') || value.includes('rivertoninsurance')) {
+
         updateTab(activeId, {
+
           page: 'riverton',
+
           url: 'https://www.riverton-insurance.com',
+
           title: 'Riverton Insurance',
+
           loading: false
+
         })
+
       } else if (value.includes('riverton-telecom') || value.includes('telecom.riverton') || value.includes('rivertontelecom')) {
+
         updateTab(activeId, {
+
           page: 'riverton-telecom',
+
           url: 'https://www.riverton-telecom.com',
+
           title: 'Riverton Telecom',
+
           loading: false
+
         })
+
+      } else if (value.includes('ekts-pro') || value.includes('ektspro') || value.includes('эцц-про') || value.includes('эццпро')) {
+
+        updateTab(activeId, {
+
+          page: 'ekts-pro',
+
+          url: 'https://www.ekts-pro.ru',
+
+          title: 'ЭКЦ-ПРО',
+
+          loading: false
+
+        })
+
       } else {
 
 
 
 
+
+
+
+
+
         updateTab(activeId, {
+
+
+
+
 
 
 
@@ -477,7 +978,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           url: value,
+
+
+
+
 
 
 
@@ -485,7 +994,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           loading: false
+
+
+
+
 
 
 
@@ -493,7 +1010,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       }
+
+
+
+
+
+
+
+
 
 
 
@@ -505,11 +1034,27 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     }, 900)
 
 
 
+
+
+
+
   }
+
+
+
+
+
+
+
+
 
 
 
@@ -521,7 +1066,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     const id = nextId++
+
+
+
+
 
 
 
@@ -529,7 +1082,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       id,
+
+
+
+
 
 
 
@@ -537,7 +1098,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       url: '',
+
+
+
+
 
 
 
@@ -545,7 +1114,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       loading: false
+
+
+
+
 
 
 
@@ -557,7 +1134,29 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
-    if (value.includes('onemail')) {
+
+
+
+
+
+
+
+
+    const v = String(value || '').toLowerCase()
+
+    if (v.includes('ekc-pro') || v.includes('экц') || v.includes('forensic-lab') || v.includes('forensic')) {
+      newTabConfig = {
+        id,
+        title: 'ЭКЦ-ПРО',
+        url: 'https://ekc-pro.lab',
+        page: 'forensic-lab',
+        loading: false
+      }
+    } else if (value.includes('onemail')) {
+
+
+
+
 
 
 
@@ -565,7 +1164,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         id,
+
+
+
+
 
 
 
@@ -573,7 +1180,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         url: 'https://onemail.darktrace.agency/inbox',
+
+
+
+
 
 
 
@@ -581,11 +1196,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         loading: false
 
 
 
+
+
+
+
       }
+
+
+
+
 
 
 
@@ -593,11 +1220,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       newTabConfig = {
 
 
 
+
+
+
+
         id,
+
+
+
+
 
 
 
@@ -605,7 +1244,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         url: 'https://agency.darktrace',
+
+
+
+
 
 
 
@@ -613,11 +1260,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         loading: false
 
 
 
+
+
+
+
       }
+
+
+
+
 
 
 
@@ -625,11 +1284,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       newTabConfig = {
 
 
 
+
+
+
+
         id,
+
+
+
+
 
 
 
@@ -637,7 +1308,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         url: 'https://darktrace.agency/login',
+
+
+
+
 
 
 
@@ -645,7 +1324,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         loading: false,
+
+
+
+
 
 
 
@@ -653,7 +1340,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           currentPage: 'login',
+
+
+
+
 
 
 
@@ -661,7 +1356,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           userLevel: 'guest'
+
+
+
+
 
 
 
@@ -669,43 +1372,107 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       }
+
+
+
+
 
 
 
     } else if (value.includes('news')) {
+
       newTabConfig = {
+
         id,
+
         title: 'NEWS',
+
         url: 'https://news.darktrace.agency',
+
         page: 'news',
+
         loading: false
+
       }
+
     } else if (value.includes('pharmanet.com') || value.includes('pharma')) {
+
       newTabConfig = {
+
         id,
+
         title: 'PharmaNet Online',
+
         url: 'https://pharmanet.com',
+
         page: 'pharma',
+
         loading: false
+
       }
+
     } else if (value.includes('riverton-insurance') || value.includes('rivertoninsurance')) {
+
       newTabConfig = {
+
         id,
+
         title: 'Riverton Insurance',
+
         url: 'https://www.riverton-insurance.com',
+
         page: 'riverton',
+
         loading: false
+
       }
+
     } else if (value.includes('riverton-telecom') || value.includes('telecom.riverton') || value.includes('rivertontelecom')) {
+
       newTabConfig = {
+
         id,
+
         title: 'Riverton Telecom',
+
         url: 'https://www.riverton-telecom.com',
+
         page: 'riverton-telecom',
+
         loading: false
+
       }
+
+    } else if (value.includes('ekts-pro') || value.includes('ektspro') || value.includes('эцц-про') || value.includes('эццпро')) {
+
+      newTabConfig = {
+
+        id,
+
+        title: 'ЭКЦ-ПРО',
+
+        url: 'https://www.ekts-pro.ru',
+
+        page: 'ekts-pro',
+
+        loading: false
+
+      }
+
     }
+
+
+
+
+
+
+
+
 
 
 
@@ -717,11 +1484,27 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     setActiveId(id)
 
 
 
+
+
+
+
   }
+
+
+
+
+
+
+
+
 
 
 
@@ -733,7 +1516,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     navigateInCurrentTab(value)
+
+
+
+
 
 
 
@@ -745,7 +1536,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
   return (
+
+
+
+
 
 
 
@@ -753,7 +1556,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       {loading && <div className="bhrome-loader" />}
+
+
+
+
 
 
 
@@ -765,7 +1576,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
       {/* TABS */}
+
+
+
+
 
 
 
@@ -773,7 +1596,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
   {tabs.map(tab => (
+
+
+
+
 
 
 
@@ -781,7 +1612,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       key={tab.id}
+
+
+
+
 
 
 
@@ -789,11 +1628,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       onClick={() => setActiveId(tab.id)}
 
 
 
+
+
+
+
     >
+
+
+
+
 
 
 
@@ -805,7 +1656,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
       <span
+
+
+
+
 
 
 
@@ -813,7 +1676,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         onClick={(e) => {
+
+
+
+
 
 
 
@@ -821,7 +1692,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
           closeTab(tab.id)
+
+
+
+
 
 
 
@@ -829,7 +1708,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       >
+
+
+
+
 
 
 
@@ -837,11 +1724,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
       </span>
 
 
 
+
+
+
+
           </div>
+
+
+
+
 
 
 
@@ -853,7 +1752,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
         <div className="tab-add" onClick={newTab}>+</div>
+
+
+
+
 
 
 
@@ -865,7 +1776,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
       {/* BAR */}
+
+
+
+
 
 
 
@@ -873,11 +1796,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         <div className="nav">&lt;</div>
 
 
 
+
+
+
+
         <div className="nav">&gt;</div>
+
+
+
+
 
 
 
@@ -889,7 +1824,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
     <input
+
+
+
+
 
 
 
@@ -897,7 +1844,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
   value={activeTab?.url || ''}
+
+
+
+
 
 
 
@@ -905,7 +1860,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
   onChange={(e) => updateTab(activeId, { url: e.target.value })}
+
+
+
+
 
 
 
@@ -913,7 +1876,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     if (e.key === 'Enter') {
+
+
+
+
 
 
 
@@ -921,11 +1892,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
     }
 
 
 
+
+
+
+
   }}
+
+
+
+
 
 
 
@@ -937,7 +1920,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
 <div className="bhrome-menu">в‹®</div>
+
+
+
+
 
 
 
@@ -949,7 +1944,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
 {/* LOADING */}
+
+
+
+
 
 
 
@@ -965,7 +1972,23 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
       {/* PAGE */}
+
+
+
+
 
 
 
@@ -973,9 +1996,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         {activeTab && activeTab.page === 'home' && (
+
           <Home navigateInNewTab={navigateInNewTab} oneMailUnreadBadge={oneMailUnreadBadge} />
+
         )}
+
+
+
+
 
 
 
@@ -983,73 +2016,152 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
         {activeTab && activeTab.page === 'darktrace' && (
+
+
 
           <DarkTraceSite 
 
+
+
             darkTraceState={activeTab.darkTraceState} 
+
+
 
             onNavigate={(page, stateUpdates) => {
 
+
+
               updateTab(activeId, { 
+
+
 
                 darkTraceState: {
 
+
+
                   ...activeTab.darkTraceState,
+
+
 
                   currentPage: page,
 
+
+
                   ...(stateUpdates || {})
+
+
 
                 }
 
+
+
               })
+
+
 
             }} 
 
+
+
             playerData={playerData}
+
+
 
           />
 
+
+
         )}
+
+
+
+
 
 
 
         {activeTab && activeTab.page === 'darktrace-public' && <DarkTracePublic onLogin={openDarkTraceLogin} />}
+
         {activeTab && activeTab.page === 'pharma' && <PharmaNet />}
+
         {activeTab && activeTab.page === 'riverton' && <RivertonInsurance />}
+
+        {activeTab && activeTab.page === 'forensic-lab' && <ForensicCenterPage embedded />}
+
         {activeTab && activeTab.page === 'riverton-telecom' && (
+
           <RivertonTelecom
+
             initialState={telecomState}
+
             onStateChange={setTelecomState}
+
           />
+
         )}
+
         {activeTab && activeTab.page === 'news' && (
+
           <NewsPortal
+
             onNavigateToDarkTrace={() => {
+
               updateTab(activeId, {
+
                 page: 'darktrace',
+
                 url: 'https://darktrace.agency/login',
+
                 title: 'DARK TRACE',
+
                 loading: false,
+
                 darkTraceState: {
+
                   currentPage: 'login',
+
                   isLoggedIn: false,
+
                   userLevel: 'guest'
+
                 }
+
               })
+
             }}
+
             onNavigateToRivertonInsurance={() => {
+
               updateTab(activeId, {
+
                 page: 'riverton',
+
                 url: 'https://www.riverton-insurance.com',
+
                 title: 'Riverton Insurance',
+
                 loading: false
+
               })
+
             }}
+
           />
+
         )}
+
+        {activeTab && activeTab.page === 'ekts-pro' && <EktsPro />}
+
       </div>
+
+
+
+
+
 
 
 
@@ -1058,7 +2170,15 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
   )
+
+
+
+
 
 
 
@@ -1070,7 +2190,19 @@ export default function Browser({ onSecondMailArrived, playerData }) {
 
 
 
+
+
+
+
+
+
+
+
 /* HOME */
+
+
+
+
 
 
 
@@ -1078,7 +2210,15 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
   function openMailInNewTab() {
+
+
+
+
 
 
 
@@ -1086,7 +2226,19 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
   }
+
+
+
+
+
+
+
+
 
 
 
@@ -1098,11 +2250,27 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
     navigateInNewTab('agency.darktrace')
 
 
 
+
+
+
+
   }
+
+
+
+
+
+
+
+
 
 
 
@@ -1114,13 +2282,27 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
     navigateInNewTab('news')
+
+
+
+
 
 
 
   }
 
+
+
   function openRivertonTelecomInNewTab() {
+
+
+
+
 
 
 
@@ -1128,7 +2310,23 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
   }
+
+  function openEkcProInNewTab() {
+    navigateInNewTab('ekts-pro')
+  }
+
+
+
+
+
+
+
+
 
 
 
@@ -1140,7 +2338,19 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
     <div className="bhrome-home">
+
+
+
+
+
+
+
+
 
 
 
@@ -1156,7 +2366,23 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
+
+
+
+
         <div className="bhrome-logo">Googel</div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1168,11 +2394,23 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
           className="bhrome-search"
 
 
 
+
+
+
+
           placeholder="Search in Googel"
+
+
+
+
 
 
 
@@ -1184,21 +2422,51 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
+
+
+
+
         <div className="bhrome-sites">
 
 
 
+
+
+
+
           <div className="site" onClick={openMailInNewTab} title="OneMail" aria-label="OneMail">
+
             <div className="site-icon-wrap">
+
               <div className="site-icon" aria-hidden="true">✉</div>
+
               {oneMailUnreadBadge > 0 && (
+
                 <span className="site-mail-badge" aria-label={`Непрочитанных: ${oneMailUnreadBadge}`}>
+
                   {oneMailUnreadBadge > 9 ? '9+' : oneMailUnreadBadge}
+
                 </span>
+
               )}
+
             </div>
+
             <div className="site-label">OneMail</div>
+
           </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1207,9 +2475,20 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
           <div className="site" onClick={openDarkTraceInNewTab} title="DARK TRACE" aria-label="DARK TRACE">
+
             <div className="site-icon" aria-hidden="true">🕵</div>
+
             <div className="site-label">Dark Trace</div>
+
           </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1218,18 +2497,46 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
           <div className="site" onClick={openNewsInNewTab} title="News" aria-label="News">
+
             <div className="site-icon" aria-hidden="true">📰</div>
+
             <div className="site-label">News</div>
+
           </div>
 
+
+
           <div className="site" onClick={openRivertonTelecomInNewTab} title="Riverton Telecom" aria-label="Riverton Telecom">
+
             <div className="site-icon" aria-hidden="true">📡</div>
+
             <div className="site-label">Riverton Telecom</div>
+
           </div>
+
+          <div className="site" onClick={openEkcProInNewTab} title="ЭКЦ-ПРО" aria-label="ЭКЦ-ПРО">
+
+            <div className="site-icon" aria-hidden="true">🛡️</div>
+
+            <div className="site-label">ЭКЦ-ПРО</div>
+
+          </div>
+
+
+
+
 
 
 
         </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -1245,7 +2552,19 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
+
+
+
+
     </div>
+
+
+
+
 
 
 
@@ -1253,7 +2572,15 @@ function Home({ navigateInNewTab, oneMailUnreadBadge = 0 }) {
 
 
 
+
+
+
+
 }
+
+
+
+
 
 
 

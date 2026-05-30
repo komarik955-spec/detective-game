@@ -122,6 +122,43 @@ Password: 12345
 
 
   {
+    id: 10,
+    folder: 'inbox',
+    tab: 'primary',
+    starred: false,
+    read: false,
+    hidden: true,
+    triggerStage: 'envelope_2',
+    envelope: 2,
+    from: {
+      name: 'ОТЧЕТ IT-ОТДЕЛА',
+      email: 'it-dept@dark-trace.gov',
+      avatar: '💻'
+    },
+    subject: 'Анализ сетевой активности Эвана Андервуда (период: 01.01.2025 - 21.06.2025)',
+    preview: 'РЕЗЮМЕ: Анализ данных, полученных из нескольких анонимных источников в даркнете, показал регулярную и нарастающую активность Э. Андервуда...',
+    date: '14:30',
+    body: `ДЕЛО №: DT-2025-06-21-SB
+ОТЧЕТ IT-ОТДЕЛА
+Анализ сетевой активности Эвана Андервуда
+Период: 01.01.2025 - 21.06.2025
+
+РЕЗЮМЕ:
+Анализ данных, полученных из нескольких анонимных источников в даркнете, показал регулярную и нарастающую активность Э. Андервуда на нелицензированных платформах для онлайн-гемблинга (онлайн-покер, ставки на спорт).
+
+КЛЮЧЕВЫЕ НАХОДКИ:
+- Общая сумма проигрыша: За указанный период превышает $100,000.
+- Динамика: Активность резко возросла в последние три месяца, зафиксированы множественные попытки взять краткосрочные онлайн-кредиты на сомнительных ресурсах под высокий процент.
+
+ВЫВОД:
+Субъект находится в состоянии острой лудомании и испытывает серьезные финансовые трудности, о которых, предположительно, не осведомлена его семья.
+
+ОТЧЕТ ПОДГОТОВЛЕН: IT-отдел Dark Trace
+ДАТА: 22.06.2025`,
+    attachments: []
+  },
+
+  {
 
     id: 5, 
 
@@ -1586,6 +1623,46 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
     window.addEventListener('dt_envelope1_unlocked', revealVesperInsuranceHint)
     return () => window.removeEventListener('dt_envelope1_unlocked', revealVesperInsuranceHint)
   }, [onSecondMailArrived])
+
+  useEffect(() => {
+    const revealITReport = () => {
+      setMails(prev => {
+        const hasITReport = prev.some(m => m.id === 10)
+        if (hasITReport) {
+          return prev.map(m => m.id === 10 ? { ...m, hidden: false } : m)
+        }
+        return prev
+      })
+      const audio = new Audio('/assets/sounds/notification.mp3')
+      audio.play().catch(() => {})
+    }
+
+    window.addEventListener('dt_envelope2_unlocked', revealITReport)
+    return () => window.removeEventListener('dt_envelope2_unlocked', revealITReport)
+  }, [])
+
+  useEffect(() => {
+    const checkEnvelope2AndReveal = () => {
+      try {
+        const currentEnvelope = localStorage.getItem('dt_current_envelope')
+        if (currentEnvelope === '2') {
+          setMails(prev => {
+            const hasITReport = prev.some(m => m.id === 10)
+            if (hasITReport) {
+              return prev.map(m => m.id === 10 ? { ...m, hidden: false } : m)
+            }
+            return prev
+          })
+        }
+      } catch {
+        // ignore errors
+      }
+    }
+
+    checkEnvelope2AndReveal()
+    const interval = setInterval(checkEnvelope2AndReveal, 2000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const unread = mails.filter(m => m.folder === 'inbox' && !m.read && !m.hidden).length
