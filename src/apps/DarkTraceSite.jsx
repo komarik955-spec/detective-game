@@ -614,7 +614,11 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
     return progress
   }
 
-  const canSendFinalReport = secondStageProgress() === 100
+  const canSendFinalReport = (() => {
+    const reviewed = progress?.reviewedFiles || []
+    const envelope2Required = ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2']
+    return envelope2Required.every(id => reviewed.includes(id))
+  })()
 
   const isEnvelope2 = currentEnvelope === 2
 
@@ -759,13 +763,45 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
                 <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
                 <p className="dt-objective-text">Соберите доказательства причастности Аларика Равенсвуда и изучите долги Эвана.</p>
                 <div className="dt-objective-hint">
-                  <p className="dt-objective-text">[ ] Изучить отчет IT-отдела по лудомании Эвана</p>
-                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Угрожающая записка от кредитора Эвана Андервуда о просроченной задолженности»</p>
-                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Переписка с неизвестным контактом "Ворон", содержащая подозрительные договорённости»</p>
-                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Продолжение переписки с "Вороном", раскрывающее детали операции»</p>
-                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Страница из дневника Селены Блэк с записями о её тревогах и подозрениях»</p>
-                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Стенограмма допроса Аларика Равенсвуда по делу о похищении Селены Блэк»</p>
-                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Личная переписка между Алариком Равенсвудом и Селеной Блэк»</p>
+                  {(() => {
+                    const reviewed = progress?.reviewedFiles || []
+                    const itReportReviewed = reviewed.includes('it_report')
+                    const creditorNoteReviewed = reviewed.includes('creditor_note')
+                    const ravenChat1Reviewed = reviewed.includes('raven_chat_1')
+                    const ravenChat2Reviewed = reviewed.includes('raven_chat_2')
+                    const diaryEnvelope2Reviewed = reviewed.includes('diary_page_envelope2')
+                    const interrogationReviewed = reviewed.includes('alaric_interrogation_transcript')
+                    const alaricSelenaReviewed = reviewed.includes('alaric_selena_chat')
+                    const phoneCallReviewed = reviewed.includes('phone_call_transcript_2')
+                    return (
+                      <>
+                        <p className="dt-objective-text">
+                          {itReportReviewed ? '✓' : '[ ]'} Изучить отчет IT-отдела по лудомании Эвана
+                        </p>
+                        <p className="dt-objective-text">
+                          {creditorNoteReviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Угрожающая записка от кредитора Эвана Андервуда о просроченной задолженности»
+                        </p>
+                        <p className="dt-objective-text">
+                          {ravenChat1Reviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Переписка с неизвестным контактом "Ворон", содержащая подозрительные договорённости»
+                        </p>
+                        <p className="dt-objective-text">
+                          {ravenChat2Reviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Продолжение переписки с "Вороном", раскрывающее детали операции»
+                        </p>
+                        <p className="dt-objective-text">
+                          {diaryEnvelope2Reviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Страница из дневника Селены Блэк с записями о её тревогах и подозрениях»
+                        </p>
+                        <p className="dt-objective-text">
+                          {interrogationReviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Стенограмма допроса Аларика Равенсвуда по делу о похищении Селены Блэк»
+                        </p>
+                        <p className="dt-objective-text">
+                          {alaricSelenaReviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Личная переписка между Алариком Равенсвудом и Селеной Блэк»
+                        </p>
+                        <p className="dt-objective-text">
+                          {phoneCallReviewed ? '✓' : '[ ]'} Ознакомьтесь с уликой «Стенограмма телефонного разговора»
+                        </p>
+                      </>
+                    )
+                  })()}
                 </div>
               </div>
             ) : (
@@ -876,16 +912,16 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
             <button
               type="button"
-              className={`dt-report-btn ${isEnvelope2 ? '' : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
-              disabled={isEnvelope2 ? true : (!canSendInterimReport || slateCallActive || reportSending)}
-              onClick={isEnvelope2 ? undefined : handleSendReport}
+              className={`dt-report-btn ${isEnvelope2 ? (canSendFinalReport ? 'dt-report-btn--active' : '') : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
+              disabled={isEnvelope2 ? !canSendFinalReport : (!canSendInterimReport || slateCallActive || reportSending)}
+              onClick={handleSendReport}
               title={
                 isEnvelope2
-                  ? 'Изучите новые файлы Конверта №2'
+                  ? (canSendFinalReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа')
                   : (reportSending ? 'Отчет отправлен. Ожидайте выхода на связь...' : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа'))
               }
             >
-              {isEnvelope2 ? 'ИЗУЧИТЬ ФАЙЛЫ' : (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ')}
+              {isEnvelope2 ? (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ') : (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ')}
             </button>
             {isEnvelope2 ? null : progressHint(currentStage, canSendInterimReport, slateCallActive, reportSending)}
           </div>
