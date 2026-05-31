@@ -167,6 +167,70 @@ Password: 12345
   },
 
   {
+    id: 11,
+    folder: 'inbox',
+    tab: 'primary',
+    starred: false,
+    read: false,
+    hidden: true,
+    triggerStage: 'envelope_3',
+    envelope: 3,
+    from: {
+      name: 'ГАЛЕРЕЯ "ХРАНИЛИЩЕ" Искусство Конфиденциальности',
+      email: 'archive@hранилище-gallery.ru',
+      avatar: '🏛️'
+    },
+    subject: 'АКТ ПРИЕМА-ПЕРЕДАЧИ № 734',
+    preview: 'г. Ривертон, Переулок Коллекционеров, д. 1 | Дата: 21 июня 2025 г.',
+    date: '17:00',
+    body: `ГАЛЕРЕЯ "ХРАНИЛИЩЕ" Искусство Конфиденциальности
+г. Ривертон, Переулок Коллекционеров, д. 1
+
+АКТ ПРИЕМА-ПЕРЕДАЧИ № 734
+ДАТА: 21 июня 2025 г.
+
+Настоящим подтверждается передача следующих ценностей:
+
+ПРИНЯЛ:
+- Аларик Равенсвуд (представитель частной коллекции "Феникс")
+
+ПЕРЕДАЛ:
+- Галерея "Хранилище" (официальный архив хранения)
+
+ПРЕДМЕТ ТРАНЗАКЦИИ:
+- Коллекция живописных работ (детали в приложении)
+- Документы о праве временного хранения
+- Сертификаты подлинности
+
+УСЛОВИЯ ХРАНЕНИЯ:
+- Срок: до дальнейшего уведомления
+- Место хранения: Сектор 7, Хранилище уровня А
+- Страхование: по полной рыночной стоимости
+
+Подписи сторон:
+_____________________
+Аларик Равенсвуд
+
+_____________________
+Администратор галереи
+
+Печать: ГАЛЕРЕЯ "ХРАНИЛИЩЕ"`,
+    attachments: [
+      {
+        id: 'mail-att-gallery-734',
+        fileId: 'gallery_transfer_record',
+        name: 'Gallery_Transfer_Record_734.png',
+        type: 'image',
+        size: '2.1 МБ',
+        icon: '🖼️',
+        url: '/assets/evidence/Gallery_Transfer_Record_734.png',
+        downloadable: true,
+        saveToDesktop: true
+      }
+    ]
+  },
+
+  {
 
     id: 5, 
 
@@ -1395,6 +1459,11 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
     setZoom(1)
     setPan({ x: 0, y: 0 })
 
+    // Mark file as reviewed if it has a fileId
+    if (file.fileId) {
+      markFileAsReviewed(file.fileId)
+    }
+
     if (file.content) {
       setImageDimensions({
         width: Math.min(720, window.innerWidth - 80),
@@ -1650,6 +1719,23 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
   }, [])
 
   useEffect(() => {
+    const revealEnvelope3Mail = () => {
+      setMails(prev => {
+        const hasEnvelope3Mail = prev.some(m => m.id === 11)
+        if (hasEnvelope3Mail) {
+          return prev.map(m => m.id === 11 ? { ...m, hidden: false } : m)
+        }
+        return prev
+      })
+      const audio = new Audio('/assets/sounds/notification.mp3')
+      audio.play().catch(() => {})
+    }
+
+    window.addEventListener('dt_envelope3_unlocked', revealEnvelope3Mail)
+    return () => window.removeEventListener('dt_envelope3_unlocked', revealEnvelope3Mail)
+  }, [])
+
+  useEffect(() => {
     const checkEnvelope2AndReveal = () => {
       try {
         const currentEnvelope = localStorage.getItem('dt_current_envelope')
@@ -1658,6 +1744,16 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
             const hasITReport = prev.some(m => m.id === 10)
             if (hasITReport) {
               return prev.map(m => m.id === 10 ? { ...m, hidden: false } : m)
+            }
+            return prev
+          })
+        }
+        // Check for envelope 3
+        if (currentEnvelope === '3') {
+          setMails(prev => {
+            const hasEnvelope3Mail = prev.some(m => m.id === 11)
+            if (hasEnvelope3Mail) {
+              return prev.map(m => m.id === 11 ? { ...m, hidden: false } : m)
             }
             return prev
           })
@@ -1821,7 +1917,7 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
       if (timerRef.current) {
         clearTimeout(timerRef.current)
       }
-
+      
       // Запуск таймера на 5 секунд для появления письма от Слейта
       timerRef.current = setTimeout(() => {
         // Проверяем, не было ли письмо уже добавлено

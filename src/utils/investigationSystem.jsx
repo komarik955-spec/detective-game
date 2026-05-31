@@ -71,8 +71,15 @@ const STAGES = {
      title: 'Конверт №2',
      objective: 'Соберите доказательства причастности Аларика Равенсвуда и изучите долги Эвана.',
      requiredFiles: ['it_report', 'creditor_note', 'raven_chat_1', 'raven_chat_2', 'alaric_selena_chat', 'diary_page_envelope2', 'alaric_interrogation_transcript', 'phone_call_transcript_2'],
-     nextStageId: null,
+     nextStageId: 'envelope_3',
    },
+  envelope_3: {
+    id: 'envelope_3',
+    title: 'Конверт №3',
+    objective: 'Изучите материалы третьего конверта и составьте Финальный Отчет.',
+    requiredFiles: ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final'],
+    nextStageId: null,
+  },
 }
 
 const DEFAULT_PROGRESS = {
@@ -218,6 +225,20 @@ export function InvestigationProvider({ children }) {
      window.dispatchEvent(new CustomEvent('dt_envelope2_unlocked'))
    }, [])
 
+  const unlockEnvelope3 = useCallback(() => {
+    const envelope3FileIds = ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final'];
+    setProgress(prev => ({
+      ...prev,
+      currentStageId: 'envelope_3',
+      completedStages: prev.completedStages.includes('envelope_2')
+        ? prev.completedStages
+        : [...prev.completedStages, 'envelope_2'],
+      newMaterialIds: [...new Set([...prev.newMaterialIds, ...envelope3FileIds])],
+    }))
+    localStorage.setItem('dt_current_envelope', '3')
+    window.dispatchEvent(new CustomEvent('dt_envelope3_unlocked'))
+  }, [])
+
   const beginInterimReport = useCallback(() => {
     setProgress(prev => ({ ...prev, interimReportSent: true }))
   }, [])
@@ -234,9 +255,9 @@ export function InvestigationProvider({ children }) {
   }, [currentStage, progress.reviewedFiles])
 
   const canSendInterimReport =
-    (progress.currentStageId === 'starter_folder' || progress.currentStageId === 'envelope_1') &&
+    (progress.currentStageId === 'starter_folder' || progress.currentStageId === 'envelope_1' || progress.currentStageId === 'envelope_2') &&
     stageStats.stagePercentage >= 100 &&
-    (progress.currentStageId === 'envelope_1' || !progress.slateCallCompleted)
+    (progress.currentStageId === 'envelope_1' || progress.currentStageId === 'envelope_2' || !progress.slateCallCompleted)
 
   const value = {
     progress,
@@ -244,6 +265,7 @@ export function InvestigationProvider({ children }) {
     markFileAsReviewed,
     unlockEnvelope1,
     unlockEnvelope2,
+    unlockEnvelope3,
     beginInterimReport,
     canSendInterimReport,
     isFileNew: (fileId) => progress.newMaterialIds.includes(fileId),

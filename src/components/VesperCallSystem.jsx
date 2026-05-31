@@ -348,10 +348,16 @@ export default function VesperCallSystem({ onCallComplete }) {
     setShowSubtitle(false)
     setWaitingForPlayer(false)
     console.log('[CLEANUP] Window destroyed, state set to idle')
-    
+
     // Play disconnect sound
-    const disconnectAudio = new Audio('/assets/audio/disconnect.mp3')
-    disconnectAudio.play().catch(console.error)
+    try {
+      const disconnectAudio = new Audio('/assets/audio/disconnect.mp3')
+      disconnectAudio.play().catch(() => {
+        console.log('Disconnect sound failed to play (file may be empty)')
+      })
+    } catch (e) {
+      console.log('Disconnect sound error:', e)
+    }
     
     // Notify parent component after cleanup
     if (onCallComplete) {
