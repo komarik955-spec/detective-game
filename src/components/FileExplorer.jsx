@@ -60,7 +60,9 @@ export default function FileExplorer({ rootId = 'case001', unlockedFiles = [] })
 
     if (
       node.type === 'txt' &&
-      (ENVELOPE_FILE_IDS.includes(id) || id === INSURANCE_POLICIES_FILE_ID)
+      (ENVELOPE_FILE_IDS.includes(id) || id === INSURANCE_POLICIES_FILE_ID ||
+       ['bank_statement', 'luxe_restaurant_chat', 'shadows_of_riverton_chat', 'selena_diary',
+        'newspaper_obituary', 'pharmacy_receipt', 'curator_card', 'miller_alibi_memo'].includes(id))
     ) {
       markFileAsReviewed(id)
     }

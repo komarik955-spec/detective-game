@@ -573,6 +573,9 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   } = useInvestigation()
   const [slateCallActive, setSlateCallActive] = useState(false)
   const [encryptedCallActive, setEncryptedCallActive] = useState(false)
+  const [reportSending, setReportSending] = useState(false)
+  const [isIncomingCall, setIsIncomingCall] = useState(false)
+  const [callerName, setCallerName] = useState('')
    const [currentEnvelope, setCurrentEnvelope] = useState(() => {
      try {
        const val = localStorage.getItem('dt_current_envelope')
@@ -628,9 +631,23 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
       setEncryptedCallActive(true)
       return
     }
-    if (!canSendInterimReport || slateCallActive) return
+    if (!canSendInterimReport || slateCallActive || encryptedCallActive || reportSending) return
     beginInterimReport()
-    setSlateCallActive(true)
+    setReportSending(true)
+    
+    // If in envelope_1, trigger detective call after 3 seconds
+    if (progress.currentStageId === 'envelope_1') {
+      setTimeout(() => {
+        setReportSending(false)
+        setIsIncomingCall(true)
+        setCallerName('Детектив')
+        const audio = new Audio('/assets/sounds/ringtone.mp3')
+        audio.play().catch(() => {})
+      }, 3000)
+    } else {
+      setSlateCallActive(true)
+      setReportSending(false)
+    }
   }
 
   const handleSlateCallComplete = suspectId => {
@@ -644,10 +661,34 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
     unlockEnvelope2()
   }
 
+  const handleIncomingCallAnswer = () => {
+    setIsIncomingCall(false)
+    setCurrentEnvelope(2)
+    unlockEnvelope2()
+  }
+
   return (
-    <div className={`dt-dashboard ${slateCallActive || encryptedCallActive ? 'dt-dashboard--locked' : ''}`}>
+    <div className={`dt-dashboard ${slateCallActive || encryptedCallActive || isIncomingCall ? 'dt-dashboard--locked' : ''}`}>
       {slateCallActive && <SlateCallFlow onComplete={handleSlateCallComplete} />}
       {encryptedCallActive && <EncryptedCall onComplete={handleEncryptedCallComplete} />}
+      {isIncomingCall && (
+        <div className="dt-incoming-call-overlay">
+          <div className="dt-incoming-call-modal">
+            <div className="dt-incoming-call-header">
+              <div className="dt-incoming-call-avatar">👮</div>
+              <h2 className="dt-incoming-call-name">{callerName}</h2>
+              <p className="dt-incoming-call-status">Входящий звонок...</p>
+            </div>
+            <button
+              type="button"
+              className="dt-incoming-call-answer-btn"
+              onClick={handleIncomingCallAnswer}
+            >
+              ПРИНЯТЬ
+            </button>
+          </div>
+        </div>
+      )}
       <div className="dt-dashboard-header">
         <h1>DASHBOARD</h1>
         <div className="dt-user-info">
@@ -719,8 +760,12 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
                 <p className="dt-objective-text">Соберите доказательства причастности Аларика Равенсвуда и изучите долги Эвана.</p>
                 <div className="dt-objective-hint">
                   <p className="dt-objective-text">[ ] Изучить отчет IT-отдела по лудомании Эвана</p>
-                  <p className="dt-objective-text">[ ] Просмотреть все новые улики и стенограммы Конверта №2 (0/7)</p>
-                  <p className="dt-objective-text">[ ] Найти скрытую связь Пейна и Равенсвуда в досье</p>
+                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Угрожающая записка от кредитора Эвана Андервуда о просроченной задолженности»</p>
+                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Переписка с неизвестным контактом "Ворон", содержащая подозрительные договорённости»</p>
+                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Продолжение переписки с "Вороном", раскрывающее детали операции»</p>
+                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Страница из дневника Селены Блэк с записями о её тревогах и подозрениях»</p>
+                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Стенограмма допроса Аларика Равенсвуда по делу о похищении Селены Блэк»</p>
+                  <p className="dt-objective-text">[ ] Ознакомьтесь с уликой «Личная переписка между Алариком Равенсвудом и Селеной Блэк»</p>
                 </div>
               </div>
             ) : (
@@ -832,17 +877,17 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
             <button
               type="button"
               className={`dt-report-btn ${isEnvelope2 ? '' : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
-              disabled={isEnvelope2 ? true : (!canSendInterimReport || slateCallActive)}
+              disabled={isEnvelope2 ? true : (!canSendInterimReport || slateCallActive || reportSending)}
               onClick={isEnvelope2 ? undefined : handleSendReport}
               title={
                 isEnvelope2
                   ? 'Изучите новые файлы Конверта №2'
-                  : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа')
+                  : (reportSending ? 'Отчет отправлен. Ожидайте выхода на связь...' : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа'))
               }
             >
-              {isEnvelope2 ? 'ИЗУЧИТЬ ФАЙЛЫ' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ'}
+              {isEnvelope2 ? 'ИЗУЧИТЬ ФАЙЛЫ' : (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ')}
             </button>
-            {isEnvelope2 ? null : progressHint(currentStage, canSendInterimReport, slateCallActive)}
+            {isEnvelope2 ? null : progressHint(currentStage, canSendInterimReport, slateCallActive, reportSending)}
           </div>
         </div>
       </div>
@@ -850,7 +895,10 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
   )
 }
 
-function progressHint(stage, canSend, callActive) {
+function progressHint(stage, canSend, callActive, reportSending) {
+  if (reportSending) {
+    return <p className="dt-report-hint">Отчет отправлен. Ожидайте выхода на связь…</p>
+  }
   if (callActive) {
     return <p className="dt-report-hint">Связь с куратором…</p>
   }

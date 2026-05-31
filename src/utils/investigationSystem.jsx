@@ -234,9 +234,9 @@ export function InvestigationProvider({ children }) {
   }, [currentStage, progress.reviewedFiles])
 
   const canSendInterimReport =
-    progress.currentStageId === 'starter_folder' &&
+    (progress.currentStageId === 'starter_folder' || progress.currentStageId === 'envelope_1') &&
     stageStats.stagePercentage >= 100 &&
-    !progress.slateCallCompleted
+    (progress.currentStageId === 'envelope_1' || !progress.slateCallCompleted)
 
   const value = {
     progress,

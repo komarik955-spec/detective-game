@@ -43,7 +43,7 @@ export default function LoginScreen({ onLogin }) {
     })
 
   return (
-    <div className={`login-screen ${stage === 'login' ? 'blur' : ''}`}>
+    <div className="login-screen">
 
       {/* LOCK SCREEN */}
       {stage === 'lock' && (
