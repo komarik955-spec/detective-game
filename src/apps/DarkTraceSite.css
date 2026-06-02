@@ -1123,6 +1123,22 @@ body {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  margin-left: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dt-file-actions-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.dt-btn-mini {
+  flex-shrink: 0;
 }
 
 .dt-new-badge {

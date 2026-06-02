@@ -231,20 +231,47 @@ _____________________
   },
 
   {
+    id: 'email_envelope_3_02',
+    folder: 'inbox', 
+    tab: 'primary', 
+    starred: false, 
+    read: false,
+    hidden: true,
+    triggerStage: 'envelope_3',
+    envelope: 3,
+    from: { 
+      name: 'Детектив Дэвид Слейт',
+      email: 'd.slate@rpd.gov',
+      avatar: '👮' 
+    },
+    subject: 'Насчет наружки в галерее (ЧИТАЙ СРАЗУ)',
+    preview: 'Напрямую на почту кидать файл не рискнул — наши почтовые серверы в РПД шмонают через день...',
+    date: '18:23',
+    body: `Напрямую на почту кидать файл не рискнул — наши почтовые серверы в РПД шмонают через день, а за слив этого документа меня живо лишат значка.
+
+Я залил официальный рапорт по наружке в галерее "Хранилище" напрямую на твой терминал Dark Trace, в обход стандартных протоколов. Должно отобразиться в категории "Улики" сразу, как ты закончишь читать это сообщение.
+
+Обрати внимание на таймлайн в документе и показания свидетелей. Там есть одна очень интересная нестыковка, которая полностью меняет дело.
+
+Изучай. На связи.`,
+    attachments: null
+  },
+
+  {
 
     id: 5, 
 
-    folder: 'inbox', 
+    folder: 'inbox',
 
-    tab: 'primary', 
+    tab: 'primary',
 
-    starred: false, 
+    starred: false,
 
     read: false,
 
     hidden: true,
 
-    from: { 
+    from: {
 
       name: 'Детектив Джон Миллер', 
 
@@ -1736,6 +1763,33 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
   }, [])
 
   useEffect(() => {
+    const revealSlateEmailEnvelope3 = () => {
+      setMails(prev => {
+        const hasSlateMail = prev.some(m => m.id === 'email_envelope_3_02')
+        if (!hasSlateMail) return prev
+        const alreadyVisible = prev.some(m => m.id === 'email_envelope_3_02' && !m.hidden)
+        if (alreadyVisible) return prev
+        return prev.map(m =>
+          m.id === 'email_envelope_3_02' ? { ...m, hidden: false, read: false } : m
+        )
+      })
+      if (onSecondMailArrived) {
+        setTimeout(() => {
+          onSecondMailArrived({
+            title: 'OneMail',
+            text: 'Новое сообщение: Насчет наружки в галерее (ЧИТАЙ СРАЗУ)',
+          })
+          const audio = new Audio('/assets/sounds/notification.mp3')
+          audio.play().catch(() => {})
+        }, 500)
+      }
+    }
+
+    window.addEventListener('dt_envelope3_unlocked', revealSlateEmailEnvelope3)
+    return () => window.removeEventListener('dt_envelope3_unlocked', revealSlateEmailEnvelope3)
+  }, [onSecondMailArrived])
+
+  useEffect(() => {
     const checkEnvelope2AndReveal = () => {
       try {
         const currentEnvelope = localStorage.getItem('dt_current_envelope')
@@ -1748,14 +1802,21 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
             return prev
           })
         }
-        // Check for envelope 3
+        // Check for envelope 3 - show both mails
         if (currentEnvelope === '3') {
           setMails(prev => {
+            // Show envelope 3 mail #11
             const hasEnvelope3Mail = prev.some(m => m.id === 11)
+            let updated = prev
             if (hasEnvelope3Mail) {
-              return prev.map(m => m.id === 11 ? { ...m, hidden: false } : m)
+              updated = prev.map(m => m.id === 11 ? { ...m, hidden: false } : m)
             }
-            return prev
+            // Show Slate email
+            const hasSlateMail = updated.some(m => m.id === 'email_envelope_3_02')
+            if (hasSlateMail) {
+              return updated.map(m => m.id === 'email_envelope_3_02' ? { ...m, hidden: false } : m)
+            }
+            return updated
           })
         }
       } catch {
@@ -2044,6 +2105,11 @@ export default function MailApp({ onNotificationRead, onSecondMailArrived, playe
         }
         if (mail.id === 10) {
           markFileAsReviewed('it_report')
+        }
+        // Триггер разблокировки скрытого рапорта при прочтении письма от Слейта
+        if (mail.id === 'email_envelope_3_02') {
+          localStorage.setItem('dt_rpd_gallery_report_unlocked', 'true')
+          window.dispatchEvent(new CustomEvent('dt_rpd_gallery_report_unlocked'))
         }
         if (onNotificationRead) onNotificationRead()
       }

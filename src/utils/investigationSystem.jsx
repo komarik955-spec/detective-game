@@ -38,6 +38,13 @@ export const STARTER_REQUIRED_FILE_IDS = [...DOSSIER_FILE_IDS]
 export const VIDEO_PROTOCOL_FILE_IDS = [...STATEMENT_FILE_IDS]
 
 export const ENVELOPE_FILE_IDS = ['insurance_policies', 'bank', 'chat']
+export const WORKSPACE_PHOTO_FILE_IDS = [
+  'workspace_rosalia',
+  'workspace_alaric',
+  'workspace_vesper',
+  'workspace_evan',
+  'selena_diary_page',
+]
 export const ENVELOPE_1_REQUIRED_FILE_IDS = [
   'insurance_policies',
   'bank_statement',
@@ -77,7 +84,7 @@ const STAGES = {
     id: 'envelope_3',
     title: 'Конверт №3',
     objective: 'Изучите материалы третьего конверта и составьте Финальный Отчет.',
-    requiredFiles: ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final'],
+    requiredFiles: ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final', 'rpd_gallery_report'],
     nextStageId: null,
   },
 }
@@ -91,6 +98,9 @@ const DEFAULT_PROGRESS = {
   envelope1Unlocked: false,
   rivertonInsuranceCompleted: false,
   newMaterialIds: [],
+  workspacePhotoCallTriggered: false,
+  workspacePhotoCallCompleted: false,
+  unlockedWorkspacePhotoIds: [],
 }
 
 function normalizeProgress(raw) {
@@ -100,6 +110,7 @@ function normalizeProgress(raw) {
   if (!Array.isArray(p.reviewedFiles)) p.reviewedFiles = []
   if (!Array.isArray(p.completedStages)) p.completedStages = []
   if (!Array.isArray(p.newMaterialIds)) p.newMaterialIds = []
+  if (!Array.isArray(p.unlockedWorkspacePhotoIds)) p.unlockedWorkspacePhotoIds = []
   if (p.envelope1Unlocked && !p.completedStages.includes('starter_folder')) {
     p.completedStages = [...p.completedStages, 'starter_folder']
   }
@@ -226,7 +237,7 @@ export function InvestigationProvider({ children }) {
    }, [])
 
   const unlockEnvelope3 = useCallback(() => {
-    const envelope3FileIds = ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final'];
+    const envelope3FileIds = ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final', 'rpd_gallery_report'];
     setProgress(prev => ({
       ...prev,
       currentStageId: 'envelope_3',
@@ -237,6 +248,26 @@ export function InvestigationProvider({ children }) {
     }))
     localStorage.setItem('dt_current_envelope', '3')
     window.dispatchEvent(new CustomEvent('dt_envelope3_unlocked'))
+  }, [])
+
+  const triggerWorkspacePhotoCall = useCallback(() => {
+    setProgress(prev => {
+      if (prev.workspacePhotoCallTriggered || prev.workspacePhotoCallCompleted) return prev
+      return { ...prev, workspacePhotoCallTriggered: true }
+    })
+  }, [])
+
+  const unlockWorkspacePhotos = useCallback((fileIds) => {
+    const validIds = (fileIds || []).filter(id => WORKSPACE_PHOTO_FILE_IDS.includes(id))
+    if (validIds.length === 0) return
+
+    setProgress(prev => ({
+      ...prev,
+      workspacePhotoCallTriggered: true,
+      workspacePhotoCallCompleted: true,
+      unlockedWorkspacePhotoIds: [...new Set([...prev.unlockedWorkspacePhotoIds, ...validIds])],
+      newMaterialIds: [...new Set([...prev.newMaterialIds, ...validIds])],
+    }))
   }, [])
 
   const beginInterimReport = useCallback(() => {
@@ -266,6 +297,8 @@ export function InvestigationProvider({ children }) {
     unlockEnvelope1,
     unlockEnvelope2,
     unlockEnvelope3,
+    triggerWorkspacePhotoCall,
+    unlockWorkspacePhotos,
     beginInterimReport,
     canSendInterimReport,
     isFileNew: (fileId) => progress.newMaterialIds.includes(fileId),

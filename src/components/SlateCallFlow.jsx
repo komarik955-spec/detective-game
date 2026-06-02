@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import './SlateCallFlow.css'
 
-const TYPE_SPEED_MS = 40
+const TYPE_SPEED_MS = 15
 
 const REPLICA_1 =
   'Ну что, Шерлок, проверил почту? Поздравляю, твой отчет прилетел. Слушай, я мельком глянул на эти выписки со счетов и чаты у ресторана LUXE… Какая поэзия! Маркус и Селена трутся у дорогого заведения, пока на счетах творится магия покруче, чем в Хогвартсе. А чеки из аптеки? Наша «скорбящая семья» явно закупалась не витаминками. Дэвид Андервуд, упокой господь его душу, определенно мешал слишком многим тратить эти деньги.'
@@ -27,6 +27,15 @@ const ENVELOPE_2_CHOICES = [
 
 const ENVELOPE_2_REPLICA_FINAL =
   'Именно. Пока эти ничтожества тряслись над своими кошельками, девочка копала куда глубже — прямо под фундамент дома Андервудов, в архивное дело о смерти их отца. И нанятый кем-то сталкер по кличке «Ворон» караулил её окна явно не из любви к живописи. Игра пошла по-крупному. Я вскрыл третий конверт. Там перехваченный отчет этого самого «Ворона», поминутные маршруты алиби нашей троицы и повторные допросы, где у Эвана и Веспер наконец-то сдали нервы. Всё уже на твоем терминале. Добивай эту грязь. А я пойду поищу нормальное спиртное, потому что этот город начинает меня утомлять. На связи.'
+
+const ENVELOPE_3_REPLICA_1 =
+  'Вижу, ты оценил мой рапорт. Но у меня есть еще кое-что. Ребята из техотдела успели втихую отснять рабочие места наших фигурантов в офисе до того, как там всё перерыли адвокаты. Но есть проблема: лавочку прикрыли, и я успею вытащить из базы файлы только по ДВУМ подозреваемым на твой выбор. Скажи, чьё рабочее место проверить первым?'
+
+const ENVELOPE_3_REPLICA_2 =
+  'Принято, первый пошел. А кто будет вторым? Напоминаю, это последний шанс, третью папку скачать не дадут.'
+
+const ENVELOPE_3_REPLICA_FINAL =
+  'Отлично. Файлы ушли по защищенному каналу. Ищи их на своем терминале в категории «Улики → Фото». Посмотри там всё внимательно. На связи.'
 
 const REACTIONS = {
   marcus_flynn:
@@ -55,6 +64,17 @@ const SUSPECT_OPTIONS = [
   { id: 'undecided', label: 'Выбрать: Пока сложно сказать, все хороши' },
 ]
 
+const ENVELOPE_3_CHOICES_PRIMARY = [
+  { id: 'workspace_rosalia', label: 'Розалия Андервуд' },
+  { id: 'workspace_alaric', label: 'Аларик Равенсвуд' },
+  { id: 'workspace_skip', label: '' },
+]
+
+const ENVELOPE_3_CHOICES_SECONDARY = [
+  { id: 'workspace_vesper', label: 'Веспер Уэйнрайт' },
+  { id: 'workspace_evan', label: 'Эван Андервуд' },
+]
+
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -74,16 +94,43 @@ export default function SlateCallFlow({ onComplete, stage = 'starter_folder' }) 
   const [dialogueStep, setDialogueStep] = useState('idle')
   const [displayText, setDisplayText] = useState('')
   const [decryptProgress, setDecryptProgress] = useState(0)
+  const [typingText, setTypingText] = useState('')
+  const [typingPhase, setTypingPhase] = useState('idle')
+  const [choiceStage, setChoiceStage] = useState('primary')
   const ringRef = useRef(null)
   const dialogueRunIdRef = useRef(0)
+  const selectedChoiceRef = useRef('auto')
+  const workspaceSelectionsRef = useRef([])
 
   const isEnvelope1 = stage === 'envelope_1'
   const isEnvelope2 = stage === 'envelope_2'
+  const isEnvelope3 = stage === 'envelope_3'
 
-  // Force envelope_2 dialogue when stage is envelope_2
-  const currentReplica1 = stage === 'envelope_2' ? ENVELOPE_2_REPLICA_1 : isEnvelope1 ? ENVELOPE_1_REPLICA_1 : REPLICA_1
-  const currentChoices = stage === 'envelope_2' ? ENVELOPE_2_CHOICES : isEnvelope1 ? ENVELOPE_1_CHOICES : SUSPECT_OPTIONS
-  const currentReplicaFinal = stage === 'envelope_2' ? ENVELOPE_2_REPLICA_FINAL : isEnvelope1 ? ENVELOPE_1_REPLICA_FINAL : REPLICA_FINAL
+  const currentReplica1 = isEnvelope3
+    ? ENVELOPE_3_REPLICA_1
+    : stage === 'envelope_2'
+      ? ENVELOPE_2_REPLICA_1
+      : isEnvelope1
+        ? ENVELOPE_1_REPLICA_1
+        : REPLICA_1
+
+  const currentReplicaFinal = isEnvelope3
+    ? ENVELOPE_3_REPLICA_FINAL
+    : stage === 'envelope_2'
+      ? ENVELOPE_2_REPLICA_FINAL
+      : isEnvelope1
+        ? ENVELOPE_1_REPLICA_FINAL
+        : REPLICA_FINAL
+
+  const currentChoices = isEnvelope3
+    ? (choiceStage === 'secondary'
+        ? ENVELOPE_3_CHOICES_SECONDARY
+        : ENVELOPE_3_CHOICES_PRIMARY)
+    : stage === 'envelope_2'
+      ? ENVELOPE_2_CHOICES
+      : isEnvelope1
+        ? ENVELOPE_1_CHOICES
+        : SUSPECT_OPTIONS
 
   const playRing = useCallback(() => {
     try {
@@ -149,41 +196,136 @@ export default function SlateCallFlow({ onComplete, stage = 'starter_folder' }) 
   const runIntro = useCallback(async () => {
     const runId = ++dialogueRunIdRef.current
     setDialogueStep('typing')
+    setTypingText(currentReplica1)
+    setTypingPhase('intro')
+    setChoiceStage('primary')
+    workspaceSelectionsRef.current = []
     const ok = await typewriter(currentReplica1, setDisplayText, runId, dialogueRunIdRef)
     if (!ok) return
     setDialogueStep('choices')
+    setTypingText('')
+    setTypingPhase('idle')
   }, [currentReplica1])
+
+  const startDecryptSequence = useCallback(
+    payload => {
+      setDialogueStep('done')
+      setTypingText('')
+      setTypingPhase('idle')
+
+      setTimeout(() => {
+        playHangupBeep()
+        setPhase('decrypt')
+        setDisplayText('')
+
+        let p = 0
+        const tick = setInterval(() => {
+          p += 4
+          setDecryptProgress(Math.min(p, 100))
+          if (p >= 100) {
+            clearInterval(tick)
+            setTimeout(() => onComplete({ ...payload, stage }), 400)
+          }
+        }, 120)
+      }, 400)
+    },
+    [onComplete, playHangupBeep, stage]
+  )
+
+  const runFinalReplica = useCallback(
+    async payload => {
+      const runId = ++dialogueRunIdRef.current
+      setDialogueStep('typing')
+      setTypingText(currentReplicaFinal)
+      setTypingPhase('final')
+      const ok = await typewriter(currentReplicaFinal, setDisplayText, runId, dialogueRunIdRef)
+      if (!ok) return
+      startDecryptSequence(payload)
+    },
+    [currentReplicaFinal, startDecryptSequence]
+  )
+
+  const runEnvelope3SecondPrompt = useCallback(async () => {
+    const runId = ++dialogueRunIdRef.current
+    setDialogueStep('typing')
+    setTypingText(ENVELOPE_3_REPLICA_2)
+    setTypingPhase('second_prompt')
+    const ok = await typewriter(ENVELOPE_3_REPLICA_2, setDisplayText, runId, dialogueRunIdRef)
+    if (!ok) return
+    setChoiceStage('secondary')
+    setDialogueStep('choices')
+    setTypingText('')
+    setTypingPhase('idle')
+  }, [])
 
   const runAfterChoice = useCallback(
     async choiceId => {
+      if (isEnvelope3) {
+        if (choiceStage === 'primary') {
+          workspaceSelectionsRef.current = [choiceId]
+          await runEnvelope3SecondPrompt()
+          return
+        }
+
+        const choiceIds = [...workspaceSelectionsRef.current, choiceId]
+        workspaceSelectionsRef.current = choiceIds
+        await runFinalReplica({ choiceIds })
+        return
+      }
+
+      selectedChoiceRef.current = choiceId
       const runId = ++dialogueRunIdRef.current
       setDialogueStep('typing')
       const reaction = stage === 'envelope_2' ? (REACTIONS[choiceId] || REACTIONS.debts) : isEnvelope1 ? (REACTIONS[choiceId] || REACTIONS.sarcastic) : (REACTIONS[choiceId] || REACTIONS.undecided)
+      setTypingText(reaction)
+      setTypingPhase('reaction')
       let ok = await typewriter(reaction, setDisplayText, runId, dialogueRunIdRef)
       if (!ok) return
       await delay(1500)
       if (runId !== dialogueRunIdRef.current) return
-      ok = await typewriter(currentReplicaFinal, setDisplayText, runId, dialogueRunIdRef)
-      if (!ok) return
-      setDialogueStep('done')
-
-      await delay(400)
-      playHangupBeep()
-      setPhase('decrypt')
-      setDisplayText('')
-
-      let p = 0
-      const tick = setInterval(() => {
-        p += 4
-        setDecryptProgress(Math.min(p, 100))
-        if (p >= 100) {
-          clearInterval(tick)
-          setTimeout(() => onComplete({ choiceId, stage }), 400)
-        }
-      }, 120)
+      await runFinalReplica({ choiceId })
     },
-    [onComplete, playHangupBeep, isEnvelope1, stage, currentReplicaFinal]
+    [choiceStage, isEnvelope1, isEnvelope3, runEnvelope3SecondPrompt, runFinalReplica, stage]
   )
+
+  const handleSkipDialogue = () => {
+    if (dialogueStep !== 'typing' || !typingText) return
+
+    dialogueRunIdRef.current += 1
+    setDisplayText(typingText)
+
+    if (typingPhase === 'intro') {
+      setDialogueStep('choices')
+      setTypingText('')
+      setTypingPhase('idle')
+      return
+    }
+
+    if (typingPhase === 'second_prompt') {
+      setChoiceStage('secondary')
+      setDialogueStep('choices')
+      setTypingText('')
+      setTypingPhase('idle')
+      return
+    }
+
+    if (typingPhase === 'reaction') {
+      setTypingText('')
+      setTypingPhase('idle')
+      setTimeout(() => {
+        runFinalReplica({ choiceId: selectedChoiceRef.current })
+      }, 300)
+      return
+    }
+
+    if (typingPhase === 'final') {
+      if (isEnvelope3) {
+        startDecryptSequence({ choiceIds: [...workspaceSelectionsRef.current] })
+      } else {
+        startDecryptSequence({ choiceId: selectedChoiceRef.current })
+      }
+    }
+  }
 
   const handleAccept = () => {
     stopRing()
@@ -192,7 +334,9 @@ export default function SlateCallFlow({ onComplete, stage = 'starter_folder' }) 
   }
 
   const handleSuspect = id => {
-    localStorage.setItem('chosen_suspect', id)
+    if (!isEnvelope3) {
+      localStorage.setItem('chosen_suspect', id)
+    }
     runAfterChoice(id)
   }
 
@@ -203,7 +347,11 @@ export default function SlateCallFlow({ onComplete, stage = 'starter_folder' }) 
           <div className="slate-decrypt-title">
             ПОЛУЧЕНИЕ ДАННЫХ: КАНАЛ ОПЕРАТИВНОГО ОТДЕЛА.
           </div>
-          <div className="slate-decrypt-sub">ИДЕТ ДЕШИФРОВКА КОНВЕРТА {stage === 'envelope_2' ? '№3' : isEnvelope1 ? '№2' : '№1'}...</div>
+          <div className="slate-decrypt-sub">
+            {isEnvelope3
+              ? 'ИДЕТ ЗАГРУЗКА ФОТОГРАФИЙ РАБОЧИХ МЕСТ...'
+              : `ИДЕТ ДЕШИФРОВКА КОНВЕРТА ${stage === 'envelope_2' ? '№3' : isEnvelope1 ? '№2' : '№1'}...`}
+          </div>
           <div className="slate-decrypt-bar-track">
             <div className="slate-decrypt-bar-fill" style={{ width: `${decryptProgress}%` }} />
           </div>
@@ -239,10 +387,19 @@ export default function SlateCallFlow({ onComplete, stage = 'starter_folder' }) 
                 <div className="slate-static-noise" aria-hidden="true" />
                 <p className="slate-transcript">{displayText}</p>
                 {dialogueStep === 'typing' && <span className="slate-cursor">▌</span>}
+                {dialogueStep === 'typing' && (
+                  <button 
+                    type="button" 
+                    className="slate-next-btn"
+                    onClick={handleSkipDialogue}
+                  >
+                    ДАЛЕЕ
+                  </button>
+                )}
               </div>
               {dialogueStep === 'choices' && (
-                <div className="slate-choices slate-choices--glitch-in" role="group" aria-label={stage === 'envelope_2' || isEnvelope1 ? "Выбор ответа" : "Выбор подозреваемого"}>
-                  {currentChoices.map(opt => (
+                <div className="slate-choices slate-choices--glitch-in" role="group" aria-label={isEnvelope3 || stage === 'envelope_2' || isEnvelope1 ? "Выбор ответа" : "Выбор подозреваемого"}>
+                  {currentChoices.filter(opt => opt.label !== '').map(opt => (
                     <button
                       key={opt.id}
                       type="button"

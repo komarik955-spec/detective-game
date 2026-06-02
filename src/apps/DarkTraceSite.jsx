@@ -39,6 +39,8 @@ import AudioArchive from './AudioArchive'
 
 export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, playerData }) {
 
+  const { progress, triggerWorkspacePhotoCall, unlockWorkspacePhotos } = useInvestigation()
+
 
 
   // Use props as single source of truth - no internal state duplication
@@ -62,6 +64,7 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
 
 
   const [loading, setLoading] = useState(false)
+  const [workspaceSlateCallActive, setWorkspaceSlateCallActive] = useState(false)
 
 
 
@@ -125,7 +128,13 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
 
 
 
-
+  useEffect(() => {
+    const activateWorkspaceCall = () => {
+      setWorkspaceSlateCallActive(true);
+    };
+    window.addEventListener('trigger_workspace_slate_call', activateWorkspaceCall);
+    return () => window.removeEventListener('trigger_workspace_slate_call', activateWorkspaceCall);
+  }, []);
 
 
 
@@ -245,7 +254,19 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
 
 
 
-
+  const handleWorkspaceSlateCallComplete = ({ choiceIds, stage }) => {
+    // choiceIds - это массив с выбранными фигурантами (например, ['workspace_rosalia', 'workspace_alaric'])
+    if (choiceIds && choiceIds.length > 0) {
+      // Фильтруем пустой выбор (workspace_skip), чтобы не пытаться разблокировать несуществующее фото
+      const validChoices = choiceIds.filter(choice => choice !== 'workspace_skip');
+      if (validChoices.length > 0) {
+        // Добавляем страницу дневника Селены к разблокируемым файлам
+        const itemsToUnlock = [...validChoices, 'selena_diary_page'];
+        unlockWorkspacePhotos(itemsToUnlock);
+      }
+    }
+    setWorkspaceSlateCallActive(false);
+  };
 
 
 
@@ -704,6 +725,10 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
 
 
       </main>
+
+      {workspaceSlateCallActive && (
+        <SlateCallFlow onComplete={handleWorkspaceSlateCallComplete} stage="envelope_3" />
+      )}
 
 
 
@@ -1228,8 +1253,6 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
     }
 
   }, [progress.currentStageId])
-
-
 
   const newEvidenceIds = ['pharmacy_receipt', 'newspaper_obituary', 'bank_statement', 'selena_diary', 'luxe_restaurant_chat', 'shadows_of_riverton_chat', 'curator_card']
 
@@ -2292,7 +2315,7 @@ function CasesDatabase({ userLevel, onNavigate }) {
 
 function EvidenceArchive({ userLevel, onNavigate }) {
 
-  const { markFileAsReviewed } = useInvestigation()
+  const { markFileAsReviewed, isFileNew, progress, triggerWorkspacePhotoCall } = useInvestigation()
 
   const [selectedCategory, setSelectedCategory] = useState('Фото')
 
@@ -2312,6 +2335,36 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
     }
 
+  })
+
+  const [isEnvelope3Unlocked, setIsEnvelope3Unlocked] = useState(() => {
+
+    try {
+
+      return localStorage.getItem('dt_current_envelope') === '3'
+
+    } catch {
+
+      return false
+
+    }
+
+  })
+
+  const [isRpdGalleryReportUnlocked, setIsRpdGalleryReportUnlocked] = useState(() => {
+    try {
+      return localStorage.getItem('dt_rpd_gallery_report_unlocked') === 'true'
+    } catch {
+      return false
+    }
+  })
+
+  const [hasTriggeredWorkspacePhotoCall, setHasTriggeredWorkspacePhotoCall] = useState(() => {
+    try {
+      return localStorage.getItem('dt_workspace_photo_call_requested') === 'true'
+    } catch {
+      return false
+    }
   })
 
   const [viewedEvidence, setViewedEvidence] = useState(() => {
@@ -2358,6 +2411,20 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
   }, [])
 
+  // Обработчик события разблокировки рапорта РПД
+  useEffect(() => {
+    const handleRpdReportUnlock = () => {
+      setIsRpdGalleryReportUnlocked(true)
+      localStorage.setItem('dt_rpd_gallery_report_unlocked', 'true')
+      // Воспроизводим звук уведомления
+      const audio = new Audio('/assets/sounds/notification.mp3')
+      audio.play().catch(() => {})
+    }
+
+    window.addEventListener('dt_rpd_gallery_report_unlocked', handleRpdReportUnlock)
+    return () => window.removeEventListener('dt_rpd_gallery_report_unlocked', handleRpdReportUnlock)
+  }, [])
+
 
 
   useEffect(() => {
@@ -2365,6 +2432,13 @@ function EvidenceArchive({ userLevel, onNavigate }) {
     localStorage.setItem('dt_viewed_evidence', JSON.stringify(viewedEvidence))
 
   }, [viewedEvidence])
+
+  useEffect(() => {
+    if (progress.workspacePhotoCallTriggered) {
+      localStorage.setItem('dt_workspace_photo_call_requested', 'true')
+      setHasTriggeredWorkspacePhotoCall(true)
+    }
+  }, [progress.workspacePhotoCallTriggered])
 
 
 
@@ -2604,6 +2678,24 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
       
 
+      {
+
+        id: 'rpd_gallery_report',
+
+        name: 'Рапорт РПД: Полевая операция в галерее',
+
+        description: 'Официальный рапорт Департамента полиции о полевой операции в галерее "Хранилище". Содержит таймлайн событий и показания свидетелей.',
+
+        url: '/assets/evidence/rpd_gallery_report.png',
+
+        type: 'image',
+
+        isNew: true,
+
+        isLocked: !isRpdGalleryReportUnlocked
+
+      }
+
     ],
 
     photo: [
@@ -2623,6 +2715,78 @@ function EvidenceArchive({ userLevel, onNavigate }) {
         type: 'image',
 
         isNew: true
+
+      },
+
+      {
+
+        id: 'workspace_rosalia',
+
+        name: 'Фото: Рабочее место Розалии',
+
+        description: 'Фотография рабочего места Розалии, полученная по закрытому каналу техотдела.',
+
+        url: '/assets/evidence/workplaces/workspace_rosalia.jpg',
+
+        type: 'image',
+
+        isNew: isFileNew('workspace_rosalia'),
+
+        isLocked: !progress.unlockedWorkspacePhotoIds.includes('workspace_rosalia')
+
+      },
+
+      {
+
+        id: 'workspace_alaric',
+
+        name: 'Фото: Рабочее место Аларика',
+
+        description: 'Фотография рабочего места Аларика, полученная по закрытому каналу техотдела.',
+
+        url: '/assets/evidence/workplaces/workspace_alaric.jpg',
+
+        type: 'image',
+
+        isNew: isFileNew('workspace_alaric'),
+
+        isLocked: !progress.unlockedWorkspacePhotoIds.includes('workspace_alaric')
+
+      },
+
+      {
+
+        id: 'workspace_vesper',
+
+        name: 'Фото: Рабочее место Веспер',
+
+        description: 'Фотография рабочего места Веспер, полученная по закрытому каналу техотдела.',
+
+        url: '/assets/evidence/workplaces/workspace_vesper.jpg',
+
+        type: 'image',
+
+        isNew: isFileNew('workspace_vesper'),
+
+        isLocked: !progress.unlockedWorkspacePhotoIds.includes('workspace_vesper')
+
+      },
+
+      {
+
+        id: 'workspace_evan',
+
+        name: 'Фото: Рабочее место Эвана',
+
+        description: 'Фотография рабочего места Эвана, полученная по закрытому каналу техотдела.',
+
+        url: '/assets/evidence/workplaces/workspace_evan.jpg',
+
+        type: 'image',
+
+        isNew: isFileNew('workspace_evan'),
+
+        isLocked: !progress.unlockedWorkspacePhotoIds.includes('workspace_evan')
 
       }
 
@@ -2696,6 +2860,24 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
         isNew: true
 
+      },
+
+      {
+
+        id: 'selena_diary_page',
+
+        name: 'Страница из дневника Селены',
+
+        description: 'Дополнительная страница из дневника Селены Блэк с важными записями о расследовании.',
+
+        url: '/assets/evidence/selena_diary_page.png',
+
+        type: 'image',
+
+        isNew: isFileNew('selena_diary_page'),
+
+        isLocked: !progress.unlockedWorkspacePhotoIds.includes('selena_diary_page')
+
       }
 
     ],
@@ -2747,12 +2929,20 @@ function EvidenceArchive({ userLevel, onNavigate }) {
       setViewedEvidence(prev => [...prev, file.id])
 
     }
+    
+    // ТРИГГЕР ЗВОНКА ПОСЛЕ ПРОСМОТРА РАПОРТА
+    if (file.id === 'rpd_gallery_report') {
+      // Отмечаем в системе расследования
+      triggerWorkspacePhotoCall(); 
+      // Генерируем событие для родительского компонента DarkTraceSite, чтобы активировать звонок
+      window.dispatchEvent(new Event('trigger_workspace_slate_call'));
+    }
 
   }
 
 
 
-  const categories = isEnvelope2Unlocked
+  const categories = isEnvelope3Unlocked
 
     ? [
 
@@ -2760,9 +2950,9 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
           ...cat,
 
-files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ...envelope2EvidenceItems.document] :
+          files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ...envelope2EvidenceItems.document.filter(d => !d.isLocked || isRpdGalleryReportUnlocked)] :
 
-                    cat.id === 'photo' ? [...cat.files, ...envelope2EvidenceItems.photo] :
+                    cat.id === 'photo' ? [...cat.files, ...envelope2EvidenceItems.photo.filter(d => !d.isLocked)] :
 
                     cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary, ...envelope2EvidenceItems.diary] :
 
@@ -2804,7 +2994,7 @@ files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ..
 
       ]
 
-    : isSlateEvidenceUnlocked
+    : isEnvelope2Unlocked
 
       ? [
 
@@ -2812,9 +3002,13 @@ files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ..
 
             ...cat,
 
-            files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document] :
+            files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ...envelope2EvidenceItems.document.filter(d => !d.isLocked || isRpdGalleryReportUnlocked)] :
 
-                     cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary] :
+                     cat.id === 'photo' ? [...cat.files, ...envelope2EvidenceItems.photo.filter(d => !d.isLocked)] :
+
+                     cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary, ...envelope2EvidenceItems.diary] :
+
+                     cat.id === 'intercept' ? [...cat.files, ...envelope2EvidenceItems.intercept] :
 
                      cat.files
 
@@ -2826,7 +3020,7 @@ files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ..
 
             name: 'Перехват',
 
-            files: slateEvidenceItems.intercept
+            files: [...slateEvidenceItems.intercept, ...envelope2EvidenceItems.intercept]
 
           },
 
@@ -2838,11 +3032,59 @@ files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ..
 
             files: slateEvidenceItems.contacts
 
+          },
+
+          {
+
+            id: 'transcript',
+
+            name: 'Стенограмма Аудиозаписей',
+
+            files: envelope2EvidenceItems.transcript
+
           }
 
         ]
 
-      : baseCategories
+      : isSlateEvidenceUnlocked
+
+        ? [
+
+            ...baseCategories.map(cat => ({
+
+              ...cat,
+
+              files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document] :
+
+                       cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary] :
+
+                       cat.files
+
+            })),
+
+            {
+
+              id: 'intercept',
+
+              name: 'Перехват',
+
+              files: slateEvidenceItems.intercept
+
+            },
+
+            {
+
+              id: 'contacts',
+
+              name: 'Контакты',
+
+              files: slateEvidenceItems.contacts
+
+            }
+
+          ]
+
+        : baseCategories
 
 
 
@@ -2984,6 +3226,8 @@ files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ..
 
                   {file.isNew && !viewedEvidence.includes(file.id) && <span className="dt-new-badge">НОВОЕ</span>}
 
+                  {file.id === 'rpd_gallery_report' && isRpdGalleryReportUnlocked && !viewedEvidence.includes(file.id) && <span className="dt-new-badge" style={{ background: '#e74c3c' }}>🔔</span>}
+
                 </div>
 
               </div>
@@ -2998,7 +3242,14 @@ files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ..
 
                   markFileAsReviewed(file.id)
 
+                  // Если это рапорт РПД и он разблокирован, также отмечаем его как просмотренный
+                  if (file.id === 'rpd_gallery_report' && isRpdGalleryReportUnlocked) {
+                    markFileAsReviewed('rpd_gallery_report')
+                  }
+
                   setPreviewImage({
+
+                    id: file.id,
 
                     src: file.url,
 
@@ -3060,7 +3311,18 @@ files: cat.id === 'document' ? [...cat.files, ...slateEvidenceItems.document, ..
 
         dossier={previewImage}
 
-        onClose={() => setPreviewImage(null)}
+        onClose={() => {
+          if (
+            previewImage?.id === 'rpd_gallery_report' &&
+            !hasTriggeredWorkspacePhotoCall &&
+            localStorage.getItem('dt_current_envelope') === '3'
+          ) {
+            localStorage.setItem('dt_workspace_photo_call_requested', 'true')
+            setHasTriggeredWorkspacePhotoCall(true)
+            window.dispatchEvent(new CustomEvent('dt_workspace_photo_call_requested'))
+          }
+          setPreviewImage(null)
+        }}
 
       />
 
