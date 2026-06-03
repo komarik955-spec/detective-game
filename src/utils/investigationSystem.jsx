@@ -43,6 +43,9 @@ export const WORKSPACE_PHOTO_FILE_IDS = [
   'workspace_alaric',
   'workspace_vesper',
   'workspace_evan',
+  'selena_diary_page',
+  'intercept_crow_report',
+  'transcript_vesper',
 ]
 export const ENVELOPE_1_REQUIRED_FILE_IDS = [
   'insurance_policies',

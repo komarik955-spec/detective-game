@@ -260,8 +260,8 @@ export default function DarkTraceSite({ onClose, darkTraceState, onNavigate, pla
       // Фильтруем пустой выбор (workspace_skip), чтобы не пытаться разблокировать несуществующее фото
       const validChoices = choiceIds.filter(choice => choice !== 'workspace_skip');
       if (validChoices.length > 0) {
-        // Добавляем страницу дневника Селены к разблокируемым файлам
-        const itemsToUnlock = [...validChoices, 'selena_diary_page'];
+        // Добавляем страницу дневника Селены, отчет Ворона и стенограмму Веспер к разблокируемым файлам
+        const itemsToUnlock = [...validChoices, 'selena_diary_page', 'intercept_crow_report', 'transcript_vesper'];
         unlockWorkspacePhotos(itemsToUnlock);
       }
     }
@@ -2922,6 +2922,50 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
       }
 
+    ],
+
+    intercept: [
+
+      {
+
+        id: 'intercept_crow_report',
+
+        name: 'Перехваченный отчет о наблюдении ("Муза")',
+
+        description: 'Отчет о наблюдении за объектом "Муза", перехваченный в ходе оперативной работы.',
+
+        url: '/assets/evidence/intercept_crow_report.png',
+
+        type: 'image',
+
+        isNew: isFileNew('intercept_crow_report'),
+
+        isLocked: !progress.unlockedWorkspacePhotoIds.includes('intercept_crow_report')
+
+      }
+
+    ],
+
+    transcript: [
+
+      {
+
+        id: 'transcript_vesper',
+
+        name: 'Стенограмма аудиозаписи DT-AUD-011 (Веспер Уэйнрайт)',
+
+        description: 'Стенограмма аудиозаписи разговора с Веспер Уэйнрайт, содержащая важные показания.',
+
+        url: '/assets/evidence/transcript_vesper.png',
+
+        type: 'image',
+
+        isNew: isFileNew('transcript_vesper'),
+
+        isLocked: !progress.unlockedWorkspacePhotoIds.includes('transcript_vesper')
+
+      }
+
     ]
 
   }
@@ -2960,7 +3004,9 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
                     cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary, ...envelope2EvidenceItems.diary, ...envelope3EvidenceItems.diary] :
 
-                    cat.id === 'intercept' ? [...cat.files, ...envelope2EvidenceItems.intercept] :
+                    cat.id === 'intercept' ? [...cat.files, ...envelope2EvidenceItems.intercept.filter(d => !d.isLocked), ...envelope3EvidenceItems.intercept.filter(d => !d.isLocked)] :
+
+                    cat.id === 'transcript' ? [...cat.files, ...envelope2EvidenceItems.transcript.filter(d => !d.isLocked), ...envelope3EvidenceItems.transcript.filter(d => !d.isLocked)] :
 
                     cat.files
 
@@ -2972,7 +3018,7 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
           name: 'Перехват',
 
-          files: [...slateEvidenceItems.intercept, ...envelope2EvidenceItems.intercept]
+          files: [...slateEvidenceItems.intercept, ...envelope2EvidenceItems.intercept.filter(d => !d.isLocked), ...envelope3EvidenceItems.intercept.filter(d => !d.isLocked)]
 
         },
 
@@ -2992,7 +3038,7 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
           name: 'Стенограмма Аудиозаписей',
 
-          files: envelope2EvidenceItems.transcript
+          files: [...envelope2EvidenceItems.transcript.filter(d => !d.isLocked), ...envelope3EvidenceItems.transcript.filter(d => !d.isLocked)]
 
         }
 
