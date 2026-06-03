@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="800" height="1100">
+  <!-- Background paper texture -->
+  <defs>
+    <filter id="paper">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" seed="2"/>
+      <feColorMatrix values="0 0 0 0 0.95
+                             0 0 0 0 0.91
+                             0 0 0 0 0.78
+                             0 0 0 0.15 0"/>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+    <linearGradient id="ageStain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(180,160,120,0)"/>
+      <stop offset="100%" stop-color="rgba(180,160,120,0.15)"/>
+    </linearGradient>
+    <filter id="inkBleed">
+      <feGaussianBlur stdDeviation="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Paper base -->
+  <rect width="800" height="1100" fill="#f5ead0"/>
+  <rect width="800" height="1100" fill="url(#ageStain)"/>
+  <rect width="800" height="1100" filter="url(#paper)" opacity="0.3"/>
+
+  <!-- Torn edges (top) -->
+  <path d="M 0,0 L 30,5 L 60,2 L 95,8 L 130,3 L 170,10 L 210,4 L 250,7 L 290,2 L 330,9 L 370,4 L 410,8 L 450,3 L 490,7 L 530,2 L 570,9 L 610,4 L 650,8 L 690,3 L 730,7 L 770,2 L 800,6 L 800,0 Z" fill="#d4c4a0" opacity="0.6"/>
+
+  <!-- Torn edges (bottom) -->
+  <path d="M 0,1100 L 25,1095 L 55,1098 L 90,1092 L 125,1097 L 165,1090 L 200,1095 L 240,1098 L 280,1093 L 320,1096 L 360,1090 L 400,1095 L 440,1098 L 480,1092 L 520,1096 L 560,1090 L 600,1095 L 640,1098 L 680,1092 L 720,1096 L 760,1090 L 800,1095 L 800,1100 Z" fill="#d4c4a0" opacity="0.6"/>
+
+  <!-- Left margin red line -->
+  <line x1="90" y1="40" x2="90" y2="1060" stroke="#c8a0a0" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Horizontal ruling lines -->
+  <g stroke="#c8b890" stroke-width="0.5" opacity="0.3">
+    <line x1="110" y1="80" x2="760" y2="80"/>
+    <line x1="110" y1="120" x2="760" y2="120"/>
+    <line x1="110" y1="160" x2="760" y2="160"/>
+    <line x1="110" y1="200" x2="760" y2="200"/>
+    <line x1="110" y1="240" x2="760" y2="240"/>
+    <line x1="110" y1="280" x2="760" y2="280"/>
+    <line x1="110" y1="320" x2="760" y2="320"/>
+    <line x1="110" y1="360" x2="760" y2="360"/>
+    <line x1="110" y1="400" x2="760" y2="400"/>
+    <line x1="110" y1="440" x2="760" y2="440"/>
+    <line x1="110" y1="480" x2="760" y2="480"/>
+    <line x1="110" y1="520" x2="760" y2="520"/>
+    <line x1="110" y1="560" x2="760" y2="560"/>
+    <line x1="110" y1="600" x2="760" y2="600"/>
+    <line x1="110" y1="640" x2="760" y2="640"/>
+    <line x1="110" y1="680" x2="760" y2="680"/>
+    <line x1="110" y1="720" x2="760" y2="720"/>
+    <line x1="110" y1="760" x2="760" y2="760"/>
+    <line x1="110" y1="800" x2="760" y2="800"/>
+    <line x1="110" y1="840" x2="760" y2="840"/>
+    <line x1="110" y1="880" x2="760" y2="880"/>
+    <line x1="110" y1="920" x2="760" y2="920"/>
+    <line x1="110" y1="960" x2="760" y2="960"/>
+    <line x1="110" y1="1000" x2="760" y2="1000"/>
+  </g>
+
+  <!-- Date header -->
+  <text x="110" y="55" font-family="'Segoe Script', 'Comic Sans MS', cursive" font-size="22" fill="#2a2a5a" font-weight="bold" filter="url(#inkBleed)">
+    19 июня 2025
+  </text>
+
+  <!-- Diary entries -->
+  <g font-family="'Segoe Script', 'Comic Sans MS', cursive" font-size="17" fill="#1a1a4a" filter="url(#inkBleed)">
+    <!-- Entry 1 -->
+    <text x="110" y="100">Я была в галерее "Хранилище" сегодня. У меня наконец-то есть</text>
+    <text x="110" y="125">доказательства — накладная №734 подтверждает, что картина</text>
+    <text x="110" y="150">"Реквием по Королю" была продана за час до "самоубийства"</text>
+    <text x="110" y="175">Дэвида Андервуда. Розалия лгала мне всё это время.</text>
+
+    <!-- Entry 2 -->
+    <text x="110" y="220" font-weight="bold">МАРКУС.</text>
+    <text x="110" y="245">Темно-синий седан снова стоял у моей студии. Я запомнила</text>
+    <text x="110" y="270">номер — RVT-441. Маркус говорил, что не имеет к этому</text>
+    <text x="110" y="295">отношения, но я видела, как он выходил из машины. Он</text>
+    <text x="110" y="320">наблюдает за мной. Они все наблюдают за мной.</text>
+
+    <!-- Entry 3 -->
+    <text x="110" y="365" font-weight="bold">ВОРОН.</text>
+    <text x="110" y="390">Получила новый отчёт от Частного Детектива. Веспер</text>
+    <text x="110" y="415">встречалась с кем-то в LUXE в день смерти Дэвида. Та</text>
+    <text x="110" y="440">самая ночь. Та самая машина. Всё сходится — Веспер</text>
+    <text x="110" y="465">и Розалия действовали вместе. Но зачем? Деньги?</text>
+    <text x="110" y="490">Страх? Или что-то ещё?</text>
+
+    <!-- Entry 4 -->
+    <text x="110" y="535" font-weight="bold">АЛАРИК.</text>
+    <text x="110" y="560">Аларик прислал мне ультиматум. Он требует, чтобы я</text>
+    <text x="110" y="585">прекратила расследование, или он "сделает это публичным".</text>
+    <text x="110" y="610">Он знает о Сертофине. Он знает, что я нашла чек из</text>
+    <text x="110" y="635">аптеки. Если он расскажет всем, что я покупала препарат,</text>
+    <text x="110" y="660">они поверят, что это действительно было самоубийство.</text>
+
+    <!-- Entry 5 -->
+    <text x="110" y="705">Я должна поговорить с Эваном. Он должен знать правду</text>
+    <text x="110" y="730">о своей матери. О Веспер. Обо всём этом безумии.</text>
+
+    <!-- Entry 6 -->
+    <text x="110" y="775">ЭВАН — если ты читаешь это, значит, я не успела. Прости</text>
+    <text x="110" y="800">меня. Я пыталась защитить тебя. Помни — ищи ВОРОВА.</text>
+    <text x="110" y="825">Он единственный, кто знает всю правду.</text>
+
+    <!-- Entry 7 -->
+    <text x="110" y="870">Если со мной что-то случится — проверьте накладную из</text>
+    <text x="110" y="895">галереи. Проверьте маршруты алиби. И проверьте ВЕСПЕР.</text>
+    <text x="110" y="920">Её идеальное алиби — ложь.</text>
+  </g>
+
+  <!-- Signature -->
+  <text x="650" y="970" font-family="'Segoe Script', 'Comic Sans MS', cursive" font-size="20" fill="#1a1a4a" font-style="italic" filter="url(#inkBleed">
+    — С.
+  </text>
+
+  <!-- Coffee stain -->
+  <ellipse cx="680" cy="420" rx="55" ry="45" fill="none" stroke="#a08060" stroke-width="2" opacity="0.25"/>
+  <ellipse cx="680" cy="420" rx="50" ry="40" fill="none" stroke="#a08060" stroke-width="1" opacity="0.15"/>
+
+  <!-- Page number -->
+  <text x="730" y="1040" font-family="'Courier New', monospace" font-size="12" fill="#8a7a5a" opacity="0.6">№20</text>
+
+  <!-- Crease/fold line -->
+  <line x1="400" y1="0" x2="400" y2="1100" stroke="#d4c4a0" stroke-width="1" opacity="0.2" stroke-dasharray="5,3"/>
+</svg>

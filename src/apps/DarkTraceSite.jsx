@@ -2860,24 +2860,6 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
         isNew: true
 
-      },
-
-      {
-
-        id: 'selena_diary_page',
-
-        name: 'Страница из дневника Селены',
-
-        description: 'Дополнительная страница из дневника Селены Блэк с важными записями о расследовании.',
-
-        url: '/assets/evidence/selena_diary_page.png',
-
-        type: 'image',
-
-        isNew: isFileNew('selena_diary_page'),
-
-        isLocked: !progress.unlockedWorkspacePhotoIds.includes('selena_diary_page')
-
       }
 
     ],
@@ -2920,7 +2902,29 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
   }
 
+  const envelope3EvidenceItems = {
 
+    diary: [
+
+      {
+
+        id: 'selena_diary_page',
+
+        name: 'Страница из дневника Селены',
+
+        description: 'Дополнительная страница из дневника Селены Блэк с важными записями о расследовании.',
+
+        url: '/assets/evidence/selena_diary_page.png',
+
+        type: 'image',
+
+        isNew: isFileNew('selena_diary_page')
+
+      }
+
+    ]
+
+  }
 
   const handleEvidenceClick = (file) => {
 
@@ -2954,7 +2958,7 @@ function EvidenceArchive({ userLevel, onNavigate }) {
 
                     cat.id === 'photo' ? [...cat.files, ...envelope2EvidenceItems.photo.filter(d => !d.isLocked)] :
 
-                    cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary, ...envelope2EvidenceItems.diary] :
+                    cat.id === 'diary' ? [...cat.files, ...slateEvidenceItems.diary, ...envelope2EvidenceItems.diary, ...envelope3EvidenceItems.diary] :
 
                     cat.id === 'intercept' ? [...cat.files, ...envelope2EvidenceItems.intercept] :
 

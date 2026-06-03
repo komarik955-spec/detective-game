@@ -43,7 +43,6 @@ export const WORKSPACE_PHOTO_FILE_IDS = [
   'workspace_alaric',
   'workspace_vesper',
   'workspace_evan',
-  'selena_diary_page',
 ]
 export const ENVELOPE_1_REQUIRED_FILE_IDS = [
   'insurance_policies',
@@ -237,7 +236,7 @@ export function InvestigationProvider({ children }) {
    }, [])
 
   const unlockEnvelope3 = useCallback(() => {
-    const envelope3FileIds = ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final', 'rpd_gallery_report'];
+    const envelope3FileIds = ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final', 'rpd_gallery_report', 'selena_diary_page'];
     setProgress(prev => ({
       ...prev,
       currentStageId: 'envelope_3',
