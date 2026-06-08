@@ -128,30 +128,39 @@ export default function App() {
 
 
   useEffect(() => {
+    const debounce = (fn, delay) => {
+      let timer;
+      return () => {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+      };
+    };
 
     const handleResize = () => {
+      const baseWidth = 1920;
+      const currentWidth = window.innerWidth;
+      const currentHeight = window.innerHeight;
+      
+      // Масштаб по ширине
+      const widthScale = Math.min(Math.max(currentWidth / baseWidth, 0.6), 1.5);
+      
+      // Дополнительная проверка по высоте (если нужно)
+      const baseHeight = 1080; // Full HD height
+      const heightScale = Math.min(Math.max(currentHeight / baseHeight, 0.6), 1.5);
+      
+      // Используем меньший масштаб из двух
+      const scale = Math.min(widthScale, heightScale);
+      
+      document.documentElement.style.setProperty('--app-scale', scale.toString());
+      document.documentElement.style.setProperty('--app-font-scale', scale.toString());
+    };
 
-      const baseWidth = 1920
+    const debouncedResize = debounce(handleResize, 100);
+    window.addEventListener('resize', debouncedResize);
+    handleResize();
 
-      const currentWidth = window.innerWidth
-
-      const scale = Math.min(Math.max(currentWidth / baseWidth, 0.6), 1.5)
-
-      document.documentElement.style.setProperty('--app-scale', scale.toString())
-
-    }
-
-
-
-    window.addEventListener('resize', handleResize)
-
-    handleResize()
-
-
-
-    return () => window.removeEventListener('resize', handleResize)
-
-  }, [])
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, []);
 
 
 

@@ -1289,6 +1289,13 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
 
   const isEnvelope2 = currentEnvelope === 2
+  const isEnvelope3 = currentEnvelope === 3
+
+  const canSendEnvelope3Report = (() => {
+    const reviewed = progress?.reviewedFiles || []
+    const envelope3Required = ['gallery_transfer_record', 'rpd_gallery_report', 'selena_diary_page', 'transcript_vesper', 'intercept_crow_report']
+    return envelope3Required.every(id => reviewed.includes(id))
+  })()
 
 
 
@@ -1309,6 +1316,25 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
 
   const handleSendReport = () => {
+
+    // Handle envelope 3 - send final report
+    if (isEnvelope3 && canSendEnvelope3Report && !slateCallActive && !reportSending) {
+
+      setReportSending(true)
+
+      beginInterimReport()
+
+      setTimeout(() => {
+
+        setReportSending(false)
+
+        setSlateCallActive(true)
+
+      }, 3000)
+
+      return
+
+    }
 
     // Handle envelope 2 - send report and trigger call to unlock envelope 3
     if (isEnvelope2 && canSendFinalReport && !slateCallActive && !reportSending) {
@@ -1489,9 +1515,9 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
             <div className="dt-progress-header">
 
-               <span className="dt-progress-percent">{isEnvelope2 ? stagePercentage : stagePercentage}%</span>
+               <span className="dt-progress-percent">{(isEnvelope2 || isEnvelope3) ? stagePercentage : stagePercentage}%</span>
 
-              <span className="dt-stage-name">STAGE: {isEnvelope2 ? 'КОНВЕРТ №2' : currentStage.title}</span>
+              <span className="dt-stage-name">STAGE: {isEnvelope3 ? 'КОНВЕРТ №3' : isEnvelope2 ? 'КОНВЕРТ №2' : currentStage.title}</span>
 
             </div>
 
@@ -1503,7 +1529,7 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
                 className="dt-progress-bar-fill"
 
-                 style={{ width: `${isEnvelope2 ? stagePercentage : stagePercentage}%` }}
+                 style={{ width: `${(isEnvelope2 || isEnvelope3) ? stagePercentage : stagePercentage}%` }}
 
               >
 
@@ -1515,7 +1541,75 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
 
 
-            {isEnvelope2 ? (
+            {isEnvelope3 ? (
+
+              <div className="dt-objective-box">
+
+                <span className="dt-objective-label">CURRENT OBJECTIVE:</span>
+
+                <p className="dt-objective-text">Изучите материалы третьего конверта и составьте Финальный Отчет.</p>
+
+                <div className="dt-objective-hint">
+
+                  {(() => {
+
+                    const reviewed = progress?.reviewedFiles || []
+
+                    const galleryTransferReviewed = reviewed.includes('gallery_transfer_record')
+
+                    const rpdReportReviewed = reviewed.includes('rpd_gallery_report')
+
+                    const selenaDiaryReviewed = reviewed.includes('selena_diary_page')
+
+                    const vesperTranscriptReviewed = reviewed.includes('transcript_vesper')
+
+                    const museReportReviewed = reviewed.includes('intercept_crow_report')
+
+                    return (
+
+                      <>
+
+                        <p className="dt-objective-text">
+
+                          {galleryTransferReviewed ? '✓' : '[ ]'} Изучить документ АКТ ПРИЕМА-ПЕРЕДАЧИ № 734
+
+                        </p>
+
+                        <p className="dt-objective-text">
+
+                          {rpdReportReviewed ? '✓' : '[ ]'} Изучить документ FILE_04 Рапорт РПД: Полевая операция в галерее
+
+                        </p>
+
+                        <p className="dt-objective-text">
+
+                          {selenaDiaryReviewed ? '✓' : '[ ]'} Изучить Дополнительная страница из дневника Селены Блэк с важными записями о расследовании.
+
+                        </p>
+
+                        <p className="dt-objective-text">
+
+                          {vesperTranscriptReviewed ? '✓' : '[ ]'} Изучить Стенограмма аудиозаписи разговора с Веспер Уэйнрайт, содержащая важные показания.
+
+                        </p>
+
+                        <p className="dt-objective-text">
+
+                          {museReportReviewed ? '✓' : '[ ]'} Изучить Отчет о наблюдении за объектом "Муза", перехваченный в ходе оперативной работы.
+
+                        </p>
+
+                      </>
+
+                    )
+
+                  })()}
+
+                </div>
+
+              </div>
+
+            ) : isEnvelope2 ? (
 
               <div className="dt-objective-box">
 
@@ -1801,7 +1895,7 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
 
 
-            {isEnvelope2 ? null : (
+            {isEnvelope2 || isEnvelope3 ? null : (
 
               <div className="dt-stats-row">
 
@@ -1823,29 +1917,33 @@ function DashboardPage({ userLevel, onNavigate, onLogout, playerData }) {
 
               type="button"
 
-              className={`dt-report-btn ${isEnvelope2 ? (canSendFinalReport ? 'dt-report-btn--active' : '') : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
+              className={`dt-report-btn ${isEnvelope3 ? (canSendEnvelope3Report ? 'dt-report-btn--active' : '') : isEnvelope2 ? (canSendFinalReport ? 'dt-report-btn--active' : '') : (canSendInterimReport ? 'dt-report-btn--active' : '')}`}
 
-              disabled={isEnvelope2 ? (!canSendFinalReport || slateCallActive || reportSending) : (!canSendInterimReport || slateCallActive || reportSending)}
+              disabled={isEnvelope3 ? (!canSendEnvelope3Report || slateCallActive || reportSending) : isEnvelope2 ? (!canSendFinalReport || slateCallActive || reportSending) : (!canSendInterimReport || slateCallActive || reportSending)}
 
               onClick={handleSendReport}
 
               title={
 
-                isEnvelope2
+                isEnvelope3
 
-                  ? (canSendFinalReport && !slateCallActive && !reportSending ? 'Отправить промежуточный отчёт куратору' : (reportSending ? 'ОТПРАВКА...' : (slateCallActive ? 'ЗВОНОК АКТИВЕН...' : 'Изучите все материалы текущего этапа')))
+                  ? (canSendEnvelope3Report && !slateCallActive && !reportSending ? 'Отправить финальный отчёт куратору' : (reportSending ? 'ОТПРАВКА...' : (slateCallActive ? 'ЗВОНОК АКТИВЕН...' : 'Изучите все материалы текущего этапа')))
 
-                  : (reportSending ? 'Отчет отправлен. Ожидайте выхода на связь...' : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа'))
+                  : isEnvelope2
+
+                    ? (canSendFinalReport && !slateCallActive && !reportSending ? 'Отправить промежуточный отчёт куратору' : (reportSending ? 'ОТПРАВКА...' : (slateCallActive ? 'ЗВОНОК АКТИВЕН...' : 'Изучите все материалы текущего этапа')))
+
+                    : (reportSending ? 'Отчет отправлен. Ожидайте выхода на связь...' : (canSendInterimReport ? 'Отправить промежуточный отчёт куратору' : 'Изучите все материалы текущего этапа'))
 
               }
 
             >
 
-              {isEnvelope2 ? (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ') : (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ')}
+              {isEnvelope3 ? (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ФИНАЛЬНЫЙ ОТЧЁТ') : isEnvelope2 ? (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ') : (reportSending ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ПРОМЕЖУТОЧНЫЙ ОТЧЁТ')}
 
             </button>
 
-            {isEnvelope2 ? null : progressHint(currentStage, canSendInterimReport, slateCallActive, reportSending)}
+            {isEnvelope2 || isEnvelope3 ? null : progressHint(currentStage, canSendInterimReport, slateCallActive, reportSending)}
 
           </div>
 
@@ -4286,6 +4384,38 @@ function DossiersDatabase({ userLevel, onNavigate }) {
 
         'Уважаемый ривертонский предприниматель, меценат и коллекционер произведений молодых художников. Именно он обнаружил тело Селены Блэк вечером 21 июня при попытке забрать заказанную картину.'
 
+    },
+
+    {
+
+      id: 'DS-008-ADD',
+
+      name: 'Повторный допрос АРТУРА ЛЭНГСТОНА ПЕЙНА',
+
+      status: 'СВИДЕТЕЛЬ',
+
+      age: 54,
+
+      lastSeen: 'г. Ривертон - 21.06.2025',
+
+      priority: 'ВЫСОКИЙ',
+
+      caseId: 'SB-2025-06-21',
+
+      gender: 'Мужской',
+
+      birthDate: '18.08.1970',
+
+      birthPlace: 'г. Ривертон',
+
+      portrait: '/assets/characters/arthur_payne.jpg',
+
+      fullDossier: '/assets/evidence/interrogation_payne_add.png',
+
+      summary:
+
+        'Стенограмма повторного допроса Артура Пейна по делу о похищении Селены Блэк.'
+
     }
 
   ]
@@ -4293,10 +4423,6 @@ function DossiersDatabase({ userLevel, onNavigate }) {
 
 
   const [selectedDossierId, setSelectedDossierId] = useState(dossiers[0]?.id)
-
-
-
-
 
   const selectedDossier = dossiers.find(d => d.id === selectedDossierId) || dossiers[0]
 
@@ -4403,8 +4529,10 @@ function DossiersDatabase({ userLevel, onNavigate }) {
 
 
           {dossiers.map(dossier => {
-
-
+            // Skip DS-008-ADD if not in Stage 2 (temporary fix)
+            if (dossier.id === 'DS-008-ADD') {
+              return null
+            }
 
             const isActive = dossier.id === selectedDossierId
 
@@ -5986,7 +6114,13 @@ function DossiersPage({ userLevel, onNavigate }) {
 
 
 
-        {dossiers.map(dossier => (
+        {dossiers.map(dossier => {
+          // Skip DS-008-ADD if not in Stage 2
+          if (dossier.id === 'DS-008-ADD' && !isEnvelope2Unlocked) {
+            return null
+          }
+
+          return (
 
 
 
@@ -6006,7 +6140,8 @@ function DossiersPage({ userLevel, onNavigate }) {
 
 
 
-        ))}
+          )
+        })}
 
 
 

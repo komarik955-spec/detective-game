@@ -34,13 +34,13 @@ body {
 }
 
 .time {
-  font-size: 72px;
+  font-size: calc(72px * var(--app-font-scale));
   font-weight: 200;
   color: white;
 }
 
 .date {
-  font-size: 18px;
+  font-size: calc(18px * var(--app-font-scale));
   opacity: 0.8;
   color: white;
 }
@@ -62,7 +62,7 @@ body {
 
 /* ТЕКСТ */
 .title {
-  font-size: 20px;
+  font-size: calc(20px * var(--app-font-scale));
   margin-bottom: 25px;
   color: white;
 }

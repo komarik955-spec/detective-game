@@ -200,9 +200,17 @@ useEffect(() => {
     }
   }
 
-  const style = (maximized || window.innerWidth <= 768)
-    ? { left: 0, top: 0, width: '100vw', height: `calc(100vh - ${window.innerWidth <= 768 ? 44 : TASKBAR}px)`, zIndex, borderRadius: 0 }
-    : { left: pos.x, top: pos.y, width: size.w, height: size.h, zIndex }
+const style = (maximized || window.innerWidth <= 768)
+  ? { 
+      left: 0, 
+      top: 0, 
+      width: '100%', 
+      height: '100%',
+      zIndex, 
+      borderRadius: 0,
+      transform: 'none'
+    }
+  : { left: pos.x, top: pos.y, width: size.w, height: size.h, zIndex }
 
 
   const handles = ['n','ne','e','se','s','sw','w','nw']

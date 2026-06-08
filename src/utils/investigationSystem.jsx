@@ -86,7 +86,7 @@ const STAGES = {
     id: 'envelope_3',
     title: 'Конверт №3',
     objective: 'Изучите материалы третьего конверта и составьте Финальный Отчет.',
-    requiredFiles: ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final', 'rpd_gallery_report'],
+    requiredFiles: ['gallery_transfer_record', 'rpd_gallery_report', 'selena_diary_page', 'transcript_vesper', 'intercept_crow_report'],
     nextStageId: null,
   },
 }
@@ -239,7 +239,7 @@ export function InvestigationProvider({ children }) {
    }, [])
 
   const unlockEnvelope3 = useCallback(() => {
-    const envelope3FileIds = ['gallery_transfer_record', 'raven_report', 'alibi_routes', 're_interrogation_evan', 're_interrogation_vesper', 'diary_page_final', 'rpd_gallery_report', 'selena_diary_page'];
+    const envelope3FileIds = ['gallery_transfer_record', 'rpd_gallery_report', 'selena_diary_page', 'transcript_vesper', 'intercept_crow_report'];
     setProgress(prev => ({
       ...prev,
       currentStageId: 'envelope_3',
